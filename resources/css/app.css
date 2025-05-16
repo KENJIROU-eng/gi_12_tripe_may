@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+IN&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+.title-sm {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: italic;
+    font-size:  400;
+    background: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 221, 255)); /* 赤→青のグラデーション */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.title-lg {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size:  500;
+    background: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 221, 255)); /* 赤→青のグラデーション */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-sm {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: italic;
+}
