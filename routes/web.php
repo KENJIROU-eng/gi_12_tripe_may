@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ItineraryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +18,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::group(['middleware' => 'auth'], function(){
+
+    #home
+
+    #itinerary
+    Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
+    Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
+    Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
+    
+    Route::get('/itinerary/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
+    Route::delete('/itinerary/{id}/delete', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
+
+});
 require __DIR__.'/auth.php';
