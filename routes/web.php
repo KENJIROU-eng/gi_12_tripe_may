@@ -8,6 +8,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/post_list', function () {
+    return view('posts.list');
+})->name('posts.list');
+
+Route::get('/post_show', function () {
+    return view('posts.show');
+})->name('posts.show');
+
+Route::get('/post_edit', function () {
+    return view('posts.edit');
+})->name('posts.edit');
+
+Route::get('/post_create', function () {
+    return view('posts.create');
+})->name('posts.create');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -16,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    #post
+
 });
 
 Route::group(['middleware' => 'auth'], function(){
