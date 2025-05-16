@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function itineraries() {
+        return $this->hasMany(Itinerary::class)->latest();
+    }
+
+    public function groups() {
+        return $this->hasMany(Group::class, 'user_id', 'id');
+    }
 }

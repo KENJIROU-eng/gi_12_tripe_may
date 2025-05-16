@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class MapItinerary extends Model
 {
     public $timestamps = false;
+
+    protected $fillable = [
+        'date_id',
+    ];
 }

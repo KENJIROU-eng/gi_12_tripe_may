@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('itineraries', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('group_id');
             $table->string('title');
             $table->date('start_date');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->string('initial_place');
             $table->timestamps();
 
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
         });
     }
