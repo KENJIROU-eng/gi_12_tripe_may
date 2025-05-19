@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <div class= "mt-5 h-[880px]">
         <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
@@ -48,7 +49,7 @@
                                         <div class="grid grid-rows-4">
                                             <div class="row-span-1 mx-auto text-yellow-300">
                                                 <i class="fa-solid fa-crown"></i> 1st
-                                                <span class="text-black">Moal Boal</span>
+                                                <a href="" class="text-black">Moal Boal</a>
                                             </div>
                                             <div class="row-span-3">
                                                 <div class="grid grid-cols-3 h-[96px]">
@@ -65,7 +66,7 @@
                                         <div class="grid grid-rows-4">
                                             <div class="row-span-1 mx-auto text-slate-400">
                                                 <i class="fa-solid fa-crown"></i> 2nd
-                                                <span class="text-black">Moal Boal</span>
+                                                <a href="" class="text-black">Moal Boal</a>
                                             </div>
                                             <div class="row-span-3">
                                                 <div class="grid grid-cols-3 h-[96px]">
@@ -82,7 +83,7 @@
                                         <div class="grid grid-rows-4">
                                             <div class="row-span-1 mx-auto text-yellow-700">
                                                 <i class="fa-solid fa-crown"></i> 3rd
-                                                <span class="text-black">Moal Boal</span>
+                                                <a href="" class="text-black">Moal Boal</a>
                                             </div>
                                             <div class="row-span-3">
                                                 <div class="grid grid-cols-3 h-[96px]">
@@ -109,3 +110,7 @@
         </div>
     </div>
 </x-app-layout>
+
+{{-- caldender js --}}
+<script src="{{ asset('js/homepage_calender.js') }}"></script>
+
