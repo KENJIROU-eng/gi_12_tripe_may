@@ -5,7 +5,7 @@
                 <div class="p-6 text-black dark:text-gray-100">
                     <div class="relative flex items-center justify-center h-16 my-5">
                         <h1 class="text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Itinerary</h1>
-                        <a href="{{ route('itinerary.create') }}" class="absolute right-40">
+                        <a href="{{ route('itinerary.share') }}" class="absolute right-40">
                             <i class="fa-solid fa-circle-plus text-lg"></i>
                         </a>
                     </div>

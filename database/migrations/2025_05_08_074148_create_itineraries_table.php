@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('itineraries', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('group_id')->nullable();
             $table->string('title');
             $table->date('start_date');
             $table->date('end_date');

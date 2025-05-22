@@ -4,20 +4,21 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Create</h1>
+                        <h1 class="text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Edit</h1>
                     </div>
 
                     <div class="max-w-6xl mx-auto h-full mt-8">
                         <div class="bg-white rounded-lg p-6 h-[640px] flex flex-col">
-                            <form id="itineraryForm" action="{{ route('itinerary.store') }}" method="POST" class="flex flex-col h-full">
+                            <form id="itineraryForm" action="#" method="POST" class="flex flex-col h-full">
                                 @csrf
+                                @method('PATCH')
                                 {{-- header --}}
                                 <div class="grid grid-cols-5 items-center border-b shrink-0">
                                     {{-- title --}}
                                     <div class="col-span-2 mb-4 me-2">
                                         <x-input-label for="title" value="Title" />
                                         <x-text-input name="title" placeholder="Please enter a title" required
-                                            class="w-full" />
+                                            class="w-full" value="{{ old('title', $itinerary->title) }}" />
                                     </div>
 
                                     {{-- date --}}
@@ -37,22 +38,22 @@
                                         <div class="grid grid-cols-5 items-center">
                                             <div class="col-span-2">
                                                 <x-text-input name="start_date" type="date" id="start_date"
-                                                    onchange="updateDateRange()" />
+                                                    onchange="updateDateRange()" value="{{ old('start_date', optional($itinerary->start_date)->format('Y-m-d')) }}" />
                                             </div>
                                             <div class="col-span-1 flex justify-center">
                                                 <span class="text-lg">～</span>
                                             </div>
                                             <div class="col-span-2">
                                                 <x-text-input name="end_date" type="date" id="end_date"
-                                                    onchange="updateDateRange()" />
+                                                    onchange="updateDateRange()" value="{{ old('end_date', optional($itinerary->end_date)->format('Y-m-d')) }}" />
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- create button --}}
+                                    {{-- update button --}}
                                     <div class="col-span-1 text-end me-4">
                                         <button type="submit"
-                                            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus-outline-none focus:ring-2 focus:ring-green-500">Create</button>
+                                            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus-outline-none focus:ring-2 focus:ring-green-500">Update</button>
                                     </div>
                                 </div>
 
@@ -62,8 +63,7 @@
                                     <div id="dateFieldsContainer" class=" flex-1 py-2 overflow-y-auto border-e">
                                         {{-- create itineraries --}}
                                         {{-- total summary --}}
-                                        <div id="totalSummary" class="mt-6 text-sm hidden">
-                                        </div>
+                                        <div id="totalSummary" class="mt-6 text-sm hidden"></div>
                                     </div>
                                     {{-- right side (Map) --}}
                                     <div class="bg-white rounded-lg flex flex-col w-1/2">
@@ -89,9 +89,13 @@
 
                                 {{-- java script --}}
                                 @push('scripts')
+                                    <script>
+                                        window.initialItineraryData = @json($itineraryData);
+                                    </script>
                                     <script src="{{ asset('js/itinerary-map-script.js') }}"></script>
                                     <script src="{{ asset('js/itinerary-create-script.js') }}"></script>
                                 @endpush
+
                             </form>
                         </div>
 

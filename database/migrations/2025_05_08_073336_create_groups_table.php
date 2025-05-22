@@ -17,6 +17,8 @@ return new class extends Migration
             $table->longText('image')->nullable();
             $table->string('name');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

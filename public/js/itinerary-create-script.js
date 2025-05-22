@@ -3,6 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const endInput   = document.querySelector('[name="end_date"]');
     const container  = document.getElementById('dateFieldsContainer');
 
+    if (window.initialItineraryData) {
+        restoreFormDataFromInitialData(window.initialItineraryData);
+    } else {
+        restoreFormDataFromLocalStorage();
+    }
+
     restoreFormDataFromLocalStorage();
 
     startInput?.addEventListener('change', () => {
@@ -30,6 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const [date, places] of Object.entries(data.destinations || {})) {
             const container = document.getElementById(`fields-${date}`);
             if(!container) continue;
+
+            container.innerHTML = '';
+
+            for (const place of places) {
+                container.insertAdjacentHTML('beforeend', createInputField(date, place));
+            }
+        }
+
+        updateTotalSummary();
+    }
+
+    function restoreFormDataFromInitialData(data) {
+        if (data.startDate) startInput.value = data.startDate;
+        if (data.endDate) endInput.value = data.endDate;
+
+        renderDateFields();
+
+        for (const [date, places] of Object.entries(data.destinations || {})) {
+            const container = document.getElementById(`fields-${date}`);
+            if (!container) continue;
 
             container.innerHTML = '';
 
@@ -108,6 +134,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function attachAutocompleteToInput(input) {
+        if (!window.google || !google.maps || !google.maps.places) {
+            console.warn('Google Maps Places API is not loaded');
+            return;
+        }
+        if (input.dataset.autocompleteAttached === 'true') return;
+
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+            types: [],
+        });
+
+        autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            input.dispatchEvent(new Event('input'));
+        });
+
+        input.dataset.autocompleteAttached = 'true';
+    }
+
+
+
     function bindInputEvents() {
         const inputs = document.querySelectorAll('.destination-input');
         inputs.forEach(input => {
@@ -117,10 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('input', updateTotalSummary);
             input.addEventListener('input', saveFormDataToLocalStorage);
 
-            if (input.dataset.autocompleteAttached === 'true') return;
-
             attachAutocompleteToInput(input);
-            input.dataset.autocompleteAttached = 'true';
         });
     }
 
@@ -172,9 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function createInputField(dateKey, value= '') {
         const id = `input-${dateKey}-${Date.now()}`;
         return `
-            <div class="flex items-center mb-1 gap-2">
+            <div class="destination-item flex items-center mb-1 gap-2">
                 <span class="cursor-move drag-handle text-gray-500 px-2 text-xl"><i class="fa-solid fa-grip-lines"></i></span>
-                <input type="text" name="destinations[${dateKey}][]" value="${value}" class="w-full p-2 border rounded destination-input" placeholder="Please enter a destination" />
+                <input type="text" name="destinations[${dateKey}][]" value="${value}" class="w-2/3 p-2 border rounded destination-input" placeholder="Please enter a destination" />
                 <span class="route-info ml-2 text-sm text-gray-600"></span>
                 <button type="button" onclick="removeField(this)" class="text-red-500 hover:text-red-700 text-xl">
                     <i class="fa-solid fa-xmark"></i>
@@ -182,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `
     }
+
 
     // Global Function: Add Input Field
     window.addMoreField = function(dateKey) {

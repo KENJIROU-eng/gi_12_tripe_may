@@ -13,7 +13,7 @@
                             {{-- calender --}}
                             <div class="col-span-2 p-4 h-[720px]">
                                 <div class="mb-4">
-                                    <a href="#" class="text-center bg-green-500 py-2 px-2 text-md lg:text-xl rounded-md lg:rounded-xl text-white inline-block w-64 lg:w-96">
+                                    <a href="{{ route('itinerary.create') }}" class="text-center bg-green-500 py-2 px-2 text-md lg:text-xl rounded-md lg:rounded-xl text-white inline-block w-64 lg:w-96">
                                         + Create Itinerary
                                     </a>
                                 </div>
