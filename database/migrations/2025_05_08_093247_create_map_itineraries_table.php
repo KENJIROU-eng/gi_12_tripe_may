@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('map_itineraries', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('date_id');
+            $table->string('place_name')->nullable();
             $table->string('destination');
+            $table->float('distance_km')->nullable();
+            $table->string('duration_text')->nullable();
 
-            $table->foreign('date_id')->references('id')->on('itineraries')->onDelete('cascade');
+            $table->foreign('date_id')->references('id')->on('date_itineraries')->onDelete('cascade');
         });
     }
 

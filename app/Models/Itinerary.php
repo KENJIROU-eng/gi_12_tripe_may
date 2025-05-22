@@ -17,14 +17,23 @@ class Itinerary extends Model
         'start_date',
         'end_date',
         'initial_place',
+        'destination',
     ];
 
     public function user() {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function group() {
+        return $this->belongsTo(Group::class, 'group_id');
+    }
+
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    public function dateItineraries() {
+        return $this->hasMany(DateItinerary::class);
+    }
 }

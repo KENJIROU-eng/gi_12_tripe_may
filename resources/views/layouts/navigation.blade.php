@@ -1,3 +1,4 @@
+
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto sm:px-4 lg:px-6">
@@ -20,7 +21,7 @@
                     </x-nav-link>
                 </div>
                 <div class="text-center border-gray-300 border-x-2 text-sm">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('itinerary')" class="text-xs lg:text-lg">
+                    <x-nav-link :href="route('itinerary.index')" :active="request()->routeIs('itinerary')" class="text-xs lg:text-lg">
                             {{ __('Itinerary') }}
                     </x-nav-link>
                 </div>

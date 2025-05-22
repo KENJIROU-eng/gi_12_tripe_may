@@ -25,7 +25,7 @@ class BillController extends Controller
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail(1);
         $groupMembers = [];
-        foreach ($group->groupMembers as $groupMember) {
+        foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
         }
         $all_bills = $this->bill->latest()->paginate(10)->onEachSide(2);
@@ -66,7 +66,7 @@ class BillController extends Controller
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail(1);
         $groupMembers = [];
-        foreach ($group->groupMembers as $groupMember) {
+        foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
         }
 
@@ -109,7 +109,7 @@ class BillController extends Controller
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail(1);
         $groupMembers = [];
-        foreach ($group->groupMembers as $groupMember) {
+        foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
         }
 

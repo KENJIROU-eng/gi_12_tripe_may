@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Itinerary;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,11 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            UserSeeder::class,
-            GroupSeeder::class,
-            ItinerarySeeder::class,
-            BillSeeder::class,
-        ]);
+        // $this->call([
+        //     UserSeeder::class,
+        //     GroupSeeder::class,
+        //     ItinerarySeeder::class,
+        //     BillSeeder::class,
+        // ]);
+
+        Itinerary::factory()->count(50)->create();
+        User::factory(10)->create();
+
     }
 }

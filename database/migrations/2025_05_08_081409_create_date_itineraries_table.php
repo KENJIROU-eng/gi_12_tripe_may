@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('date_itineraries', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('itinerary_id');
-            $table->unsignedBigInteger('date_id');
-
+            $table->date('date');
 
             $table->foreign('itinerary_id')->references('id')->on('itineraries')->onDelete('cascade');
+            $table->unique(['itinerary_id', 'date']);
         });
     }
 

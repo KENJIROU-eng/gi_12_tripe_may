@@ -7,4 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class DateItinerary extends Model
 {
     public $timestamps = false;
+
+    protected $fillable = [
+        'itinerary_id', 'date',
+    ];
+
+    public function mapItineraries() {
+        return $this->hasMany(MapItinerary::class, 'date_id');
+    }
 }

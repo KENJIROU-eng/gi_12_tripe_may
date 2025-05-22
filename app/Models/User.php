@@ -46,11 +46,18 @@ class User extends Authenticatable
         ];
     }
 
+
     public function itineraries() {
         return $this->hasMany(Itinerary::class)->latest();
     }
 
     public function groups() {
-        return $this->hasMany(Group::class, 'user_id', 'id');
+        return $this->belongsToMany(Group::class, 'group_members');
     }
+
+
+    public function group(){
+        return $this->hasMany(Group::class);
+    }
+
 }
