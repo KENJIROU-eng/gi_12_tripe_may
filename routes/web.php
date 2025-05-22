@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
 
 
+
     #itinerary
     Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
     Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
@@ -46,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/prefill', [ItineraryController::class, 'prefill'])->name('itinerary.prefill');
     Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::get('/itineraries/{id}/edit', [ItineraryController::class, 'edit'])->name('itinerary.edit');
+
+
 
 
 });

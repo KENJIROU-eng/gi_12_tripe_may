@@ -10,6 +10,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +32,10 @@
 
     </head>
     <body >
+
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+>>>>>>> b3b2339 (post create/edit/delete/list/show)
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -41,9 +45,10 @@
                         {{ $header }}
                     </div>
                 </header>
-            @endisset
+            @endisset --}}
 
             <!-- Page Content -->
+
 
             <main class="main-background">
                 {{ $slot }}
@@ -51,6 +56,13 @@
         </div>
 
         @stack('scripts')
+
+            <main>
+                @yield('content')
+                {{-- {{ $slot }} --}}
+            </main>
+        {{-- </div> --}}
+
 
             <main>
                 @yield('content')
