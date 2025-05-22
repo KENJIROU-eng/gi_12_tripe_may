@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Itinerary;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,7 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        Itinerary::factory()->count(50)->create();
+        $this->call([
+            UserSeeder::class,
+            GroupSeeder::class,
+            ItinerarySeeder::class,
+            BillSeeder::class,
+        ]);
     }
 }

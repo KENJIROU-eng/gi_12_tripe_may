@@ -53,7 +53,9 @@ Route::group(['middleware' => 'auth'], function(){
 
     #goDutch
     Route::get('/goDutch', [BillController::class, 'index'])->name('goDutch.index');
-    Route::get('/goDutch/create', [BillController::class, 'create'])->name('goDutch.create');
+    Route::post('/goDutch/create', [BillController::class, 'store'])->name('goDutch.create');
+    Route::delete('/goDutch/delete/{bill_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
+    Route::patch('/goDutch/update/{bill_id}', [BillController::class, 'update'])->name('goDutch.update');
 
 });
 require __DIR__.'/auth.php';

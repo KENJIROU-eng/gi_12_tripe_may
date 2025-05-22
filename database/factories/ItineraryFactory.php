@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Itinerary;
+use App\Models\Group;
 use HasFactory;
 
 /**
@@ -20,6 +21,7 @@ class ItineraryFactory extends Factory
     public function definition(): array
     {
         return [
+            'group_id' => Group::factory(),
             'created_by' => 1,
             'group_id' => 1,
             'title' => $this->faker->sentence,
