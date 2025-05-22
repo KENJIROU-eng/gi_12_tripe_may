@@ -7,6 +7,7 @@ window.Alpine = Alpine;
 Alpine.start();
 
 
+
 // calender
 const tripSchedule = [["2025-05-17", "2025-05-18"],["2025-05-24", "2025-05-25"]];
 const tripName = ["MoalBoal", "Tops"];
@@ -112,3 +113,17 @@ document.addEventListener('DOMContentLoaded', () => {
         generateCalendar(currentYear, currentMonth);
     });
 });
+
+//laravel Echo
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS: true
+});
+

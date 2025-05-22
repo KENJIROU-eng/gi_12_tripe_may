@@ -33,9 +33,13 @@
     </head>
     <body >
 
+
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
->>>>>>> b3b2339 (post create/edit/delete/list/show)
+
+
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -45,7 +49,7 @@
                         {{ $header }}
                     </div>
                 </header>
-            @endisset --}}
+            @endisset
 
             <!-- Page Content -->
 
