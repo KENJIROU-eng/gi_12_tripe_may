@@ -7,8 +7,6 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\GroupController;
-
-
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

@@ -34,8 +34,19 @@
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-span-4 col-start-2 mb-2 me-auto w-full">
-                                    <div class="flex items-end gap-4 mb-4 bg-green-500">
+                                <div class="col-span-4 col-start-2 mb-2 me-auto w-full h-40">
+                                    <div class="grid grid-cols-3">
+                                        <div class="col-span-1 bg-blue-500 w-full h-40">
+                                            <label for="image" class="block text-sm font-semibold">Image</label>
+                                        </div>
+                                        <div class="col-span-1 bg-green-500 w-full h-40">
+                                        </div>
+                                        <div class="col-span-1 bg-red-500 w-full h-40">
+                                        </div>
+                                    </div>
+                                    {{-- test --}}
+                                    
+                                    {{-- <div class="flex items-end gap-4 mb-4 bg-green-500">
                                         <div class="pt-2 w-20 bg-red-500">
                                             <label for="image" class="block text-sm font-semibold">Image</label>
                                         </div>
@@ -49,7 +60,7 @@
                                                 Max file size is 1048kb.
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="col-span-2 col-start-2 mt-2">
                                     <a href="">
