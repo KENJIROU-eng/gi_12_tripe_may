@@ -42,9 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
     Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
     Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
-    Route::get('/itinerary/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::delete('/itinerary/{id}/delete', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
-    Route::delete('/itinerary/{itinerary_id}/delete', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
     Route::get('/itinerary/share', [ItineraryController::class, 'shareSelect'])->name('itinerary.share');
     Route::get('/itinerary/prefill', [ItineraryController::class, 'prefill'])->name('itinerary.prefill');
     Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
