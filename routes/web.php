@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\ItineraryController;
+use App\Http\Controllers\BelongingController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
@@ -45,6 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/prefill', [ItineraryController::class, 'prefill'])->name('itinerary.prefill');
     Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::get('/itineraries/{id}/edit', [ItineraryController::class, 'edit'])->name('itinerary.edit');
+    Route::put('/itineraries/{id}/update', [ItineraryController::class, 'update'])->name('itinerary.update');
+
+    #belonging
+    Route::get('/belongings/{itinerary_id}', [BelongingController::class, 'index'])->name('belonging.index');
+    Route::post('/belongings/store', [BelongingController::class, 'store'])->name('belonging.store');
+    Route::put('/belongings/{belonging}', [BelongingController::class, 'update'])->name('belonging.update');
+    Route::delete('/belongings/{belonging}', [BelongingController::class, 'destroy'])->name('belonging.destroy');
+
 
     #goDutch
     Route::get('/goDutch', [BillController::class, 'index'])->name('goDutch.index');

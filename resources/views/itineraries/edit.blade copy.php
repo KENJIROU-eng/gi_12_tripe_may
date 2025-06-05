@@ -7,7 +7,22 @@
                         <h1 class="text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">
                             Edit
                         </h1>
-
+                        <div class="absolute right-32 flex items-center space-x-2">
+                            @if ($allGroups->isNotEmpty())
+                                <div class="mb-4">
+                                    <label for="group_id" class="block text-sm font-medium text-gray-700">Reselect Group</label>
+                                    <select name="group_id" id="group_id" class="mt-1 block w-full border border-gray-300 rounded-md">
+                                        {{-- No group --}}
+                                        <option value="" {{ is_null($itinerary->group_id) ? 'selected' : '' }}>No Group</option>
+                                        @foreach ($allGroups as $group)
+                                            <option value="{{ $group->id }}" {{ $group->id == $itinerary->group_id ? 'selected' : '' }}>
+                                                {{ $group->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="max-w-6xl mx-auto h-full mt-8">
@@ -15,22 +30,7 @@
                             <form id="itineraryForm" action="{{ route('itinerary.update', $itinerary->id) }}" method="POST" class="flex flex-col h-full">
                                 @csrf
                                 @method('PUT')
-                                <div class="absolute top-40 right-1/4 flex items-center space-x-2">
-                                    @if ($allGroups->isNotEmpty())
-                                        <div class="mb-4">
-                                            <label for="group_id" class="block text-sm font-medium text-gray-700">Reselect Group</label>
-                                            <select name="group_id" id="group_id" class="mt-1 block w-full border border-gray-300 rounded-md">
-                                                {{-- No group --}}
-                                                <option value="" {{ is_null($itinerary->group_id) ? 'selected' : '' }}>No Group</option>
-                                                @foreach ($allGroups as $group)
-                                                    <option value="{{ $group->id }}" {{ $group->id == $itinerary->group_id ? 'selected' : '' }}>
-                                                        {{ $group->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @endif
-                                </div>
+
                                 {{-- header --}}
                                 <div class="grid grid-cols-5 items-center border-b shrink-0">
                                     {{-- title --}}

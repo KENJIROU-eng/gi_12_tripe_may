@@ -27,7 +27,7 @@
                                 </div>
                                 {{-- date --}}
                                 <div class="col-span-3 text-start">
-                                    <p class="inline-block w-60">{{ \Carbon\Carbon::parse($itinerary->start_date)->format('M,d,Y') }} ～ {{ \Carbon\Carbon::parse($itinerary->end_date)->format('M,d,Y') }}</p>
+                                    <p class="inline-block w-60">{{ \Carbon\Carbon::parse($itinerary->start_date)->format('M. d, Y') }} ～ {{ \Carbon\Carbon::parse($itinerary->end_date)->format('M. d, Y') }}</p>
                                 </div>
 
                                 {{-- title --}}
@@ -45,7 +45,7 @@
                             <div class="text-center text-lg my-60">
                                 <h2 class="mb-4 text-gray-500">No itinerary created yet.</h2>
                                 <div class="text-blue-500">
-                                    <a href="#">
+                                    <a href="{{ route('itinerary.share') }}">
                                         <i class="fa-solid fa-plus"></i>
                                         add itinerary
                                     </a>

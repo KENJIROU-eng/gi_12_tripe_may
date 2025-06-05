@@ -4,62 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\Belonging;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BelongingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index($itinerary_id)
     {
-        //
+        $all_belongings = Belonging::where('itinerary_id', $itinerary_id)->latest()->get();
+
+        return view('belongings.index', [
+            'all_belongings' => $all_belongings,
+            'itinerary_id' => $itinerary_id,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'itinerary_id' => 'required|integer|exists:itineraries,id',
+        ]);
+
+        $belonging = Belonging::create([
+            'itinerary_id' => $validated['itinerary_id'],
+            'name' => $validated['name'],
+            'checked' => false,
+        ]);
+
+        return response()->json($belonging);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Belonging $belonging)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Belonging $belonging)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Belonging $belonging)
     {
-        //
+        $data = $request->only(['name', 'is_checked']);
+
+        // 型の強制（is_checked は boolean にキャスト）
+        if ($request->has('is_checked')) {
+            $data['checked'] = filter_var($request->is_checked, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        if ($request->has('name')) {
+            $request->validate(['name' => 'required|string|max:255']);
+        }
+
+        $belonging->update($data);
+
+        return response()->json($belonging);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Belonging $belonging)
     {
-        //
+        $belonging->delete();
+
+        return response()->json(['message' => 'Deleted']);
     }
 }

@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('date_id');
             $table->string('place_name')->nullable();
             $table->string('destination');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('place_id')->nullable();
             $table->float('distance_km')->nullable();
             $table->string('duration_text')->nullable();
 

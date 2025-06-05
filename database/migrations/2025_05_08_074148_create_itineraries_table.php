@@ -18,7 +18,11 @@ return new class extends Migration
             $table->string('title');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('initial_place');
+            $table->string('initial_place_name')->nullable();
+            $table->decimal('initial_latitude', 10, 7)->nullable();
+            $table->decimal('initial_longitude', 10, 7)->nullable();
+
+
             $table->timestamps();
 
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
