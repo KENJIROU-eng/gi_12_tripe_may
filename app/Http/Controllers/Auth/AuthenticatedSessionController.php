@@ -28,7 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if (Auth::User()->email_verified_at != NULL) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        } else {
+            Auth::logout();
+            return redirect('/login')->withErrors([
+            'email' => 'メールアドレスの認証がまだ完了していません。',
+            ]);
+        }
     }
 
     /**

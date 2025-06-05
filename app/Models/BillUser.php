@@ -11,5 +11,6 @@ class BillUser extends Model
     protected $fillable = [
         'user_paid_id',
         'bill_id',
+        'eachPay',
     ];
 }

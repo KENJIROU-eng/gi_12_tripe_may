@@ -3,24 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bill;
-use App\Models\BillUser;
 use App\Models\Group;
+use App\Models\Itinerary;
+use App\Models\BillUser;
 use Illuminate\Http\Request;
+use App\Services\CostCalculator;
 
 class BillController extends Controller
 {
     private $bill;
     private $group;
+    private $itinerary;
+    private $billUser;
 
-    public function __construct(Bill $bill, Group $group)
+    public function __construct(Bill $bill, Group $group, Itinerary $itinerary, BillUser $billUser)
     {
         $this->bill = $bill;
+        $this->billUser = $billUser;
         $this->group = $group;
+        $this->itinerary = $itinerary;
     }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(CostCalculator $costCalculator)
     {
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail(1);
@@ -28,16 +34,30 @@ class BillController extends Controller
         foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
         }
-        $all_bills = $this->bill->latest()->paginate(10)->onEachSide(2);
+
+        // ItineraryのIDの付与ー＞のちに行う
+        $itinerary = $this->itinerary->findOrFail(1);
+        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
+
+        //calculation
+        $total_getPay = [];
+        $total_Pay = [];
+        foreach ($groupMembers as $member) {
+            $total_getPay[$member->id] = $costCalculator->total_getPay($this->group, $this->itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($this->group, $this->itinerary, $this->billUser, $member);
+        }
+
         return view('goDutch.show')
             ->with('all_bills', $all_bills)
-            ->with('groupMembers', $groupMembers);
+            ->with('groupMembers', $groupMembers)
+            ->with('total_getPay', $total_getPay)
+            ->with('total_Pay', $total_Pay);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, CostCalculator $costCalculator)
     {
         $request->validate([
             'user_paid_id' => 'required',
@@ -53,13 +73,25 @@ class BillController extends Controller
         // itinerary_idを保存する予定
         $this->bill->itinerary_id = 1;
 
+        $number_payment = count($request->user_paid_id);
+        $each_cost = $request->cost / $number_payment;
+        if (in_array($request->user_pay_id, $request->user_paid_id)) {
+            $getPay = $request->cost / $number_payment * ($number_payment - 1);
+        } else {
+            $getPay = $request->cost;
+        };
+        $this->bill->eachPay = $getPay;
         $this->bill->save();
 
-        $user_paid_id = [];
+        $billUser = [];
         foreach ($request->user_paid_id as $user_id) {
-            $user_paid_id[] = ['user_paid_id' => $user_id];
+            if($user_id == $request->user_pay_id){
+                $billUser[] = ['user_paid_id' => $user_id, 'eachPay' => 0];
+            }else{
+                $billUser[] = ['user_paid_id' => $user_id, 'eachPay' => $each_cost];
+            }
         }
-        $this->bill->billUser()->createMany($user_paid_id);
+        $this->bill->billUser()->createMany($billUser);
 
 
         $all_bills = $this->bill->latest()->paginate(10)->onEachSide(2);
@@ -70,9 +102,19 @@ class BillController extends Controller
             $groupMembers[] = $groupMember->user;
         }
 
+        //calculation
+        $total_getPay = [];
+        $total_Pay = [];
+        foreach ($groupMembers as $member) {
+            $total_getPay[$member->id] = $costCalculator->total_getPay($this->group, $this->itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($this->group, $this->itinerary, $this->billUser, $member);
+        }
+
         return view('goDutch.show')
         ->with('all_bills', $all_bills)
-        ->with('groupMembers', $groupMembers);
+        ->with('groupMembers', $groupMembers)
+        ->with('total_getPay', $total_getPay)
+        ->with('total_Pay', $total_Pay);
     }
 
     /**

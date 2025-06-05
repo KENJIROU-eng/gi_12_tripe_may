@@ -5,71 +5,73 @@
                 <div class="p-6 text-black dark:text-gray-100 h-full">
                     {{-- title --}}
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Profile</h1>
+                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2"><span class="text-green-500">{{ $user->name }}</span>`s Profile</h1>
                     </div>
                     <hr class="border-green-500 border-1">
                     {{-- contents --}}
                     <div class="mx-auto h-4/5 mt-8 overflow-hidden">
                         {{-- body --}}
-                        <form action="" class="mx-auto w-full mt-3">
+                        <form action="{{ route('profile.update') }}" class="mx-auto w-full mt-3" method="post" enctype="multipart/form-data">
+                            @csrf
+                            @method('PATCH')
                             <div class="grid grid-cols-6 gap-2">
                                 <div class="col-span-4 col-start-2 mb-2 me-auto w-full">
                                     <label for="name" class="block text-md font-medium text-gray-900 mb-2">Username:</label>
-                                    <input type="text" name="name" id="name" class="block rounded-md w-full mt-2" placeholder="name">
+                                    <input type="text" name="name" id="name" class="block rounded-md w-full mt-2" value="{{ $user->name }}">
                                     @error('name')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-span-4 col-start-2 mb-2 me-auto w-full">
                                     <label for="email" class="block text-md font-medium text-gray-900 mb-2">Email:</label>
-                                    <input type="text" name="email" id="email" class="block rounded-md w-full mt-2" placeholder="email">
+                                    <input type="text" name="email" id="email" class="block rounded-md w-full mt-2" value="{{ $user->email }}">
                                     @error('email')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-span-4 col-start-2 mb-2 me-auto w-full">
                                     <label for="introduction" class="block text-md font-medium text-gray-900 mb-2">Introduction:</label>
-                                    <textarea name="introduction" id="introduction" cols="30" rows="5" class="block rounded-md w-full mt-2" placeholder="introduction"></textarea>
+                                    <textarea name="introduction" id="introduction" cols="30" rows="5" class="block rounded-md w-full mt-2">{{ $user->introduction }}</textarea>
                                     @error('introduction')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-span-4 col-start-2 mb-2 me-auto w-full h-40">
-                                    <div class="grid grid-cols-3">
-                                        <div class="col-span-1 bg-blue-500 w-full h-40">
-                                            <label for="image" class="block text-sm font-semibold">Image</label>
+                                    <div class="grid grid-cols-4 gap-4">
+                                        <div class="ms-2 mt-2 col-span-1 w-full h-40 flex flex-col">
+                                            <label for="image" class="block text-md font-medium text-gray-900">Image:</label>
+                                            @if ($user->avatar)
+                                                <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="h-2/3 aspect-square mx-auto mt-auto object-cover" id="imagePreview">
+                                            @else
+                                                <img src="{{ asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="default avatar" class="h-2/3 aspect-square mx-auto mt-auto object-cover" id="imagePreview">
+                                            @endif
                                         </div>
-                                        <div class="col-span-1 bg-green-500 w-full h-40">
-                                        </div>
-                                        <div class="col-span-1 bg-red-500 w-full h-40">
-                                        </div>
-                                    </div>
-                                    {{-- test --}}
-                                    
-                                    {{-- <div class="flex items-end gap-4 mb-4 bg-green-500">
-                                        <div class="pt-2 w-20 bg-red-500">
-                                            <label for="image" class="block text-sm font-semibold">Image</label>
-                                        </div>
-                                        <div class="mt-2 bg-cyan-500">
-                                            <img id="image-preview" class="rounded-md hidden" src="{{ old( $post->image ?? '')}}" alt="Image Preview" style="min-width: 100px; max-width: 300px; width: auto;">
-                                        </div>
-                                        <div class="flex flex-col justify-end bg-blue-500">
-                                            <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)">
-                                            <div class="form-text text-gray-500 mt-1" id="image-info">
-                                                The acceptable formats are jpeg, jpg, png, and gif only. <br>
-                                                Max file size is 1048kb.
+                                        <div class="col-span-3 w-full h-40 me-auto flex flex-col">
+                                            <div class="form-text text-gray-500 mt-auto" id="image-info">
+                                                <p class="mb-2">
+                                                    The acceptable formats are jpeg, jpg, png, and gif only. <br>
+                                                    Max file size is 1048kb.
+                                                </p>
+                                                <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)" accept="image/*">
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                 </div>
-                                <div class="col-span-2 col-start-2 mt-2">
-                                    <a href="">
+                                {{-- @if (Route::has('password.request'))
+                                    <div class="col-span-2 col-start-3 mt-2 mb-2 mx-auto">
+                                        <a class="underline text-sm text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                                            If you want new password, please click here
+                                        </a>
+                                    </div>
+                                @endif --}}
+                                <div class="col-span-2 col-start-2 mt-3">
+                                    <a href="{{ route('profile.show') }}">
                                         <button type="button" class="w-full bg-gray-500 font-semi-bold text-white py-2 rounded text-xl hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500">
                                             Cancel
                                         </button>
                                     </a>
                                 </div>
-                                <div class="col-span-2 col-start-4 mt-2">
+                                <div class="col-span-2 col-start-4 mt-3">
                                     <button type="submit" class="w-full bg-green-500 font-semi-bold rounded text-white py-2 text-xl hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                                         Enter
                                     </button>
@@ -83,32 +85,5 @@
     </div>
 </x-app-layout>
 
-{{-- <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout> --}}
+{{-- image exhibition js --}}
+<script src="{{ asset('js/image_quick-exhibition.js') }}"></script>

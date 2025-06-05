@@ -45,7 +45,7 @@
                     <div class="max-h-20 space-y-2 mt-2 max-h-30 overflow-y-auto p-2 rounded">
                         @forelse ($groupMembers as $groupMember)
                         <label class="flex items-center space-x-3 cursor-pointer">
-                            <input type="checkbox" name="user_paid_id[]" value="{{ $groupMember->id }}">
+                            <input type="checkbox" name="user_paid_id[]" class="user-input" value="{{ $groupMember->id }}" data-user-id="{{ $groupMember->id }}">
                             <div class="flex items-center space-x-2">
                                 <span class="text-sm text-gray-700">{{ $groupMember->name }}</span>
                             </div>
@@ -74,4 +74,7 @@
         </form>
     </div>
 </div>
+{{-- remove js --}}
+<script src="{{ asset('js/removeOption.js') }}" defer></script>
+
 
