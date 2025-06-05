@@ -1,4 +1,4 @@
- {{-- <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto sm:px-4 lg:px-6">
         <div class="flex justify-between h-16">
@@ -25,7 +25,7 @@
                     </x-nav-link>
                 </div>
                 <div class="col-span-1 text-center text-sm">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('group')" class="text-xs lg:text-lg">
+                    <x-nav-link :href="route('groups.index')" :active="request()->routeIs('group')" class="text-xs lg:text-lg">
                         {{ __('Group') }}
                     </x-nav-link>
                 </div>
@@ -114,4 +114,4 @@
             </div>
         </div>
     </div>
-</nav> --}}
+</nav>

@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\GroupController;
+use App\Events\MessageSent;
 
 
 use Illuminate\Support\Facades\Route;
@@ -29,12 +30,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/post_create', [PostController::class, 'create'])->name('post.create');
 
     #chat
-    Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('message.send');
+    Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
+
 
     #group
     Route::get('/group', [GroupController::class, 'index'])->name('groups.index');
     Route::get('/group_create', [GroupController::class, 'create'])->name('groups.create');
     Route::post('/group/store', [GroupController::class, 'store'])->name('groups.store');
+    Route::delete('/group/{group_id}/delete', [GroupController::class, 'delete'])->name('groups.delete');
 
 
 
@@ -49,8 +53,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/prefill', [ItineraryController::class, 'prefill'])->name('itinerary.prefill');
     Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::get('/itineraries/{id}/edit', [ItineraryController::class, 'edit'])->name('itinerary.edit');
-
-
 
 
 });

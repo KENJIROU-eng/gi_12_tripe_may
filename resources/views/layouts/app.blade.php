@@ -22,7 +22,7 @@
 
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/chat.js'])
 
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -31,11 +31,11 @@
         <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
 
     </head>
-    <body >
+    <body data-user-id="{{ Auth::user()->id }} ">
 
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
 
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -65,14 +65,12 @@
                 @yield('content')
                 {{-- {{ $slot }} --}}
             </main>
-        {{-- </div> --}}
 
 
             <main>
                 @yield('content')
                 {{-- {{ $slot }} --}}
             </main>
-        {{-- </div> --}}
 
     </body>
 </html>
