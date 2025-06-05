@@ -22,12 +22,13 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        {{-- Stylesheet --}}
-        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
+
+        {{-- Stylesheet --}}
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
 
     </head>
     <body>
