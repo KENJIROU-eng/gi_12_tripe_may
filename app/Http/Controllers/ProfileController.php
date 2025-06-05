@@ -8,9 +8,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
+
+    private $user;
+    private $post;
+
+    public function __construct(User $user) {
+        $this->user = $user;
+    }
+
+    public function set(): View
+    {
+        $user = $this->user->findOrFail(Auth::user()->id);
+        return view('profile.create')
+            ->with('user', $user);
+    }
+
+    public function create(Request $request) {
+
+        $request->validate([
+            'name'          => 'required|max:50',
+            'email'         => 'required|email|max:50|unique:users,email,' . Auth::user()->id,
+            'image'        => 'mimes:jpeg,jpg,png,gif|max:1048',
+            'introduction'  => 'max:100'
+        ]);
+
+        $user = $this->user->findOrFail(Auth::user()->id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->introduction = $request->introduction;
+
+        if ($request->image) {
+            $user->avatar = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
+        }
+        $user->save();
+
+        return redirect()->route('dashboard');
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -21,21 +59,44 @@ class ProfileController extends Controller
         ]);
     }
 
+
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+    public function update(Request $request) {
+
+        $request->validate([
+            'name'          => 'required|max:50',
+            'email'         => 'required|email|max:50|unique:users,email,' . Auth::user()->id,
+            'image'        => 'mimes:jpeg,jpg,png,gif|max:1048',
+            'introduction'  => 'max:100'
+        ]);
+
+        $user = $this->user->findOrFail(Auth::user()->id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->introduction = $request->introduction;
+
+        if ($request->image) {
+            $user->avatar = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
         }
+        $user->save();
 
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.show');
     }
+    // public function update(ProfileUpdateRequest $request): RedirectResponse
+    // {
+    //     $request->user()->fill($request->validated());
+
+    //     if ($request->user()->isDirty('email')) {
+    //         $request->user()->email_verified_at = null;
+    //     }
+
+    //     $request->user()->save();
+
+    //     return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    // }
 
     /**
      * Delete the user's account.
@@ -57,4 +118,13 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function show() {
+        $user = $this->user->findOrFail(Auth::user()->id);
+        $all_posts = $user->post()->paginate(6)->onEachSide(2);
+        return view('profile.show')
+            ->with('user', $user)
+            ->with('all_posts', $all_posts);
+    }
+
 }

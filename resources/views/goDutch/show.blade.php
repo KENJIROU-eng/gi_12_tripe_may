@@ -18,13 +18,10 @@
                             {{-- modal content --}}
                             @include('goDutch.modals.create', ['all_bills' => $all_bills, 'groupMembers' => $groupMembers])
                         </div>
-
                     </div>
                     {{-- contents --}}
                     <div class="mx-auto h-4/5 mt-8 overflow-hidden">
-
                         @forelse ($all_bills as $bill)
-
                             <div class="grid grid-cols-7 items-center text-center text-md my-4 gap-4 pb-4">
                                 {{-- user avatar --}}
                                 <div class="col-span-1">
@@ -82,8 +79,24 @@
                                 </div>
                             </div>
                         @endforelse
+                        <h1 class="text-xl text-center">Calculation Result for payment per each person</h1>
+                        <div class="mx-auto w-2/3 max-h-30 space-y-2 mt-2 overflow-y-auto p-2 rounded">
+                            @forelse ($groupMembers as $groupMember)
+                                <div class="flex">
+                                    <span class="text-md text-gray-700">{{ $groupMember->name }}</span>
+                                    @if ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] > 0)
+                                        <span class="text-md text-gray-700 ml-auto block text-green-500">Get ${{  number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
+                                    @elseif ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] < 0)
+                                        <span class="text-md text-gray-700 ml-auto block text-red-500">Pay ${{  number_format(abs($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
+                                    @else
+                                        <span class="text-md text-gray-700 ml-auto block">$ 0</span>
+                                    @endif
+                                </div>
+                            @empty
+                                <p class="text-sm text-gray-500">No Users</p>
+                            @endforelse
+                        </div>
                     </div>
-
                     {{-- paginate --}}
                     <div class="flex justify-center">
                         {{ $all_bills->links('vendor.pagination.custom') }}

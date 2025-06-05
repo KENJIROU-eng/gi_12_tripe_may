@@ -19,15 +19,24 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     #post
-    Route::get('/post_list', [PostController::class, 'list'])->name('posts.list');
-    Route::get('/post_show', [PostController::class, 'show'])->name('posts.show');
-    Route::get('/post_edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::get('/post_create', [PostController::class, 'create'])->name('post.create');
+    Route::get('/post/list', [PostController::class, 'index'])->name('post.list');
+    Route::get('/post/{post_id}/show', [PostController::class, 'show'])->name('post.show');
+    Route::get('/post/{post_id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
+    Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+    Route::post('/post/{post_id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
+    Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
+    Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
+    // Route::get('/post/test', [PostController::class, 'test']);
+    // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
+    // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);
 
     #chat
     Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('chat.send');

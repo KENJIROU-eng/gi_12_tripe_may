@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bill_users', function (Blueprint $table) {
             $table->unsignedBigInteger('bill_id');
             $table->unsignedBigInteger('user_paid_id');
+            $table->string('eachPay');
 
             $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
         });

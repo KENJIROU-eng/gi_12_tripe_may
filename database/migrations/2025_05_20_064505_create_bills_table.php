@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_pay_id');
             $table->string('name');
             $table->string('cost');
+            $table->string('eachPay');
             $table->timestamps();
 
             $table->foreign('itinerary_id')->references('id')->on('itineraries')->onDelete('cascade');

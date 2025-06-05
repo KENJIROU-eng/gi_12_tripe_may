@@ -29,6 +29,10 @@ class Itinerary extends Model
         return $this->belongsTo(Group::class, 'group_id');
     }
 
+    public function bills() {
+        return $this->hasMany(Bill::class);
+    }
+
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
