@@ -10,9 +10,12 @@ class MapItinerary extends Model
 
     protected $fillable = [
         'date_id',
-        'place_name',
         'destination',
+        'place_name',
+        'latitude',
+        'longitude',
         'distance_km',
-        'duration_text'
+        'duration_text',
+        'place_id',
     ];
 }

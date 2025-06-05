@@ -16,8 +16,9 @@ class Itinerary extends Model
         'title',
         'start_date',
         'end_date',
-        'initial_place',
-        'destination',
+        'initial_place_name',
+        'initial_latitude',
+        'initial_longitude',
     ];
 
     public function user() {
@@ -35,5 +36,9 @@ class Itinerary extends Model
 
     public function dateItineraries() {
         return $this->hasMany(DateItinerary::class);
+    }
+
+    public function belongings() {
+        return $this->hasMany(Belonging::class);
     }
 }
