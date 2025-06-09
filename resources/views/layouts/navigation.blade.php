@@ -1,4 +1,3 @@
-
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto sm:px-4 lg:px-6">
@@ -27,11 +26,12 @@
                         </x-nav-link>
                     </div>
                     <div class="col-span-1 text-center text-sm">
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('group*')" class="text-xs lg:text-lg">
+                        <x-nav-link :href="route('groups.index')" :active="request()->routeIs('group*')" class="text-xs lg:text-lg">
                             {{ __('Group') }}
                         </x-nav-link>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <!-- Settings Dropdown -->
                 <div class="w-24 flex flex-col items-center my-auto">
                     <x-dropdown align="right" width="48">
@@ -47,7 +47,6 @@
                                 <p class="text-xs sm:text-base">{{ Auth::user()->name }}</p>
                             </div>
                         </x-slot>
-
                         <x-slot name="content">
                             {{-- admin --}}
                             @can('admin')
@@ -84,7 +83,7 @@
         </div>
     </div>
 
-     @if (Auth::check())
+    @if (Auth::check())
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">

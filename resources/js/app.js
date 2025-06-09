@@ -1,6 +1,8 @@
 import './bootstrap';
 import './realtime';
 // import './auth';
+import './chat';
+
 
 import Alpine from 'alpinejs';
 
@@ -34,6 +36,7 @@ Alpine.start();
 //     });
 // });
 
+
 //laravel Echo
 // import Echo from 'laravel-echo';
 // import Pusher from 'pusher-js';
@@ -46,3 +49,4 @@ Alpine.start();
 //     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
