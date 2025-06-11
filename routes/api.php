@@ -1,5 +1,4 @@
 <?php
-// APIルートは使用していませんが、ファイルだけ残しています。
  //routes/api.php
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;

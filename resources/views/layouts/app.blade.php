@@ -35,6 +35,13 @@
     </head>
     <body data-user-id="{{ Auth::user()->id }} ">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+
+
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+
+
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Heading -->
             {{-- @isset($header)
@@ -51,5 +58,16 @@
             </main>
         </div>
         @stack('scripts')
+            <main>
+                @yield('content')
+                {{-- {{ $slot }} --}}
+            </main>
+
+
+            <main>
+                @yield('content')
+                {{-- {{ $slot }} --}}
+            </main>
+
     </body>
 </html>

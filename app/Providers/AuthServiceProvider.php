@@ -10,6 +10,9 @@ use App\Policies\GroupPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    /**
+     * The policy mappings for the application.
+     */
     protected $policies = [
         Group::class => GroupPolicy::class,
     ];
