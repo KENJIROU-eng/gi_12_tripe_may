@@ -10,14 +10,15 @@
 
                         {{-- group member --}}
                         <div class="absolute right-0 flex items-center space-x-2">
+                            <p>{{ $groupName }}</p>
                             @foreach ($displayMembers as $member)
                                 <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-300 bg-gray-100 flex items-center justify-center text-gray-400">
                                     @if ($member->avatar_url)
-                                        <a href="#">
+                                        <a href="{{ route('profile.show', $member->user_id) }}">
                                             <img src="{{ $member->avatar_url }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
                                         </a>
                                     @else
-                                        <a href="#"><i class="fa-regular fa-circle-user fa-lg"></i></a>
+                                        <a href="{{ route('profile.show', $member->id) }}"><i class="fa-regular fa-circle-user fa-lg"></i></a>
                                     @endif
                                 </div>
                             @endforeach
@@ -75,9 +76,25 @@
                                                 @endphp
                                                 @foreach ($dateItinerary->mapItineraries as $map)
                                                     <li class="flex justify-between items-center py-1 border-b border-dashed border-gray-200">
-                                                        <span class="ml-4">
+                                                        <span class="ml-4 flex items-center gap-2">
+                                                            {{-- travel_mode アイコン --}}
+                                                            @php
+                                                                $mode = strtoupper($map->travel_mode ?? 'DRIVING');
+                                                                $modeIconMap = [
+                                                                    'DRIVING'     => ['icon' => 'fa-car-side',       'color' => 'text-blue-500'],
+                                                                    'MOTORCYCLE'  => ['icon' => 'fa-motorcycle',     'color' => 'text-green-500'],
+                                                                    'WALKING'     => ['icon' => 'fa-person-walking', 'color' => 'text-red-500'],
+                                                                    'TRANSIT'     => ['icon' => 'fa-van-shuttle',    'color' => 'text-yellow-500'],
+                                                                ];
+                                                                $modeData = $modeIconMap[$mode] ?? ['icon' => 'fa-location-dot', 'color' => 'text-gray-400'];
+                                                            @endphp
+
+                                                            <i class="fa-solid {{ $modeData['icon'] }} {{ $modeData['color'] }}"></i>
+
+
                                                             {{ $map->place_name ?? $map->destination }}
                                                         </span>
+
                                                         @if (!is_null($map->distance_km) && !is_null($map->duration_text))
                                                             <span class="text-gray-500 text-sm whitespace-nowrap">
                                                                 {{ number_format($map->distance_km, 1) }} km / {{ $map->duration_text }}
@@ -112,7 +129,7 @@
                                     </div>
                                     {{-- Total summary --}}
                                     <div class="mt-4">
-                                        <p class="text-blue-700 text-lg text-end">
+                                        <p class="text-blue-800 text-md text-end">
                                             Total Distance: {{ number_format($grandTotalDistance, 1) }} km /
                                             Total Duration: {{ gmdate('G\h i\m', $grandTotalDurationSeconds) }}
                                         </p>
@@ -125,8 +142,7 @@
                         <div class="flex flex-col w-3/5 overflow-hidden">
                             <div class="w-full mx-auto flex flex-1 overflow-hidden">
                                 {{-- bill 1/2 --}}
-                                <div class="flex flex-col w-1/2 border h-full">
-                                    bill
+                                <div class="flex flex-col w-1/2 border h-full p-2">
                                 </div>
                                 {{-- belonging list 1/2 --}}
                                 <div class="flex flex-col w-1/2 border h-full p-2">

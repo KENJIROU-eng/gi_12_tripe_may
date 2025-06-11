@@ -1,6 +1,7 @@
 import './bootstrap';
 import './realtime';
 // import './auth';
+import './chat';
 
 import Alpine from 'alpinejs';
 
@@ -33,7 +34,6 @@ Alpine.start();
 //         console.error('ログイン失敗', err);
 //     });
 // });
-
 //laravel Echo
 // import Echo from 'laravel-echo';
 // import Pusher from 'pusher-js';

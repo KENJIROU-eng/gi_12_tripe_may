@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-
 use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\BelongingController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\GroupController;
+use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,12 +39,15 @@ Route::middleware('auth')->group(function () {
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);
 
     #chat
-    Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('message.send');
+    Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
+
 
     #group
     Route::get('/group', [GroupController::class, 'index'])->name('groups.index');
     Route::get('/group_create', [GroupController::class, 'create'])->name('groups.create');
     Route::post('/group/store', [GroupController::class, 'store'])->name('groups.store');
+    Route::delete('/group/{group_id}/delete', [GroupController::class, 'delete'])->name('groups.delete');
 
     #itinerary
     Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
@@ -62,7 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/belongings/store', [BelongingController::class, 'store'])->name('belonging.store');
     Route::put('/belongings/{belonging}', [BelongingController::class, 'update'])->name('belonging.update');
     Route::delete('/belongings/{belonging}', [BelongingController::class, 'destroy'])->name('belonging.destroy');
-
 
     #goDutch
     Route::get('/goDutch', [BillController::class, 'index'])->name('goDutch.index');

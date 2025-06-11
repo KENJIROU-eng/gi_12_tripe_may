@@ -5,34 +5,68 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\GroupMember;
 use App\Models\User;
+use App\Models\Message;
 use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+
 
 
 class GroupController extends Controller
 {
 
-
+    use AuthorizesRequests;
+    //メッセージを送信
+    //MessageSentイベントをリアルタイムで全クライアント(js)に送信
     public function sendMessage(Request $request){
 
         $request->validate([
             'message' => 'nullable|string',
             'image' =>'nullable|image|max:2048',
+            'group_id' => 'required|exists:groups,id',
         ]);
 
         $user = auth()->user();
         $imageUrl = null;
+        $imagePath = null;
 
         if($request->hasFile('image')){
             $path = $request->file('image')->store('chat_image','public');
             $imageUrl = asset('storage/' . $path);
         }
 
-        broadcast(new MessageSent($user,$request->message, $imageUrl))->toOthers();
+        $message = Message::create([
+            'user_id' => $user->id,
+            'group_id' => $request->group_id,
+            'message' => $request->message,
+            'image_url' => $imageUrl,
+        ]);
 
-        return response()->json(['status' => 'Message sent!']);
+        broadcast(new MessageSent(auth()->user(),$message));
+
+        return response()->json(['success' => true]); //成功したらJSONレスポンスを返す
+        //return back();
+        //return response()->json(['status' => 'Message sent!']);
     }
+
+    //メッセージを表示
+    public function showMessage(Group $group){
+
+        $this->authorize('view',$group);
+
+        $messages = Message::where('group_id',$group->id)
+            ->with('user')
+            ->orderBy('created_at')
+            ->get();
+
+        // broadcast(new MessageSent($user, $request->message, $imageUrl, $request->group_id))->toOthers();
+
+            return view('groups.show',compact('group','messages'));
+    }
+
+
 
     /**
      * Display a listing of the resource.
@@ -129,6 +163,6 @@ class GroupController extends Controller
      */
     public function destroy(Group $group)
     {
-        //
+        
     }
 }

@@ -18,4 +18,9 @@ class Bill extends Model
     {
         return $this->HasMany(BillUser::class);
     }
+
+    public function itinerary()
+    {
+        return $this->belongsTo(Itinerary::class);
+    }
 }

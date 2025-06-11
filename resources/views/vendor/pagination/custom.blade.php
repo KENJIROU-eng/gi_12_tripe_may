@@ -3,10 +3,10 @@
         <ul class="inline-flex items-center space-x-1 text-sm">
             {{-- Previous --}}
             @if ($paginator->onFirstPage())
-                <li class="px-3 py-1 text-gray-400 cursor-default">← Previous</li>
+                <li class="px-3 py-1 text-gray-400 cursor-default"><i class="fa-solid fa-chevron-left"></i> Previous</li>
             @else
                 <li>
-                    <a href="{{ $paginator->previousPageUrl() }}" class="px-3 py-1 text-gray-700 hover:text-green-500">← Previous</a>
+                    <a href="{{ $paginator->previousPageUrl() }}" class="px-3 py-1 text-gray-700 hover:text-green-500"><i class="fa-solid fa-chevron-left"></i> Previous</a>
                 </li>
             @endif
 
@@ -64,10 +64,10 @@
             {{-- Next --}}
             @if ($paginator->hasMorePages())
                 <li>
-                    <a href="{{ $paginator->nextPageUrl() }}" class="px-3 py-1 text-gray-700 hover:text-green-500">Next →</a>
+                    <a href="{{ $paginator->nextPageUrl() }}" class="px-3 py-1 text-gray-700 hover:text-green-500">Next <i class="fa-solid fa-chevron-right"></i></a>
                 </li>
             @else
-                <li class="px-3 py-1 text-gray-400 cursor-default">Next →</li>
+                <li class="px-3 py-1 text-gray-400 cursor-default">Next <i class="fa-solid fa-chevron-right"></i></li>
             @endif
         </ul>
     </nav>

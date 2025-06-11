@@ -17,5 +17,6 @@ class MapItinerary extends Model
         'distance_km',
         'duration_text',
         'place_id',
+        'travel_mode',
     ];
 }

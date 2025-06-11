@@ -13,11 +13,6 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
-
-
-
-
 class ItineraryController extends Controller
 {
 
@@ -52,6 +47,8 @@ class ItineraryController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::debug('💡 travel_modes:', $request->input('travel_modes', []));
+
         $validated = $request->validate([
             'title'      => 'required|max:255',
             'start_date' => 'required|date',
@@ -64,6 +61,9 @@ class ItineraryController extends Controller
         $destinationsLat      = $request->input('destinations_lat', []);
         $destinationsLng      = $request->input('destinations_lng', []);
         $destinationsPlaceIds = $request->input('destinations_place_id', []);
+        $travelModes          = $request->input('travel_modes', []);
+
+        // dd($travelModes);
 
         // 最初の地点を初期地点として取得
         $firstPlace = null;
@@ -132,8 +132,11 @@ class ItineraryController extends Controller
                 $lat     = $destinationsLat[$date][$i]      ?? null;
                 $lng     = $destinationsLng[$date][$i]      ?? null;
                 $placeId = $destinationsPlaceIds[$date][$i] ?? null;
+                $travelMode = $travelModes[$date][$i] ?? 'DRIVING';
 
-                // デフォルト名を destination に
+                // バイクは API 上 driving として扱う
+                $modeForApi = $travelMode === 'MOTORCYCLE' ? 'driving' : strtolower($travelMode);
+
                 $placeName = $destination;
 
                 if ($placeId) {
@@ -154,11 +157,11 @@ class ItineraryController extends Controller
                 $distance = null;
                 $duration = null;
 
-                // 前の地点があれば距離と所要時間を取得
                 if ($prevPlace) {
                     $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
                         'origins'      => $prevPlace,
                         'destinations' => $destination,
+                        'mode'         => $modeForApi,
                         'key'          => env('GOOGLE_MAPS_API_KEY'),
                     ]);
 
@@ -166,13 +169,12 @@ class ItineraryController extends Controller
                         $data = $response->json();
                         $element = $data['rows'][0]['elements'][0] ?? null;
                         if ($element && $element['status'] === 'OK') {
-                            $distance = $element['distance']['value'] / 1000; // km
+                            $distance = $element['distance']['value'] / 1000;
                             $duration = $element['duration']['text'] ?? null;
                         }
                     }
                 }
 
-                // データ保存
                 MapItinerary::create([
                     'date_id'       => $dateId,
                     'destination'   => $destination,
@@ -182,6 +184,7 @@ class ItineraryController extends Controller
                     'distance_km'   => $distance,
                     'duration_text' => $duration,
                     'place_id'      => $placeId,
+                    'travel_mode'   => $travelMode,
                 ]);
 
                 $prevPlace = $destination;
@@ -190,9 +193,9 @@ class ItineraryController extends Controller
 
         session()->forget(['group_id', 'share']);
 
-
         return redirect()->route('itinerary.index')->with('success', 'Itinerary saved');
     }
+
 
 
 
@@ -247,55 +250,58 @@ class ItineraryController extends Controller
     /**
      * Display the specified resource.
      */
-public function show($itinerary_id)
-    {
-        $itinerary = $this->itinerary
-            ->with(['dateItineraries.mapItineraries', 'group.users'])
-            ->findOrFail($itinerary_id);
+    public function show($itinerary_id)
+        {
+            $itinerary = $this->itinerary
+                ->with(['dateItineraries.mapItineraries', 'group.users'])
+                ->findOrFail($itinerary_id);
 
-        $all_belongings = $itinerary->belongings;
+            $all_belongings = $itinerary->belongings;
 
-        $itineraryData = [];
+            $itineraryData = [];
 
-        foreach ($itinerary->dateItineraries as $dateItinerary) {
-            $date = $dateItinerary->date instanceof \Carbon\Carbon
-                ? $dateItinerary->date->format('Y-m-d')
-                : (string) $dateItinerary->date;
+            foreach ($itinerary->dateItineraries as $dateItinerary) {
+                $date = $dateItinerary->date instanceof \Carbon\Carbon
+                    ? $dateItinerary->date->format('Y-m-d')
+                    : (string) $dateItinerary->date;
 
-            $itineraryData['destinations'][$date] = [];
+                $itineraryData['destinations'][$date] = [];
 
-            foreach ($dateItinerary->mapItineraries as $map) {
-                $itineraryData['destinations'][$date][] = [
-                    'place_name'    => $map->place_name ?? $map->destination ?? '',
-                    'latitude'      => $map->latitude,
-                    'longitude'     => $map->longitude,
-                    'place_id'      => $map->place_id ?? null,
-                    'address'       => $map->destination ?? null,
-                    'distance_km'   => $map->distance_km ?? null,
-                    'duration_text' => $map->duration_text ?? null,
-                ];
+                foreach ($dateItinerary->mapItineraries as $map) {
+                    $itineraryData['destinations'][$date][] = [
+                        'place_name'    => $map->place_name ?? $map->destination ?? '',
+                        'latitude'      => $map->latitude,
+                        'longitude'     => $map->longitude,
+                        'place_id'      => $map->place_id ?? null,
+                        'address'       => $map->destination ?? null,
+                        'distance_km'   => $map->distance_km ?? null,
+                        'duration_text' => $map->duration_text ?? null,
+                        'travel_mode'   => $map->travel_mode ?? 'DRIVING',
+                    ];
+                }
             }
+
+            $startDate = \Carbon\Carbon::parse($itinerary->start_date);
+            $endDate = \Carbon\Carbon::parse($itinerary->end_date);
+            $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
+
+            $groupName = $itinerary->group ? $itinerary->group->name : null;
+            $groupMembers = $itinerary->group ? $itinerary->group->users : collect();
+
+            $maxDisplay = 3;
+            $displayMembers = $groupMembers->take($maxDisplay);
+            $remainingCount = max(0, $groupMembers->count() - $maxDisplay);
+
+            return view('itineraries.show', [
+                'itinerary' => $itinerary,
+                'period' => $period,
+                'itineraryData' => $itineraryData,
+                'all_belongings' => $all_belongings,
+                'displayMembers' => $displayMembers,
+                'remainingCount' => $remainingCount,
+                'groupName'      => $groupName,
+            ]);
         }
-
-        $startDate = \Carbon\Carbon::parse($itinerary->start_date);
-        $endDate = \Carbon\Carbon::parse($itinerary->end_date);
-        $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
-
-        $groupMembers = $itinerary->group ? $itinerary->group->users : collect();
-
-        $maxDisplay = 3;
-        $displayMembers = $groupMembers->take($maxDisplay);
-        $remainingCount = max(0, $groupMembers->count() - $maxDisplay);
-
-        return view('itineraries.show', [
-            'itinerary' => $itinerary,
-            'period' => $period,
-            'itineraryData' => $itineraryData,
-            'all_belongings' => $all_belongings,
-            'displayMembers' => $displayMembers,
-            'remainingCount' => $remainingCount,
-        ]);
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -331,6 +337,7 @@ public function edit($itinerary_id)
                 'longitude'  => $mapItinerary->longitude,
                 'place_id'   => $mapItinerary->place_id,
                 'address'    => $mapItinerary->destination,
+                'travel_mode' => $mapItinerary->travel_mode,
             ];
         })->filter(function ($dest) {
             return !empty($dest['place_name']);
@@ -381,18 +388,16 @@ public function update(Request $request, $itinerary_id)
             return redirect()->route('itinerary.index')->withErrors(['unauthorized' => 'You are not authorized to update this itinerary.']);
         }
 
-        // グループIDの取得とnull変換処理
         $groupId = $request->input('group_id');
         $groupId = $groupId === '' ? null : $groupId;
 
-        // 入力取得
         $destinationsAddress    = $request->input('destinations', []);
         $destinationsLat        = $request->input('destinations_lat', []);
         $destinationsLng        = $request->input('destinations_lng', []);
         $destinationsPlaceIds   = $request->input('destinations_place_id', []);
         $destinationsPlaceNames = $request->input('destinations_place_name', []);
+        $travelModes            = $request->input('travel_modes', []);
 
-        // 初期地点（最初のaddress）
         $firstPlace = null;
         foreach ($destinationsAddress as $places) {
             if (!empty($places)) {
@@ -410,24 +415,21 @@ public function update(Request $request, $itinerary_id)
             [$firstLat, $firstLng, $firstPlaceName] = $this->fetchPlaceInfo($firstPlace, $cache);
         }
 
-        // itinerary 更新
         $itinerary->update([
             'title'              => $validated['title'],
             'start_date'         => $validated['start_date'],
             'end_date'           => $validated['end_date'],
-            'group_id'           => $groupId, // ← ここでグループを保存
+            'group_id'           => $groupId,
             'initial_place_name' => $firstPlaceName,
             'initial_latitude'   => $firstLat,
             'initial_longitude'  => $firstLng,
         ]);
 
-        // 既存の関連データを削除
         foreach ($itinerary->dateItineraries as $dateItinerary) {
             MapItinerary::where('date_id', $dateItinerary->id)->delete();
             $dateItinerary->delete();
         }
 
-        // DateItinerary 作成
         $dateIds = [];
         $start = Carbon::parse($validated['start_date']);
         $end   = Carbon::parse($validated['end_date']);
@@ -440,7 +442,6 @@ public function update(Request $request, $itinerary_id)
             $dateIds[$date->toDateString()] = $dateRecord->id;
         }
 
-        // MapItinerary 作成
         $prevPlace = null;
 
         foreach ($destinationsAddress as $date => $places) {
@@ -452,12 +453,14 @@ public function update(Request $request, $itinerary_id)
                 $destination = $places[$i] ?? null;
                 if (empty($destination)) continue;
 
-                $lat       = $destinationsLat[$date][$i]        ?? null;
-                $lng       = $destinationsLng[$date][$i]        ?? null;
-                $placeId   = $destinationsPlaceIds[$date][$i]   ?? null;
-                $placeName = $destinationsPlaceNames[$date][$i] ?? $destination;
+                $lat         = $destinationsLat[$date][$i]        ?? null;
+                $lng         = $destinationsLng[$date][$i]        ?? null;
+                $placeId     = $destinationsPlaceIds[$date][$i]   ?? null;
+                $placeName   = $destinationsPlaceNames[$date][$i] ?? $destination;
+                $travelMode  = $travelModes[$date][$i] ?? 'DRIVING';
 
-                // Place API で正式名称取得
+                $modeForApi = $travelMode === 'MOTORCYCLE' ? 'driving' : strtolower($travelMode);
+
                 if ($placeId) {
                     $placeDetailResponse = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
                         'place_id' => $placeId,
@@ -473,7 +476,6 @@ public function update(Request $request, $itinerary_id)
                     }
                 }
 
-                // 距離・時間計算
                 $distance = null;
                 $duration = null;
 
@@ -481,6 +483,7 @@ public function update(Request $request, $itinerary_id)
                     $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
                         'origins'      => $prevPlace,
                         'destinations' => $destination,
+                        'mode'         => $modeForApi,
                         'key'          => env('GOOGLE_MAPS_API_KEY'),
                     ]);
 
@@ -503,6 +506,7 @@ public function update(Request $request, $itinerary_id)
                     'distance_km'   => $distance,
                     'duration_text' => $duration,
                     'place_id'      => $placeId,
+                    'travel_mode'   => $travelMode,
                 ]);
 
                 $prevPlace = $destination;
@@ -511,13 +515,14 @@ public function update(Request $request, $itinerary_id)
 
         DB::commit();
 
-        return redirect()->route('itinerary.index')->with('success', 'Itinerary updated successfully.');
+        return redirect()->route('itinerary.show', ['id' => $itinerary->id])->with('success', 'Itinerary updated successfully.');
     } catch (\Exception $e) {
         DB::rollBack();
         \Log::error('Itinerary update failed', ['error' => $e->getMessage()]);
         return back()->withErrors(['update_failed' => 'An error occurred while updating the itinerary.']);
     }
 }
+
 
 
     /**

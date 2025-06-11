@@ -26,14 +26,14 @@
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-
+        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/chat.js'])
 
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 
     </head>
-    <body>
+    <body data-user-id="{{ Auth::user()->id }} ">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Heading -->
@@ -51,8 +51,5 @@
             </main>
         </div>
         @stack('scripts')
-            {{-- <main>
-                @yield('content')
-            </main> --}}
     </body>
 </html>

@@ -3,24 +3,67 @@ let totalSummary = document.getElementById('totalSummary');
 let distanceMatrixService;
 let dailyDistances = {};
 let dailyDurations = {};
+const destinationCounts = {}; // 各日付ごとの目的地数を記録
 
-function createInputField(dateKey, value = '', lat = '', lng = '', placeId = '') {
+
+function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
+    const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
+    const travelModeLabels = {
+        DRIVING: 'Car',
+        MOTORCYCLE: 'Motorcycle',
+        WALKING: 'Walk',
+        TRANSIT: 'Transit'
+    };
+
+    const radioButtons = travelModes.map(mode => `
+        <label class="inline-flex items-center mr-4 mb-1 text-sm whitespace-nowrap">
+            <input type="radio" name="travel_modes[${dateKey}][${index}]" value="${mode}"
+                   ${travelMode === mode ? 'checked' : ''} class="travel-mode-radio mr-2">
+            ${travelModeLabels[mode]}
+        </label>
+    `).join('');
+
     return `
-        <div class="destination-item flex items-center mb-1 gap-2">
-        <span class="cursor-move drag-handle text-gray-500 px-2 text-xl">
-            <i class="fa-solid fa-grip-lines"></i>
-        </span>
-        <input type="text" name="destinations[${dateKey}][]" value="${value}" class="w-2/3 p-2 border rounded destination-input" placeholder="Please enter a destination" />
-        <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
-        <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
-        <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
-        <span class="route-info ml-2 text-sm text-gray-600"></span>
-        <button type="button" class="text-red-500 hover:text-red-700 text-xl remove-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+        <div class="destination-item mb-3">
+            <div class="flex items-center gap-2">
+                <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
+                    <i class="fa-solid fa-grip-lines"></i>
+                </span>
+                <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
+                       class="p-1 border rounded destination-input w-4/5" placeholder="Please enter a destination" />
+                <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="ml-10 flex flex-wrap items-center mt-1 travel-mode-container">
+                ${radioButtons}
+                <span class="route-info text-sm text-gray-600 ml-4"></span>
+            </div>
+            <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
+            <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
+            <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
+            <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
         </div>
     `;
 }
+
+function updateFirstDestinationVisibility() {
+    const items = Array.from(document.querySelectorAll('.destination-item'));
+
+    // 全て表示
+    items.forEach(item => {
+        item.querySelector('.travel-mode-container')?.classList.remove('hidden');
+        item.querySelector('.route-info')?.classList.remove('hidden');
+    });
+
+    // 最初の1件だけ非表示に
+    const firstItem = items[0];
+    if (firstItem) {
+        firstItem.querySelector('.travel-mode-container')?.classList.add('hidden');
+        firstItem.querySelector('.route-info')?.classList.add('hidden');
+    }
+}
+
 
 function saveCurrentDestinations() {
     const data = {};
@@ -30,17 +73,21 @@ function saveCurrentDestinations() {
         data[dateKey] = [];
         const items = dateDiv.querySelectorAll('.destination-item');
         items.forEach(item => {
-        const address = item.querySelector('.destination-input').value;
-        const lat = item.querySelector('.destination-lat').value;
-        const lng = item.querySelector('.destination-lng').value;
-        const placeId = item.querySelector('.destination-place-id').value;
-        if (address) {
-            data[dateKey].push({ address, lat, lng, placeId });
-        }
+            const address = item.querySelector('.destination-input').value;
+            const lat = item.querySelector('.destination-lat').value;
+            const lng = item.querySelector('.destination-lng').value;
+            const placeId = item.querySelector('.destination-place-id').value;
+            const checkedRadio = item.querySelector('input[name^="travel_modes"]:checked');
+            const travelMode = checkedRadio ? checkedRadio.value : 'DRIVING';
+
+            if (address) {
+                data[dateKey].push({ address, lat, lng, placeId, travelMode });
+            }
         });
     }
     return data;
 }
+
 
 function formatDateToDisplay(dateStr) {
     const date = new Date(dateStr);
@@ -69,7 +116,7 @@ function createDateFields(startDate, endDate, existingData = {}) {
         <h3 class="font-bold mb-2">${formatDateToDisplay(dateStr)}</h3>
         <div class="destinations sortable-container"></div>
         <button type="button" class="addDestinationBtn px-2 py-1 bg-green-500 text-white rounded"><i class="fa-solid fa-plus"></i> Add More Field</button>
-        <div class="summary mt-1 text-sm text-gray-600"></div>
+        <div class="summary mt-1 text-sm text-end text-gray-600"></div>
         `;
         dateFieldsContainer.appendChild(dateDiv);
 
@@ -77,13 +124,16 @@ function createDateFields(startDate, endDate, existingData = {}) {
 
         // 既存データがあれば復元
         if (existingData[dateStr]) {
-        existingData[dateStr].forEach(dest => {
-            destinationsContainer.insertAdjacentHTML('beforeend', createInputField(dateStr, dest.address, dest.lat, dest.lng, dest.placeId));
-        });
+            existingData[dateStr].forEach((dest, i) => {
+                destinationsContainer.insertAdjacentHTML(
+                    'beforeend',
+                    createInputField(dateStr, i, dest.address, dest.lat, dest.lng, dest.placeId, dest.placeName, dest.travelMode || 'DRIVING')
+                );
+            });
         } else {
-        // なければ空の入力欄をひとつ作る
-        destinationsContainer.insertAdjacentHTML('beforeend', createInputField(dateStr));
+            destinationsContainer.insertAdjacentHTML('beforeend', createInputField(dateStr, 0));
         }
+
 
         // オートコンプリート設定（すべてのinputに対して）
         destinationsContainer.querySelectorAll('.destination-input').forEach(input => {
@@ -95,6 +145,8 @@ function createDateFields(startDate, endDate, existingData = {}) {
     attachRemoveButtons();
     attachInputChangeEvents();
     initSortable();
+
+    updateFirstDestinationVisibility();
 }
 
 function attachAutocomplete(input) {
@@ -128,15 +180,23 @@ function attachAutocomplete(input) {
 function attachAddDestinationButtons() {
     document.querySelectorAll('.addDestinationBtn').forEach(btn => {
         btn.onclick = () => {
-        const dateDiv = btn.closest('div.mb-4');
-        const dateKey = dateDiv.dataset.date;
-        const container = dateDiv.querySelector('.destinations');
-        container.insertAdjacentHTML('beforeend', createInputField(dateKey));
-        const newInput = container.lastElementChild.querySelector('.destination-input');
-        attachAutocomplete(newInput);
-        attachRemoveButtons();
-        attachInputChangeEvents();
+            const dateDiv = btn.closest('div.mb-4');
+            const dateKey = dateDiv.dataset.date;
+            const container = dateDiv.querySelector('.destinations');
+
+            if (!destinationCounts[dateKey]) destinationCounts[dateKey] = container.children.length;
+
+            const index = destinationCounts[dateKey]++;
+            container.insertAdjacentHTML('beforeend', createInputField(dateKey, index));
+
+            const newInput = container.lastElementChild.querySelector('.destination-input');
+            attachAutocomplete(newInput);
+            attachRemoveButtons();
+            attachInputChangeEvents();
+            attachTravelModeChangeEvents();
+            updateFirstDestinationVisibility();
         };
+
     });
 }
 
@@ -146,18 +206,32 @@ function attachRemoveButtons() {
         btn.closest('.destination-item').remove();
         updateAllDistanceTimes();
         updateMapByCurrentInputs();
+        updateFirstDestinationVisibility();
         };
     });
 }
 
 function attachInputChangeEvents() {
-    document.querySelectorAll('.destination-input').forEach(input => {
-        input.onchange = () => {
-        updateAllDistanceTimes();
-        updateMapByCurrentInputs();
+    document.querySelectorAll('.destination-input, .travel-mode-select').forEach(el => {
+        el.onchange = () => {
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
         };
     });
 }
+
+function attachTravelModeChangeEvents() {
+    document.querySelectorAll('.travel-mode-radio').forEach(radio => {
+        // バインドを防ぐために remove → add ではなく、直接 addEventListener はOK
+        radio.addEventListener('change', () => {
+            console.log('[DEBUG] travelMode changed:', radio.value);
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
+        });
+    });
+}
+
+
 
 function initSortable() {
     document.querySelectorAll('.sortable-container').forEach(container => {
@@ -173,6 +247,7 @@ function initSortable() {
             });
             updateAllDistanceTimes();
             updateMapByCurrentInputs();
+            updateFirstDestinationVisibility();
         }
         });
     });
@@ -207,8 +282,11 @@ function updateMapRoutesByLatLngs(latLngs) {
 function formatDuration(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    return (h ? `${h}h ` : '') + `${m}m`;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
 }
+
 
 window.initializeCreateForm = function() {
     distanceMatrixService = new google.maps.DistanceMatrixService();
@@ -219,8 +297,8 @@ window.initializeCreateForm = function() {
         if (start && end && start <= end) {
 
             const saveData = saveCurrentDestinations();
-
             createDateFields(start, end, saveData);
+            attachTravelModeChangeEvents();
             updateAllDistanceTimes();
             updateMapByCurrentInputs();
         }
@@ -231,6 +309,7 @@ window.initializeCreateForm = function() {
     const end = document.getElementById('end_date').value;
     if (start && end && start <= end) {
         createDateFields(start, end);
+        attachTravelModeChangeEvents();
     }
 };
 
@@ -243,12 +322,10 @@ function updateAllDistanceTimes() {
 
     dailyDistances = {};
     dailyDurations = {};
-
     let initialPlace = null;
 
     const itemsChrono = [];
 
-    // 各日付の目的地をまとめて取得
     const dateDivs = Array.from(dateFieldsContainer.children);
     dateDivs.sort((a, b) => a.dataset.date.localeCompare(b.dataset.date));
     for (const dateDiv of dateDivs) {
@@ -256,11 +333,7 @@ function updateAllDistanceTimes() {
         const summaryEl = dateDiv.querySelector('.summary');
         const items = Array.from(dateDiv.querySelectorAll('.destination-item'));
         for (const item of items) {
-            itemsChrono.push({
-                item,
-                date,
-                summaryEl
-            });
+            itemsChrono.push({ item, date, summaryEl });
         }
     }
 
@@ -270,9 +343,7 @@ function updateAllDistanceTimes() {
         return (!isNaN(lat) && !isNaN(lng)) ? new google.maps.LatLng(lat, lng) : null;
     }
 
-    // 初期化
     const perDayStats = {};
-
     let pending = 0;
 
     for (let i = 0; i < itemsChrono.length; i++) {
@@ -280,7 +351,6 @@ function updateAllDistanceTimes() {
         const currentLatLng = getLatLng(item);
         if (!currentLatLng) continue;
 
-        // 初回地点を initial_place にセット
         if (!initialPlace) {
             const placeId = item.querySelector('.destination-place-id').value;
             initialPlace = {
@@ -308,11 +378,18 @@ function updateAllDistanceTimes() {
             const destination = currentLatLng;
             const info = item.querySelector('.route-info');
 
+            // travelMode の取得
+            const checkedRadio = item.querySelector('input[name^="travel_modes"]:checked');
+            let travelMode = checkedRadio ? checkedRadio.value.toUpperCase() : 'DRIVING';
+
+
+            if (travelMode === 'MOTORCYCLE') travelMode = 'DRIVING'; // fallback
+
             pending++;
             distanceMatrixService.getDistanceMatrix({
                 origins: [origin],
                 destinations: [destination],
-                travelMode: google.maps.TravelMode.DRIVING
+                travelMode: google.maps.TravelMode[travelMode],
             }, (response, status) => {
                 pending--;
 
@@ -333,7 +410,6 @@ function updateAllDistanceTimes() {
                     }
                 }
 
-                // 最後の非同期処理が終わったら集計表示
                 if (pending === 0) {
                     for (const d in perDayStats) {
                         const stat = perDayStats[d];
@@ -351,17 +427,10 @@ function updateAllDistanceTimes() {
         previousLatLng = currentLatLng;
     }
 
-    // 入力が空の時はリセット表示
     if (itemsChrono.length === 0) {
         totalSummary.textContent = 'No destinations added.';
         totalSummary.classList.remove('hidden');
     }
-}
-
-function formatDuration(seconds) {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    return (h ? `${h}h ` : '') + `${m}m`;
 }
 
 

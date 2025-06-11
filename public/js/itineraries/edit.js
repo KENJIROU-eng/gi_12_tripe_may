@@ -4,24 +4,67 @@ let distanceMatrixService;
 let dailyDistances = {};
 let dailyDurations = {};
 
-function createInputField(dateKey, address = '', lat = '', lng = '', placeId = '', placeName = '') {
+function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
+    const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
+    const travelModeLabels = {
+        DRIVING: 'Car',
+        MOTORCYCLE: 'Motorcycle',
+        WALKING: 'Walk',
+        TRANSIT: 'Transit'
+    };
+
+    const radioButtons = travelModes.map(mode => `
+        <label class="inline-flex items-center mr-4 mb-1 text-sm whitespace-nowrap">
+            <input type="radio" name="travel_modes[${dateKey}][${index}]" value="${mode}"
+                ${travelMode === mode ? 'checked' : ''} class="travel-mode-radio mr-2">
+            ${travelModeLabels[mode]}
+        </label>
+    `).join('');
+
     return `
-        <div class="destination-item flex items-center mb-1 gap-2">
-            <span class="cursor-move drag-handle text-gray-500 px-2 text-xl">
-                <i class="fa-solid fa-grip-lines"></i>
-            </span>
-            <input type="text" name="destinations[${dateKey}][]" value="${address && address.trim() !== '' ? address : placeName}" class="w-2/3 p-2 border rounded destination-input" placeholder="Please enter a destination" />
+        <div class="destination-item mb-3">
+            <div class="flex items-center gap-2">
+                <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
+                    <i class="fa-solid fa-grip-lines"></i>
+                </span>
+                <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
+                    class="p-1 border rounded destination-input w-4/5" placeholder="Please enter a destination" />
+                <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="ml-10 flex flex-wrap items-center mt-1 travel-mode-container">
+                ${radioButtons}
+                <span class="route-info text-sm text-gray-600 ml-4"></span>
+            </div>
+
             <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
             <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
             <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
             <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
-            <span class="route-info ml-2 text-sm text-gray-600"></span>
-            <button type="button" class="text-red-500 hover:text-red-700 text-xl remove-btn">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
         </div>
     `;
 }
+
+
+function updateFirstDestinationVisibility() {
+    // 全 destination-item を取得（全日付順）
+    const items = Array.from(document.querySelectorAll('.destination-item'));
+
+    // 一旦全部表示
+    items.forEach(item => {
+        item.querySelector('.travel-mode-container')?.classList.remove('hidden');
+        item.querySelector('.route-info')?.classList.remove('hidden');
+    });
+
+    // 最初の1件だけを非表示
+    const firstItem = items[0];
+    if (firstItem) {
+        firstItem.querySelector('.travel-mode-container')?.classList.add('hidden');
+        firstItem.querySelector('.route-info')?.classList.add('hidden');
+    }
+}
+
 
 function saveCurrentDestinations() {
     const data = {};
@@ -38,18 +81,25 @@ function saveCurrentDestinations() {
             const lng = item.querySelector('.destination-lng').value;
             const placeId = item.querySelector('.destination-place-id').value;
             const placeName = item.querySelector('.destination-place-name')?.value || '';
+            const checkedRadio = item.querySelector('input.travel-mode-radio:checked');
+            const travelMode = checkedRadio ? checkedRadio.value : 'DRIVING';
 
-            console.log('Stored Data:', { dateKey, address, lat, lng, placeId, placeName });
 
             if (address) {
-                data[dateKey].push({ address, lat, lng, placeId, placeName });
+                data[dateKey].push({
+                    address,
+                    lat,
+                    lng,
+                    placeId,
+                    placeName,
+                    travelMode
+                });
             }
         });
     }
+
     console.log('saveCurrentDestinations result:', data);
-
     return data;
-
 }
 
 function formatDateToDisplay(dateStr) {
@@ -75,50 +125,60 @@ async function createDateFields(startDate, endDate, existingData = {}) {
         dateDiv.className = 'mb-4 border-b pb-2';
         dateDiv.dataset.date = dateStr;
         dateDiv.innerHTML = `
-        <h3 class="font-bold mb-2">${formatDateToDisplay(dateStr)}</h3>
-        <div class="destinations sortable-container"></div>
-        <button type="button" class="addDestinationBtn px-2 py-1 bg-green-500 text-white rounded"><i class="fa-solid fa-plus"></i> Add More Field</button>
-        <div class="summary mt-1 text-sm text-gray-600"></div>
+            <h3 class="font-bold mb-2">${formatDateToDisplay(dateStr)}</h3>
+            <div class="destinations sortable-container"></div>
+            <button type="button" class="addDestinationBtn px-2 py-1 bg-green-500 text-white rounded">
+                <i class="fa-solid fa-plus"></i> Add More Field
+            </button>
+            <div class="summary mt-1 text-sm text-end text-gray-600"></div>
         `;
         dateFieldsContainer.appendChild(dateDiv);
 
         const destinationsContainer = dateDiv.querySelector('.destinations');
 
         if (existingData[dateStr]) {
-        for (const dest of existingData[dateStr]) {
-            let address = dest.address || "";
-            let lat = dest.lat || dest.latitude || "";
-            let lng = dest.lng || dest.longitude || "";
-            let placeId = dest.placeId || dest.place_id || "";
-            let placeName = dest.placeName || dest.place_name || "";
-            const addressOrName = address || placeName || "";
+            for (let j = 0; j < existingData[dateStr].length; j++) {
+                const dest = existingData[dateStr][j];
+                let address = dest.address || "";
+                let lat = dest.lat || dest.latitude || "";
+                let lng = dest.lng || dest.longitude || "";
+                let placeId = dest.placeId || dest.place_id || "";
+                let placeName = dest.placeName || dest.place_name || "";
+                let travelMode = dest.travelMode || dest.travel_mode || "DRIVING";
 
-            if ((!lat || !lng) && (address || placeName)) {
-            try {
-                const result = await geocodeAddress(address || placeName);
-                if (result) {
-                lat = result.lat;
-                lng = result.lng;
-                placeId = result.placeId || placeId;
-                address = result.name || address || placeName;
-                placeName = placeName || result.name;
+                const addressOrName = address || placeName || "";
+
+                if ((!lat || !lng) && (address || placeName)) {
+                    try {
+                        const result = await geocodeAddress(addressOrName);
+                        if (result) {
+                            lat = result.lat;
+                            lng = result.lng;
+                            placeId = result.placeId || placeId;
+                            address = result.name || address || placeName;
+                            placeName = placeName || result.name;
+                        }
+                    } catch (e) {
+                        console.warn("Geocode error:", e);
+                    }
                 }
-            } catch (e) {
-                console.warn("Geocode error:", e);
-            }
-            }
 
-            destinationsContainer.insertAdjacentHTML('beforeend',
-            createInputField(dateStr, addressOrName, lat, lng, placeId, placeName)
+                destinationsContainer.insertAdjacentHTML(
+                    'beforeend',
+                    createInputField(dateStr, j, address, lat, lng, placeId, placeName, travelMode)
+
+
+                );
+            }
+        } else {
+            destinationsContainer.insertAdjacentHTML(
+                'beforeend',
+                createInputField(dateStr)
             );
         }
-        } else {
-        destinationsContainer.insertAdjacentHTML('beforeend', createInputField(dateStr));
-        }
 
-        // 新しく追加したinput要素だけにattachAutocompleteを呼ぶ例
         destinationsContainer.querySelectorAll('.destination-input').forEach(input => {
-        attachAutocomplete(input);
+            attachAutocomplete(input);
         });
     }
 
@@ -126,6 +186,10 @@ async function createDateFields(startDate, endDate, existingData = {}) {
     attachRemoveButtons();
     attachInputChangeEvents();
     initSortable();
+
+    attachTravelModeChangeEvents();
+
+    updateFirstDestinationVisibility();
 }
 
 
@@ -147,7 +211,6 @@ function geocodeAddress(address) {
         });
     });
 }
-
 
 function attachAutocomplete(input) {
     const autocomplete = new google.maps.places.Autocomplete(input, {
@@ -189,6 +252,7 @@ function attachAddDestinationButtons() {
         attachAutocomplete(newInput);
         attachRemoveButtons();
         attachInputChangeEvents();
+        updateFirstDestinationVisibility();
         };
     });
 }
@@ -199,6 +263,7 @@ function attachRemoveButtons() {
         btn.closest('.destination-item').remove();
         updateAllDistanceTimes();
         updateMapByCurrentInputs();
+        updateFirstDestinationVisibility();
         };
     });
 }
@@ -206,11 +271,28 @@ function attachRemoveButtons() {
 function attachInputChangeEvents() {
     document.querySelectorAll('.destination-input').forEach(input => {
         input.onchange = () => {
-        updateAllDistanceTimes();
-        updateMapByCurrentInputs();
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
+        };
+    });
+
+    document.querySelectorAll('.travel-mode-select').forEach(select => {
+        select.onchange = () => {
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
         };
     });
 }
+
+function attachTravelModeChangeEvents() {
+    document.querySelectorAll('.travel-mode-radio').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
+        });
+    });
+}
+
 
 function initSortable() {
     document.querySelectorAll('.sortable-container').forEach(container => {
@@ -226,6 +308,7 @@ function initSortable() {
             });
             updateAllDistanceTimes();
             updateMapByCurrentInputs();
+            updateFirstDestinationVisibility();
         }
         });
     });
@@ -267,6 +350,7 @@ window.initializeCreateForm = function() {
                 const saveData = saveCurrentDestinations();
                 const filteredData = filterDataByDateRange(saveData, start, end);
                 createDateFields(start, end, filteredData);
+                attachTravelModeChangeEvents(); // ← 追加
                 updateAllDistanceTimes();
                 updateMapByCurrentInputs();
             }
@@ -300,8 +384,8 @@ function filterDataByDateRange(data, startDate, endDate) {
 
 // Promise対応のupdateAllDistanceTimes
 function updateAllDistanceTimes() {
-    return new Promise((resolve, reject) => {
-        const totalSummary = document.getElementById('totalSummary'); // ここで取得
+    return new Promise((resolve) => {
+        const totalSummary = document.getElementById('totalSummary');
 
         if (!distanceMatrixService) {
             resolve();
@@ -344,13 +428,16 @@ function updateAllDistanceTimes() {
         let previousLatLng = null;
         let initialPlace = null;
 
-        // すべてのリクエストのPromiseを格納
         const promises = [];
 
         for (let i = 0; i < itemsChrono.length; i++) {
             const { item, date, summaryEl } = itemsChrono[i];
             const currentLatLng = getLatLng(item);
             if (!currentLatLng) continue;
+
+            const checkedRadio = item.querySelector('input.travel-mode-radio:checked');
+            let travelMode = checkedRadio ? checkedRadio.value : 'DRIVING';
+
 
             if (!initialPlace) {
                 const placeId = item.querySelector('.destination-place-id')?.value || '';
@@ -379,18 +466,20 @@ function updateAllDistanceTimes() {
                 const destination = currentLatLng;
                 const info = item.querySelector('.route-info');
 
-                // PromiseでラップしたDistanceMatrix呼び出し
-                const p = new Promise((res, rej) => {
+                // バイクはAPI上DRIVING扱い
+                const modeForApi = travelMode === 'MOTORCYCLE' ? 'DRIVING' : travelMode;
+
+                const p = new Promise((res) => {
                     distanceMatrixService.getDistanceMatrix({
                         origins: [origin],
                         destinations: [destination],
-                        travelMode: google.maps.TravelMode.DRIVING
+                        travelMode: google.maps.TravelMode[modeForApi] || google.maps.TravelMode.DRIVING
                     }, (response, status) => {
                         if (status === 'OK') {
                             const result = response.rows[0].elements[0];
                             if (result.status === 'OK') {
-                                const distance = result.distance.value;   // meters
-                                const duration = result.duration.value;   // seconds
+                                const distance = result.distance.value;
+                                const duration = result.duration.value;
 
                                 perDayStats[date].distance += distance;
                                 perDayStats[date].duration += duration;
@@ -398,13 +487,13 @@ function updateAllDistanceTimes() {
                                 totalDuration += duration;
 
                                 if (info) {
-                                    info.textContent = `${(distance / 1000).toFixed(2)} km / ${Math.round(duration / 60)} min`;
+                                    info.textContent = `${(distance / 1000).toFixed(2)} km / ${formatDuration(duration)}`;
                                 }
                             }
                             res();
                         } else {
                             console.error('DistanceMatrix status:', status);
-                            res(); // エラーでもresolveして続行
+                            res();
                         }
                     });
                 });
@@ -414,19 +503,15 @@ function updateAllDistanceTimes() {
             previousLatLng = currentLatLng;
         }
 
-        // 全てのDistanceMatrixリクエストが完了するのを待つ
         Promise.all(promises).then(() => {
-            // 各日の summary 表示
             for (const key in perDayStats) {
                 const day = perDayStats[key];
                 const dKm = (day.distance / 1000).toFixed(2);
-                const dMin = Math.round(day.duration / 60);
-                day.summaryEl.textContent = `Total: ${dKm} km / ${dMin} min`;
+                day.summaryEl.textContent = `Total: ${dKm} km / ${formatDuration(day.duration)}`;
                 dailyDistances[key] = day.distance;
                 dailyDurations[key] = day.duration;
             }
 
-            // hidden inputにセット
             const dailyDistancesInput = document.getElementById('daily_distances');
             const dailyDurationsInput = document.getElementById('daily_durations');
             const totalDistanceInput = document.getElementById('total_distance');
@@ -437,20 +522,18 @@ function updateAllDistanceTimes() {
             if (totalDistanceInput) totalDistanceInput.value = totalDistance;
             if (totalDurationInput) totalDurationInput.value = totalDuration;
 
-            // 全体 summary 表示
             if (totalSummary) {
                 const totalKm = (totalDistance / 1000).toFixed(2);
-                const totalMin = Math.round(totalDuration / 60);
-                totalSummary.textContent = `Total Distance: ${totalKm} km / Total Time: ${totalMin} min`;
-                totalSummary.classList.remove('hidden');  // 必要に応じて非表示解除
+                totalSummary.textContent = `Total Distance: ${totalKm} km / Total Time: ${formatDuration(totalDuration)}`;
+                totalSummary.classList.remove('hidden');
             }
 
             updateMapByCurrentInputs();
-
-            resolve(); // 完了通知
+            resolve();
         });
     });
 }
+
 
 
 // フォーム送信制御
@@ -469,7 +552,9 @@ form.addEventListener('submit', async (e) => {
 function formatDuration(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    return (h ? `${h}h ` : '') + (m ? `${m}m` : '');
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
 }
 
 
