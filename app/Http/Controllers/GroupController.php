@@ -75,12 +75,15 @@ class GroupController extends Controller
     {
         $user = auth()->user();
 
+
         //ログインユーザーが所属しているグループを取得
         $groups = Group::whereHas('members',function($quely) use ($user){
             $quely->where('user_id',$user->id);
         })->withCount('members')->get();
 
-        return view('groups.list', compact('groups'));
+        $users = User::all();
+
+        return view('groups.list', compact('groups','users'));
     }
 
     /**
@@ -145,9 +148,9 @@ class GroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Group $group)
+    public function edit(Request $request,Group $group)
     {
-        //
+
     }
 
     /**
@@ -155,14 +158,46 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|max:2048',
+            'members' => 'nullable|array',
+            'members.*' => 'exists:users,id',
+        ]);
+
+        $group->name = $validated['name'];
+
+        if ($request->hasFile('image')) {
+            if ($group->image) {
+                Storage::disk('public')->delete($group->image);
+            }
+
+            $path = $request->file('image')->store('group_images', 'public');
+            $group->image = $path;
+        }
+
+        $group->save();
+
+        // メンバー更新（同期）
+        if (isset($validated['members'])) {
+            $group->users()->sync($validated['members']);
+        }
+
+        return redirect()->back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Group $group)
+    public function destroy($group_id)
     {
+
+
+
+        $group = Group::findOrFail($group_id);
+        $group->delete();
+
+    return redirect()->route('groups.index');
 
     }
 }
