@@ -29,6 +29,7 @@
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     </head>
     <body data-user-id="{{ Auth::user()->id }} ">
@@ -61,16 +62,13 @@
 
         @stack('scripts')
 
-            <main>
-                @yield('content')
-                {{-- {{ $slot }} --}}
-            </main>
 
 
-            <main>
+
+            {{-- <main>
                 @yield('content')
                 {{-- {{ $slot }} --}}
-            </main>
+            {{--</main> --}}
 
     </body>
 </html>

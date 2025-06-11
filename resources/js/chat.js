@@ -1,6 +1,20 @@
+//textareaの設定
+document.addEventListener("DOMContentLoaded", () => {
+    const textarea = document.getElementById('message-input');
+
+    if (textarea) {
+        textarea.addEventListener('input', () => {
+            textarea.style.height = 'auto';
+            const maxHeight = parseInt(getComputedStyle(textarea).lineHeight) * 5;
+            textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+            textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
+        });
+    }
+});
 //送信者のための非同期処理（fetch）
 //フォームの送信処理（チャットメッセージ送信）を担当
 //ユーザーがフォームからメッセージを送信したときに、ページをリロードせずにjsで非同期非同期（Ajax）でサーバーへ送信するための処理
+
 
 //1.DOMの読み込みを待つ
 document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要素が全て読み込まれた後に実行されるようにする
@@ -92,6 +106,12 @@ window.Pusher = Pusher; //Laravel Echoが内部的に Pusher を使うため
 const groupId = document.getElementById('messages')?.dataset.groupId;
 const myUserId = document.body.dataset.userId;
 console.log(myUserId);
+
+const messagesDiv = document.getElementById('messages');
+if (messagesDiv) {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
 //3.IDが取れたらWebSocketを開始
 if (groupId && myUserId) {
 
@@ -101,6 +121,7 @@ if (groupId && myUserId) {
         key: import.meta.env.VITE_PUSHER_APP_KEY, //.env ファイルに定義されたキー・クラスタ情報を使う
         cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
         useTLS:true,
+        withCredentials: true,
         // forceTLS: false, //HTTPS経由でWebSocket通信を強制する
         // encrypted: true, //暗号化通信（Pusherでは必須に近い）
     });
@@ -139,38 +160,44 @@ if (groupId && myUserId) {
                 messageContent += `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">`;
             }
 
-            //投稿時間の表示
-            messageContent += `<div class="text-xs text-right mt-1 text-gray-400">${e.time}</div>`;
-
-            //8. 自分 or 他人の表示スタイルに合わせて描画
-            // messageElement.innerHTML = `
-            //     <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
-            //         <div class="${isMine ? 'bg-green-300' : 'bg-white'} rounded-2xl p-3 max-w-[70%] shadow">
-            //             ${messageContent}
-            //         </div>
-            //     </div>
-            // `;
             if (isMine) {
                 messageElement.innerHTML = `
-                    <div class="flex justify-end">
-                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
-                            ${messageContent}
+                    <div class="flex justify-end items-end">
+                        <div class="text-xs text-left mt-1 text-gray-400 mr-2">
+                            ${e.time}
                         </div>
-                    </div>
-                `;
-            } else {
-                messageElement.innerHTML = `
-                    <div class="flex items-start space-x-2">
-                        <img src="${e.user.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" />
-                        <div>
-                            <div class="text-sm text-gray-600 font-medium">${e.user.name}</div>
-                            <div class="bg-white rounded-2xl p-3 max-w-[70%] shadow">
+                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
+                            <div style="word-break: break-word; overflow-wrap: break-word;">
                                 ${messageContent}
                             </div>
                         </div>
                     </div>
                 `;
+            } else {
+                messageElement.innerHTML = `
+                    <div>
+                        <div class="flex items-start">
+                            <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
+                            <div class="flex space-x-2 items-end">
+                                <div class="max-w-[70%]">
+                                    <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                    <div class="bg-white rounded-2xl p-3 shadow">
+                                        <div style="word-break: break-word; overflow-wrap: break-word;">
+                                            ${e.message?.text ?? ''}
+                                        </div>
+                                        ${e.image_url ? `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-400 items-end">
+                                    ${e.time}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+`;
+
             }
+
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
