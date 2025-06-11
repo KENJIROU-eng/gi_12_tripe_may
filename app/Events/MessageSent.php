@@ -11,6 +11,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Group;
 
 class MessageSent implements ShouldBroadcast
 {
@@ -26,7 +27,7 @@ class MessageSent implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct($user,$message)
+    public function __construct($message)
     {
         $this->message = $message;
         // $this->user_id = $user->id;
@@ -54,12 +55,19 @@ class MessageSent implements ShouldBroadcast
     }
 
     public function broadcastWith(){
+        $group = Group::findOrFail($this->message->group_id);
+        $groupMembers = $group->members()->get();
+        $groupMember_name = [];
+        foreach ($groupMembers as $groupMember) {
+            $groupMember_name[] = $groupMember->user->name;
+        }
         return [
             'message' => ['text' => $this->message->message,],
             'user_id' => $this->message->user_id,
             'user_name' => $this->message->user->name,
             'user_avatar' => $this->message->user->user_avatar,
-            'image_url' => $this->image_url,
+            'image_url' => $this->message->image_url,
+            'groupMember_name' => $groupMember_name,
             'time' => $this->message->created_at->format('H:i'),//ex12:55
         ];
     }

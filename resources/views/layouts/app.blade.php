@@ -47,6 +47,8 @@
             <main class="main-background">
                 {{ $slot }}
             </main>
+
+            @stack('scripts')
         </div>
     </body>
 </html>

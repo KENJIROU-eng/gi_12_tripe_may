@@ -1,5 +1,5 @@
 import './bootstrap';
-import './realtime';
+// import './realtime';
 // import './auth';
 import './chat';
 

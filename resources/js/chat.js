@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
         const data = await response.json();
         if (data.success) {
-            alert('送信成功！');
+            // alert('送信成功！');
             // 例えばフォームをリセットしたい場合
             document.getElementById('chat-form').reset();
         } else {
@@ -91,18 +91,25 @@ window.Pusher = Pusher; //Laravel Echoが内部的に Pusher を使うため
 //2.チャットが属するグループのIDをHTMLから取得
 const groupId = document.getElementById('messages')?.dataset.groupId;
 const myUserId = document.body.dataset.userId;
-console.log(myUserId);
 //3.IDが取れたらWebSocketを開始
 if (groupId && myUserId) {
 
     //4.Echo（WebSocket）の設定、LaravelEchoでWebSocket接続を確立
-    window.Echo = new Echo({
-        broadcaster: 'pusher',  //Pusher を使って Echo を初期化
-        key: import.meta.env.VITE_PUSHER_APP_KEY, //.env ファイルに定義されたキー・クラスタ情報を使う
-        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-        useTLS:true,
+    // window.Echo = new Echo({
+    //     broadcaster: 'pusher',  //Pusher を使って Echo を初期化
+    //     key: import.meta.env.VITE_PUSHER_APP_KEY, //.env ファイルに定義されたキー・クラスタ情報を使う
+    //     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    //     useTLS:true,
         // forceTLS: false, //HTTPS経由でWebSocket通信を強制する
         // encrypted: true, //暗号化通信（Pusherでは必須に近い）
+    // });
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: 'ffddfa3bd363d3272b37',
+        cluster: 'ap1',
+        forceTLS: true,
+        withCredentials: true,
     });
 
     //pusherへの接続状態を確認（デバック用）
@@ -119,7 +126,6 @@ if (groupId && myUserId) {
 
             //6.受信データでメッセージ要素を作成
             console.log('受信:', e); //コンソールに受信内容を表示（デバッグ用）
-            console.log("chat.js is loaded");
             console.log("Echo object:", window.Echo);
 
             const messagesDiv = document.getElementById('messages'); //チャットメッセージの親要素を取得
@@ -161,9 +167,9 @@ if (groupId && myUserId) {
             } else {
                 messageElement.innerHTML = `
                     <div class="flex items-start space-x-2">
-                        <img src="${e.user.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" />
+                        <img src="${e.user_avatar ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" />
                         <div>
-                            <div class="text-sm text-gray-600 font-medium">${e.user.name}</div>
+                            <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
                             <div class="bg-white rounded-2xl p-3 max-w-[70%] shadow">
                                 ${messageContent}
                             </div>
@@ -177,11 +183,5 @@ if (groupId && myUserId) {
             messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
             messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
-
-        window.Echo.private(`group.${groupId}`)
-            .listenToAll((event, data) => {
-                console.log(':火: イベント受信:', event, data);
-                alert(`イベント名: ${event}\nデータ: ${JSON.stringify(data)}`);
-            });
 }
 

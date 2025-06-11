@@ -16,7 +16,7 @@
                                 <i class="fa-solid fa-circle-plus text-lg"></i>
                             </button>
                             {{-- modal content --}}
-                            @include('goDutch.modals.create', ['all_bills' => $all_bills, 'groupMembers' => $groupMembers])
+                            @include('goDutch.modals.create', ['all_bills' => $all_bills, 'groupMembers' => $groupMembers, 'itinerary' => $itinerary])
                         </div>
                     </div>
                     {{-- contents --}}
@@ -26,7 +26,7 @@
                                 {{-- user avatar --}}
                                 <div class="col-span-1">
                                     {{-- user show --}}
-                                    <a href="#" class="text-xl w-6 h-6 rounded-full">
+                                    <a href="{{ route('profile.show', $bill->userPay->id) }}" class="text-xl w-6 h-6 rounded-full">
                                         @if ($bill->userPay->avatar)
                                             <img src="{{ $bill->userPay->avatar }}" alt="{{ $bill->userPay->name }}">
                                         @else
@@ -52,11 +52,11 @@
                                             <i class="fa-solid fa-pen-to-square text-black"></i>
                                         </button>
                                         {{-- modal content --}}
-                                        @include('goDutch.modals.edit', ['bill' => $bill, 'groupMembers' => $groupMembers])
+                                        @include('goDutch.modals.edit', ['bill' => $bill, 'groupMembers' => $groupMembers, 'itinerary' => $itinerary])
                                     </div>
                                 </div>
                                 <div class="col-span-2 col-start-7">
-                                    <form action="{{ route('goDutch.delete', $bill->id) }}" method="post">
+                                    <form action="{{ route('goDutch.delete', ['itinerary_id' => $itinerary->id, 'bill_id' => $bill->id]) }}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-1/2 font-semi-bold rounded text-white py-2 text-xl hover">

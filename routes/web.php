@@ -5,9 +5,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\BelongingController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\PostsController;
+use App\Http\Controllers\Admin\CategoriesController;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
 
@@ -15,15 +19,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    #profile
+    Route::get('/profile/set', [ProfileController::class, 'set'])->name('profile.set');
+    Route::patch('/profile/create', [ProfileController::class, 'create'])->name('profile.create');
+    Route::get('/profile/{user_id}/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/destroy', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    #follow
+    Route::post('/follow/{following_id}/create', [FollowController::class, 'create'])->name('follow.create');
+    Route::delete('/follow/{following_id}/delete', [FollowController::class, 'destroy'])->name('follow.delete');
+    Route::get('/follower/{user}/show', [FollowController::class, 'follower_show'])->name('follower.show');
+    Route::get('/following/{user}/show', [FollowController::class, 'following_show'])->name('following.show');
 
     #post
     Route::get('/post/list', [PostController::class, 'index'])->name('post.list');
@@ -32,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::post('/post/{post_id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::get('/post/{post_id}/like', [PostController::class, 'like'])->name('post.like');
+    Route::delete('/post/{post_id}/like/delete', [PostController::class, 'like_delete'])->name('post.like.delete');
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
@@ -68,10 +81,26 @@ Route::middleware('auth')->group(function () {
     Route::delete('/belongings/{belonging}', [BelongingController::class, 'destroy'])->name('belonging.destroy');
 
     #goDutch
-    Route::get('/goDutch', [BillController::class, 'index'])->name('goDutch.index');
-    Route::post('/goDutch/create', [BillController::class, 'store'])->name('goDutch.create');
-    Route::delete('/goDutch/delete/{bill_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
-    Route::patch('/goDutch/update/{bill_id}', [BillController::class, 'update'])->name('goDutch.update');
+    Route::get('/{itinerary_id}/goDutch', [BillController::class, 'index'])->name('goDutch.index');
+    Route::post('/goDutch/{itinerary_id}/create', [BillController::class, 'store'])->name('goDutch.create');
+    Route::delete('/goDutch/delete/{bill_id}/{itinerary_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
+    Route::patch('/goDutch/update/{bill_id}/{itinerary_id}', [BillController::class, 'update'])->name('goDutch.update');
+
+    #ADMIN Routes
+    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){
+        # Users
+        Route::get('/users/show', [UsersController::class, 'index'])->name('users.show');
+        Route::delete('/users/{user_id}/delete', [UsersController::class, 'destroy'])->name('users.delete');
+
+        # Posts
+        Route::get('/posts/show', [PostsController::class, 'index'])->name('posts.show');
+        Route::delete('/posts/{id}/delete', [PostsController::class, 'destroy'])->name('posts.delete');
+
+        # CATEGORIES
+        Route::get('/categories/show', [CategoriesController::class, 'index'])->name('categories.show');
+        Route::post('/categories/store', [CategoriesController::class, 'store'])->name('categories.store');
+        Route::delete('/categories/{id}/delete', [CategoriesController::class, 'destroy'])->name('categories.delete');
+    });
 
 });
 

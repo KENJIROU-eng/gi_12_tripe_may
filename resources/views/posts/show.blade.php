@@ -11,15 +11,19 @@
                     <div class="mx-auto h-4/5 mt-8 overflow-hidden">
                         <div class="flex justify-center h-full">
                             <div class="w-3/4 bg-white bg-opacity-90 shadow-lg p-10 px-16 rounded h-full mt-3 mx-auto sm:px-6 lg:px-8">
-                
+
                                 {{--contents--}}
                                 <div x-data="{ showModal: false }" class="container shadow-lg w-3/5 h-full border mx-auto mt-8">
                                     <div class="row items-center flex mt-4">
                                         <div class="col-auto bg-gray-600 rounded-full w-14 h-14 ml-4">
                                             @if ($post->user->avatar)
-                                                <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="object-cover rounded-full w-14 h-14">
+                                                <a href="{{ route('profile.show', $post->user->id) }}">
+                                                    <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="object-cover rounded-full w-14 h-14">
+                                                </a>
                                             @else
-                                                <img src="{{ asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="default avatar" class="object-cover rounded-full w-14 h-14">
+                                                <a href="{{ route('profile.show', $post->user->id) }}">
+                                                    <img src="{{ asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="default avatar" class="object-cover rounded-full w-14 h-14">
+                                                </a>
                                             @endif
                                         </div>
                                         <div class="col-auto ml-2">{{ $post->user->name }}</div>
@@ -52,7 +56,21 @@
                                     </div>
                                     {{--likes,category--}}
                                     <div class="row flex items-center mt-2">
-                                        <div class="col-auto mx-4"><i class="fa-regular fa-heart text-red-600 text-3xl"></i></div>
+                                        <div class="col-auto mx-4">
+                                            @if (in_array(Auth::User()->id, $post->likes->pluck('user_id')->toArray()))
+                                                <form action="{{ route('post.like.delete', $post->id) }}" method="post">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit">
+                                                        <i class="fa-solid fa-heart text-red-500 text-3xl"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('post.like', $post->id) }}">
+                                                    <i class="fa-regular fa-heart text-gray-400 hover:text-red-500 text-3xl"></i>
+                                                </a>
+                                            @endif
+                                        </div>
                                         <div class="col-auto ">{{ $post->likes()->count() }}</div>
                                         <div class="col text-end text-blue-400 font-light ml-auto mr-4">
                                             @foreach ($post->categoryPost as $categoryPost)

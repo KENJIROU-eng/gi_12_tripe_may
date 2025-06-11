@@ -1,6 +1,9 @@
-// calender
-const tripSchedule = [["2025-05-17", "2025-05-18"],["2025-05-24", "2025-05-25"]];
-const tripName = ["MoalBoal", "Tops"];
+// retrieve data from itinerary
+const tripSchedule = window.appData.tripSchedule;
+const tripName = window.appData.tripName;
+console.log(routeUrls);
+console.log(tripSchedule);
+console.log(tripSchedule[0][0]);
 
 function generateCalendar(year, month) {
         const calendarBody = document.getElementById('calendar-body'); // 日付を表示する要素
@@ -52,6 +55,7 @@ function generateCalendar(year, month) {
                 const endDate = new Date(endY, endM - 1, endD);
             if (thisDate >= startDate && thisDate <= endDate) {
                 dayScheduled.classList.add('bg-green-500', 'block');
+                dayScheduled.href = routeUrls[x];
                 dayScheduled.textContent = tripName[x];
             }
         }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('place_id')->nullable();
             $table->float('distance_km')->nullable();
             $table->string('duration_text')->nullable();
+            $table->string('travel_mode')->default('DRIVING');
 
             $table->foreign('date_id')->references('id')->on('date_itineraries')->onDelete('cascade');
         });

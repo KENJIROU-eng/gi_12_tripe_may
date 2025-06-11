@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -67,6 +68,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function post()
     {
         return $this->HasMany(Post::class);
+    }
+
+    public function followers(){
+        return $this->hasMany(Follow::class, 'following_id');
+    }
+
+    public function following(){
+        return $this->hasMany(Follow::class, 'follower_id');
+    }
+
+    # Returns TRUE if the Auth user is already following the user
+    public function isFollowed()
+    {
+        return $this->followers()->where('follower_id', Auth::user()->id)->exists();
     }
 
 }

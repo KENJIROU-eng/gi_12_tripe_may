@@ -31,7 +31,6 @@
                         </x-nav-link>
                     </div>
                 </div>
-<<<<<<< HEAD
                 <!-- Settings Dropdown -->
                 <div class="w-24 flex flex-col items-center my-auto">
                     <x-dropdown align="right" width="48">
@@ -55,7 +54,7 @@
                                 </x-dropdown-link>
                             @endcan
                             {{-- profile --}}
-                            <x-dropdown-link :href="route('profile.show')">
+                            <x-dropdown-link :href="route('profile.show', Auth::User()->id)">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
                             <!-- Authentication -->
@@ -100,7 +99,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.show')">
+                <x-responsive-nav-link :href="route('profile.show', Auth::User()->id)">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 

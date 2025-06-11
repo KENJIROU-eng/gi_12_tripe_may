@@ -44,7 +44,7 @@ class GroupController extends Controller
             'image_url' => $imageUrl,
         ]);
 
-        broadcast(new MessageSent(auth()->user(),$message));
+        broadcast(new MessageSent($message));
 
         return response()->json(['success' => true]); //成功したらJSONレスポンスを返す
         //return back();
@@ -163,6 +163,6 @@ class GroupController extends Controller
      */
     public function destroy(Group $group)
     {
-        
+
     }
 }

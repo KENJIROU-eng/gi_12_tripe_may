@@ -46,60 +46,30 @@
                                         </h2>
                                     </div>
                                     <div class="grid grid-rows-3 h-4/5 mt-6 gap-10">
+                                        @foreach ($posts as $index => $post)
                                         <div class="grid grid-rows-4">
                                             <div class="row-span-1 mx-auto text-yellow-300">
-                                                <i class="fa-solid fa-crown"></i> 1st
-                                                <a href="" class="text-black">Moal Boal</a>
+                                                <i class="fa-solid fa-crown"></i> {{ $index + 1 }}st
+                                                <a href="{{ route('post.show', $post->id) }}" class="text-black hover:text-green-500">{{ $post->title }}</a>
                                             </div>
                                             <div class="row-span-3">
                                                 <div class="grid grid-cols-3 h-[96px]">
                                                     <div class="col-span-2">
-                                                        <img src="#" alt="#" class="bg-blue-500 h-1/2 aspect-square mx-auto">
+                                                        <a href="{{ route('post.show', $post->id) }}">
+                                                            <img src="{{ $post->image }}" alt="{{ $post->id }}" class="h-1/2 aspect-square mx-auto hover:scale-105 transition-transform duration-300">
+                                                        </a>
                                                     </div>
                                                     <div class="col-span-1 h-[96px] flex items-end py-3">
                                                         <i class="fa-solid fa-heart text-red-500 me-3 text-xl"></i>
-                                                        <span>1233</span>
+                                                        <span>{{ $post->likes()->count() }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="grid grid-rows-4">
-                                            <div class="row-span-1 mx-auto text-slate-400">
-                                                <i class="fa-solid fa-crown"></i> 2nd
-                                                <a href="" class="text-black">Moal Boal</a>
-                                            </div>
-                                            <div class="row-span-3">
-                                                <div class="grid grid-cols-3 h-[96px]">
-                                                    <div class="col-span-2">
-                                                        <img src="#" alt="#" class="bg-blue-500 h-1/2 aspect-square mx-auto">
-                                                    </div>
-                                                    <div class="col-span-1 h-[96px] flex items-end py-3">
-                                                        <i class="fa-solid fa-heart text-red-500 me-3 text-xl"></i>
-                                                        <span>1233</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid grid-rows-4">
-                                            <div class="row-span-1 mx-auto text-yellow-700">
-                                                <i class="fa-solid fa-crown"></i> 3rd
-                                                <a href="" class="text-black">Moal Boal</a>
-                                            </div>
-                                            <div class="row-span-3">
-                                                <div class="grid grid-cols-3 h-[96px]">
-                                                    <div class="col-span-2">
-                                                        <img src="#" alt="#" class="bg-blue-500 h-1/2 aspect-square mx-auto">
-                                                    </div>
-                                                    <div class="col-span-1 h-[96px] flex items-end py-3">
-                                                        <i class="fa-solid fa-heart text-red-500 me-3 text-xl"></i>
-                                                        <span>1233</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                     <div class="mt-4 text-end text-sm text-blue-500 px-3">
-                                        <a href="#">View More</a>
+                                        <a href="{{ route('post.list') }}">View More</a>
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +80,13 @@
         </div>
     </div>
 </x-app-layout>
-
+<script>
+    window.appData = {
+        tripSchedule: @json($tripSchedule),
+        tripName: @json($tripName),
+    };
+    const routeUrls = @json($routeUrls); // Laravelの配列をJSに渡す
+</script>
 {{-- caldender js --}}
 <script src="{{ asset('js/homepage_calender.js') }}"></script>
 

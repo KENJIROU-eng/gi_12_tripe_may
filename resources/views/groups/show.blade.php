@@ -71,8 +71,7 @@
 
 
 
-<form id="chat-form" action="{{ route('message.send')}}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
-@csrf
+<form id="chat-form" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
     <input type="hidden" name="group_id" value="{{ $group->id }}">
     <input type="text" name="message" placeholder="message..." class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300">
     <input type="file" name="image" accept="image/*" class="hidden" id="image-upload">
@@ -82,10 +81,5 @@
     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send
     </button>
 </form>
-
-@vite('resources/js/chat.js')
-
-
-
 </x-app-layout>
 

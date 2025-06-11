@@ -8,23 +8,23 @@ use App\Models\Itinerary;
 use App\Models\group;
 use App\Models\MapItinerary;
 use App\Models\DateItinerary;
+use App\Models\BillUser;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
-
-
-
+use App\Services\CostCalculator;
 
 class ItineraryController extends Controller
 {
 
     private $itinerary;
+    private $billUser;
 
-    public function __construct(Itinerary $itinerary) {
+    public function __construct(Itinerary $itinerary, BillUser $billUser) {
         $this->itinerary = $itinerary;
+        $this->billUser = $billUser;
     }
     /**
      * Display a listing of the resource.
@@ -247,7 +247,7 @@ class ItineraryController extends Controller
     /**
      * Display the specified resource.
      */
-public function show($itinerary_id)
+public function show($itinerary_id, CostCalculator $costCalculator)
     {
         $itinerary = $this->itinerary
             ->with(['dateItineraries.mapItineraries', 'group.users'])
@@ -287,13 +287,24 @@ public function show($itinerary_id)
         $displayMembers = $groupMembers->take($maxDisplay);
         $remainingCount = max(0, $groupMembers->count() - $maxDisplay);
 
+        //bill calculation
+        $total_getPay = [];
+        $total_Pay = [];
+        foreach ($groupMembers as $member) {
+            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
+        }
+
         return view('itineraries.show', [
             'itinerary' => $itinerary,
             'period' => $period,
             'itineraryData' => $itineraryData,
             'all_belongings' => $all_belongings,
             'displayMembers' => $displayMembers,
+            'groupMembers' => $groupMembers,
             'remainingCount' => $remainingCount,
+            'total_getPay' => $total_getPay,
+            'total_Pay' => $total_Pay,
         ]);
     }
 

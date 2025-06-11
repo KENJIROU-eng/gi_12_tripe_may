@@ -1,16 +1,13 @@
 <div class="relative flex justify-center items-center mb-4">
     <h2 class="text-xl font-bold">Belonging List</h2>
-    <button id="toggleVisibility" class="absolute right-6 text-2xl" type="button">
+    <button id="toggleVisibility" class="absolute right-[24px] text-2xl" type="button">
         <i class="fa-solid fa-eye"></i>
     </button>
 </div>
-
-
 <div class="flex space-x-2 p-2">
     <input type="text" id="itemInput" placeholder="Add item..." class="flex-grow border px-2 py-1 rounded" />
     <button id="addItemBtn" class="bg-green-500 text-white px-4 py-1 rounded" type="button">Add</button>
 </div>
-
 <ul id="itemList" class="space-y-1 mb-4 max-h-72 overflow-y-auto overflow-x-hidden">
     @foreach ($all_belongings as $belonging)
     <li class="flex items-between gap-2 p-1 border rounded" data-id="{{ $belonging->id }}">
@@ -33,8 +30,6 @@
     </li>
     @endforeach
 </ul>
-
-
 @push('scripts')
     <script>
         const itineraryId = @json($itinerary->id);

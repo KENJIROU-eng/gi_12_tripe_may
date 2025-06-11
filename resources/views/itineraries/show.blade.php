@@ -12,12 +12,12 @@
                         <div class="absolute right-0 flex items-center space-x-2">
                             @foreach ($displayMembers as $member)
                                 <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-300 bg-gray-100 flex items-center justify-center text-gray-400">
-                                    @if ($member->avatar_url)
-                                        <a href="#">
-                                            <img src="{{ $member->avatar_url }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
+                                    @if ($member->avatar)
+                                        <a href="{{ route('profile.show', $member->id) }}">
+                                            <img src="{{ $member->avatar }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
                                         </a>
                                     @else
-                                        <a href="#"><i class="fa-regular fa-circle-user fa-lg"></i></a>
+                                        <a href="{{ route('profile.show', $member->id) }}"><i class="fa-regular fa-circle-user fa-lg"></i></a>
                                     @endif
                                 </div>
                             @endforeach
@@ -125,8 +125,8 @@
                         <div class="flex flex-col w-3/5 overflow-hidden">
                             <div class="w-full mx-auto flex flex-1 overflow-hidden">
                                 {{-- bill 1/2 --}}
-                                <div class="flex flex-col w-1/2 border h-full">
-                                    bill
+                                <div class="flex flex-col w-1/2 border h-full p-2">
+                                    @include('goDutch.index', ['groupMembers' => $groupMembers, 'total_Pay' => $total_Pay, 'total_getPay' => $total_getPay])
                                 </div>
                                 {{-- belonging list 1/2 --}}
                                 <div class="flex flex-col w-1/2 border h-full p-2">
