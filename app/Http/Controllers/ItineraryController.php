@@ -8,18 +8,22 @@ use App\Models\Itinerary;
 use App\Models\group;
 use App\Models\MapItinerary;
 use App\Models\DateItinerary;
+use App\Models\BillUser;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Services\CostCalculator;
 class ItineraryController extends Controller
 {
 
     private $itinerary;
+    private $billUser;
 
-    public function __construct(Itinerary $itinerary) {
+    public function __construct(Itinerary $itinerary, BillUser $billUser) {
         $this->itinerary = $itinerary;
+        $this->billUser = $billUser;
     }
     /**
      * Display a listing of the resource.
@@ -250,11 +254,11 @@ class ItineraryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($itinerary_id)
-        {
-            $itinerary = $this->itinerary
-                ->with(['dateItineraries.mapItineraries', 'group.users'])
-                ->findOrFail($itinerary_id);
+public function show($itinerary_id, CostCalculator $costCalculator)
+    {
+        $itinerary = $this->itinerary
+            ->with(['dateItineraries.mapItineraries', 'group.users'])
+            ->findOrFail($itinerary_id);
 
             $all_belongings = $itinerary->belongings;
 
@@ -281,28 +285,38 @@ class ItineraryController extends Controller
                 }
             }
 
-            $startDate = \Carbon\Carbon::parse($itinerary->start_date);
-            $endDate = \Carbon\Carbon::parse($itinerary->end_date);
-            $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
+        $startDate = \Carbon\Carbon::parse($itinerary->start_date);
+        $endDate = \Carbon\Carbon::parse($itinerary->end_date);
+        $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
 
-            $groupName = $itinerary->group ? $itinerary->group->name : null;
-            $groupMembers = $itinerary->group ? $itinerary->group->users : collect();
+        $groupMembers = $itinerary->group ? $itinerary->group->users : collect();
+        $groupName = $itinerary->group ? $itinerary->group->name : null;
 
-            $maxDisplay = 3;
-            $displayMembers = $groupMembers->take($maxDisplay);
-            $remainingCount = max(0, $groupMembers->count() - $maxDisplay);
+        $maxDisplay = 3;
+        $displayMembers = $groupMembers->take($maxDisplay);
+        $remainingCount = max(0, $groupMembers->count() - $maxDisplay);
 
-            return view('itineraries.show', [
-                'itinerary' => $itinerary,
-                'period' => $period,
-                'itineraryData' => $itineraryData,
-                'all_belongings' => $all_belongings,
-                'displayMembers' => $displayMembers,
-                'remainingCount' => $remainingCount,
-                'groupName'      => $groupName,
-            ]);
+        //bill calculation
+        $total_getPay = [];
+        $total_Pay = [];
+        foreach ($groupMembers as $member) {
+            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
         }
 
+        return view('itineraries.show', [
+            'itinerary' => $itinerary,
+            'period' => $period,
+            'itineraryData' => $itineraryData,
+            'all_belongings' => $all_belongings,
+            'displayMembers' => $displayMembers,
+            'groupMembers' => $groupMembers,
+            'remainingCount' => $remainingCount,
+            'total_getPay' => $total_getPay,
+            'total_Pay' => $total_Pay,
+            'groupName'      => $groupName,
+        ]);
+    }
     /**
      * Show the form for editing the specified resource.
      */

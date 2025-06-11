@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
+
     /**
      * Register any application services.
      */
@@ -24,6 +25,13 @@ class BroadcastServiceProvider extends ServiceProvider
         Broadcast::routes([
             'middleware' => ['web', 'auth'], // 'auth:web' と同等
         ]);
+    // public function boot(): void
+    // {
+
+    //     Broadcast::routes([
+    //     'middleware' => ['web', 'auth'], // ← 'auth:web' と同じ意味
+    // ]);
+
 
         // チャンネル定義ファイルの読み込み
         require base_path('routes/channels.php');

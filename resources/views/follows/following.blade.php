@@ -1,0 +1,35 @@
+<x-app-layout>
+    <div class= "mt-5 h-[880px]">
+        <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
+                <div class="p-6 text-black dark:text-gray-100">
+                    {{-- title --}}
+                    <div class="relative flex items-center justify-center h-16 my-5">
+                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Follower List</h1>
+                    </div>
+                    {{-- contents --}}
+                    <div class="mx-auto h-full mt-8">
+                        @foreach ($followings as $following)
+                            <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
+                                <a href="" class="flex items-center space-x-4 w-full ml-2">
+                                    @if ($following->following->avatar)
+                                        <img src="{{ $following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
+                                    @else
+                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                        {{ strtoupper(substr($following->following->name, 0, 1)) }}
+                                    </div>
+                                    @endif
+
+                                    <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                        <p class="font-semibold text-2xl truncate ">{{$following->following->name}}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                    {{-- paginate --}}
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

@@ -1066,6 +1066,16 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/293bb1c70224faebfd3d4328e201c37115da055f",
                 "reference": "293bb1c70224faebfd3d4328e201c37115da055f",
+            "version": "v12.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77",
+                "reference": "2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77",
                 "shasum": ""
             },
             "require": {
@@ -1267,6 +1277,8 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
+            "time": "2025-05-27T15:49:44+00:00"
+            "time": "2025-05-20T15:10:44+00:00"
             "time": "2025-05-27T15:49:44+00:00"
         },
         {
@@ -6600,6 +6612,16 @@
         },
         {
             "name": "laravel/sail",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/sail.git",
+                "reference": "71a509b14b2621ce58574274a74290f933c687f7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/71a509b14b2621ce58574274a74290f933c687f7",
+                "reference": "71a509b14b2621ce58574274a74290f933c687f7",
             "version": "v1.43.1",
             "source": {
                 "type": "git",
@@ -6659,6 +6681,8 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
+            "time": "2025-05-19T13:19:21+00:00"
+            "time": "2025-05-13T13:34:34+00:00"
             "time": "2025-05-19T13:19:21+00:00"
         },
         {

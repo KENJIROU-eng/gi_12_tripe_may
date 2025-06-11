@@ -13,9 +13,15 @@
                             <p>{{ $groupName }}</p>
                             @foreach ($displayMembers as $member)
                                 <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-300 bg-gray-100 flex items-center justify-center text-gray-400">
+<<<<<<< HEAD
                                     @if ($member->avatar_url)
                                         <a href="{{ route('profile.show', $member->user_id) }}">
                                             <img src="{{ $member->avatar_url }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
+=======
+                                    @if ($member->avatar)
+                                        <a href="{{ route('profile.show', $member->id) }}">
+                                            <img src="{{ $member->avatar }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
+>>>>>>> 3fe0d3fb41c29bc42cf195297c20b02bd7930528
                                         </a>
                                     @else
                                         <a href="{{ route('profile.show', $member->id) }}"><i class="fa-regular fa-circle-user fa-lg"></i></a>
@@ -143,6 +149,10 @@
                             <div class="w-full mx-auto flex flex-1 overflow-hidden">
                                 {{-- bill 1/2 --}}
                                 <div class="flex flex-col w-1/2 border h-full p-2">
+<<<<<<< HEAD
+=======
+                                    @include('goDutch.index', ['groupMembers' => $groupMembers, 'total_Pay' => $total_Pay, 'total_getPay' => $total_getPay])
+>>>>>>> 3fe0d3fb41c29bc42cf195297c20b02bd7930528
                                 </div>
                                 {{-- belonging list 1/2 --}}
                                 <div class="flex flex-col w-1/2 border h-full p-2">

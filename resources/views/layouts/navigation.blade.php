@@ -25,12 +25,12 @@
                         </x-nav-link>
                     </div>
                     <div class="text-center">
+                    <div class="col-span-1 text-center text-sm">
                         <x-nav-link :href="route('groups.index')" :active="request()->routeIs('group*')" class="text-xs lg:text-lg">
                             {{ __('Group') }}
                         </x-nav-link>
                     </div>
                 </div>
-
                 <!-- Settings Dropdown -->
                 <div class="w-24 flex flex-col items-center my-auto">
                     <x-dropdown align="right" width="48">
@@ -54,6 +54,8 @@
                                 </x-dropdown-link>
                             @endcan
                             <x-dropdown-link :href="route('profile.show')">
+                            {{-- profile --}}
+                            <x-dropdown-link :href="route('profile.show', Auth::User()->id)">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
                             <form method="POST" action="{{ route('logout') }}">
@@ -85,6 +87,24 @@
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
+    <!-- Responsive Navigation Menu -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+        </div>
+
+        <!-- Responsive Settings Options -->
+        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            <div class="px-4">
+                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <x-responsive-nav-link :href="route('profile.show', Auth::User()->id)">
+                    {{ __('Profile') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('post.list')" :active="request()->routeIs('post*')">
                     {{ __('Post') }}
@@ -117,5 +137,6 @@
                 </div>
             </div>
         </div>
+    </div>
     @endif
 </nav>

@@ -1,12 +1,7 @@
 import './bootstrap';
-<<<<<<< HEAD
-import './realtime';
-// import './auth';
-=======
->>>>>>> e1bd31e8d67f147ae0d82c4e8a11a61e20952725
 import './chat';
-
 import Alpine from 'alpinejs';
+// import './realtime';
 
 window.Alpine = Alpine;
 
@@ -23,7 +18,6 @@ Alpine.start();
 //     const email = e.target.email.value;
 //     const password = e.target.password.value;
 
-<<<<<<< HEAD
 //     console.log('login 実行前');
 //     login(email, password)
 //     .then(token => {
@@ -50,5 +44,3 @@ Alpine.start();
 //     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
-=======
->>>>>>> e1bd31e8d67f147ae0d82c4e8a11a61e20952725

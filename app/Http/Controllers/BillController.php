@@ -26,29 +26,30 @@ class BillController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(CostCalculator $costCalculator)
+    public function index($itinerary_id, CostCalculator $costCalculator)
     {
+        // ItineraryのIDの付与
+        $itinerary = $this->itinerary->findOrFail($itinerary_id);
+        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
+
         // groupIDの付与ー＞のちに行う
-        $group = $this->group->findOrFail(1);
+        $group = $this->group->findOrFail($itinerary->group_id);
         $groupMembers = [];
         foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
         }
 
-        // ItineraryのIDの付与ー＞のちに行う
-        $itinerary = $this->itinerary->findOrFail(1);
-        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
-
         //calculation
         $total_getPay = [];
         $total_Pay = [];
         foreach ($groupMembers as $member) {
-            $total_getPay[$member->id] = $costCalculator->total_getPay($this->group, $this->itinerary, $member);
-            $total_Pay[$member->id] = $costCalculator->total_Pay($this->group, $this->itinerary, $this->billUser, $member);
+            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
         }
 
         return view('goDutch.show')
             ->with('all_bills', $all_bills)
+            ->with('itinerary', $itinerary)
             ->with('groupMembers', $groupMembers)
             ->with('total_getPay', $total_getPay)
             ->with('total_Pay', $total_Pay);
@@ -57,7 +58,7 @@ class BillController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, CostCalculator $costCalculator)
+    public function store(Request $request, CostCalculator $costCalculator, $itinerary_id)
     {
         $request->validate([
             'user_paid_id' => 'required',
@@ -70,8 +71,8 @@ class BillController extends Controller
         $this->bill->name = $request->bill_name;
         $this->bill->cost = $request->cost;
 
-        // itinerary_idを保存する予定
-        $this->bill->itinerary_id = 1;
+        // itinerary_idを付与
+        $this->bill->itinerary_id = $itinerary_id;
 
         $number_payment = count($request->user_paid_id);
         $each_cost = $request->cost / $number_payment;
@@ -93,10 +94,10 @@ class BillController extends Controller
         }
         $this->bill->billUser()->createMany($billUser);
 
-
-        $all_bills = $this->bill->latest()->paginate(10)->onEachSide(2);
+        $itinerary = $this->itinerary->findOrFail($itinerary_id);
+        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
         // groupIDの付与ー＞のちに行う
-        $group = $this->group->findOrFail(1);
+        $group = $this->group->findOrFail($itinerary->id);
         $groupMembers = [];
         foreach ($group->members as $groupMember) {
             $groupMembers[] = $groupMember->user;
@@ -106,12 +107,13 @@ class BillController extends Controller
         $total_getPay = [];
         $total_Pay = [];
         foreach ($groupMembers as $member) {
-            $total_getPay[$member->id] = $costCalculator->total_getPay($this->group, $this->itinerary, $member);
-            $total_Pay[$member->id] = $costCalculator->total_Pay($this->group, $this->itinerary, $this->billUser, $member);
+            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
         }
 
         return view('goDutch.show')
         ->with('all_bills', $all_bills)
+        ->with('itinerary', $itinerary)
         ->with('groupMembers', $groupMembers)
         ->with('total_getPay', $total_getPay)
         ->with('total_Pay', $total_Pay);
@@ -120,7 +122,7 @@ class BillController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $bill_id)
+    public function update(Request $request, $bill_id, $itinerary_id)
     {
         $request->validate([
             'user_paid_id_edit' => 'required',
@@ -130,43 +132,44 @@ class BillController extends Controller
         ]);
 
         $bill = $this->bill->findOrFail($bill_id);
-
         $bill->user_pay_id = $request->user_pay_id_edit;
         $bill->name = $request->bill_name_edit;
         $bill->cost = $request->cost_edit;
+        // itinerary_idを付与
+        $bill->itinerary_id = $itinerary_id;
 
-        // itinerary_idを保存する予定
-        $bill->itinerary_id = 1;
-
+        $number_payment = count($request->user_paid_id_edit);
+        $each_cost = $request->cost_edit / $number_payment;
+        if (in_array($request->user_pay_id_edit, $request->user_paid_id_edit)) {
+            $getPay = $request->cost_edit / $number_payment * ($number_payment - 1);
+        } else {
+            $getPay = $request->cost_edit;
+        };
+        $bill->eachPay = $getPay;
         $bill->save();
 
-        $user_paid_id = [];
+        $billUser = [];
         foreach ($request->user_paid_id_edit as $user_id) {
-            $user_paid_id[] = ['user_paid_id' => $user_id];
+            if($user_id == $request->user_pay_id_edit){
+                $billUser[] = ['user_paid_id' => $user_id, 'eachPay' => 0];
+            }else{
+                $billUser[] = ['user_paid_id' => $user_id, 'eachPay' => $each_cost];
+            }
         }
         $bill->billUser()->delete();
-        $bill->billUser()->createMany($user_paid_id);
+        $bill->billUser()->createMany($billUser);
+        $bill->save();
 
-        $all_bills = $this->bill->latest()->paginate(10)->onEachSide(2);
-        // groupIDの付与ー＞のちに行う
-        $group = $this->group->findOrFail(1);
-        $groupMembers = [];
-        foreach ($group->members as $groupMember) {
-            $groupMembers[] = $groupMember->user;
-        }
-
-        return redirect()->route('goDutch.index')
-        ->with('all_bills', $all_bills)
-        ->with('groupMembers', $groupMembers);
+        return redirect()->route('goDutch.index', $itinerary_id);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bill $bill, $bill_id)
+    public function destroy(Bill $bill, $bill_id, $itinerary_id)
     {
         $bill = $this->bill->findOrFail($bill_id);
         $bill->delete();
-        return redirect()->route('goDutch.index');
+        return redirect()->route('goDutch.index', $itinerary_id);
     }
 }

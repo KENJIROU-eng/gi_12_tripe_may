@@ -8,21 +8,18 @@ use App\Models\billUser;
 class CostCalculator
 {
 
-    public function total_getPay(Group $group, Itinerary $itinerary, $member)
+    public function total_getPay(Itinerary $itinerary, $member)
 {
-    // $groupMembers = [];
-    // foreach ($group->members as $groupMember) {
-    //     $groupMembers[] = $groupMember->user;
-    // }
+
     // ItineraryのIDの付与ー＞のちに行う
-    $all_getPayUser = $itinerary->findOrFail(1)->bills()->where('user_pay_id', $member->id)->get();
+    $all_getPayUser = $itinerary->bills()->where('user_pay_id', $member->id)->get();
 
     $total = $all_getPayUser->sum('eachPay');
 
     return $total;
 }
 
-public function total_Pay(Group $group, Itinerary $itinerary, billUser $billUser, $member)
+public function total_Pay(Itinerary $itinerary, billUser $billUser, $member)
 {
     // $groupMembers = [];
     // foreach ($group->members as $groupMember) {
@@ -30,7 +27,7 @@ public function total_Pay(Group $group, Itinerary $itinerary, billUser $billUser
     // }
 
     // ItineraryのIDの付与ー＞のちに行う
-    $all_bills_id = $itinerary->findOrFail(1)->bills->pluck('id')->toArray();
+    $all_bills_id = $itinerary->bills->pluck('id')->toArray();
     $all_billUsers = $billUser->whereIn('bill_id', $all_bills_id)->get();
     $total = $all_billUsers->where('user_paid_id', $member->id)->sum('eachPay');
 

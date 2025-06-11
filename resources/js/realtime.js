@@ -32,22 +32,22 @@
     // この関数の中では await を使って非同期処理（例：fetch() や API 呼び出し）を「一時停止」して待つことができるようになります。
     // これはイベントリスナーから受け取る イベントオブジェクト です。
     // たとえば submit イベントの中では、e.preventDefault() でフォームのデフォルト送信を止めるなどに使われます。
-    document.getElementById('post-form').addEventListener('submit', async (e) => {
+    // document.getElementById('post-form').addEventListener('submit', async (e) => {
         //submitされたときにpageの更新を阻止
-        e.preventDefault();
-        const title = document.getElementById('title').value;
+        // e.preventDefault();
+        // const title = document.getElementById('title').value;
 
-        const response = await fetch('/post/broadcast/realtime', {
-            method: 'POST',
-            headers: {
+        // const response = await fetch('/post/broadcast/realtime', {
+        //     method: 'POST',
+        //     headers: {
             // Content-Type: application/json によって、送るデータがJSON形式であることを指定。
             // LaravelのCSRF保護のために、metaタグからトークンを取得して送信。
             // LaravelではPOST送信時に X-CSRF-TOKEN が必須です。
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ title })
-        });
+        //     'Content-Type': 'application/json',
+        //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        //     },
+        //     body: JSON.stringify({ title })
+        // });
 
         const data = await response.json();
 
@@ -93,4 +93,3 @@
             });
     });
 
-    

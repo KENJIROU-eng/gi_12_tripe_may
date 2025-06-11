@@ -7,7 +7,7 @@
         </div>
         <hr class="border-green-500 border-1">
         {{-- body --}}
-        <form action="{{ route('goDutch.create') }}" class="mx-auto w-full mt-3" method="post">
+        <form action="{{ route('goDutch.create', $itinerary->id) }}" class="mx-auto w-full mt-3" method="post">
             @csrf
             <div class="grid grid-cols-6 gap-2">
                 <div class="col-span-4 col-start-2 me-auto">
@@ -59,7 +59,7 @@
                     @enderror
                 </div>
                 <div class="col-span-2 col-start-2 mt-2">
-                    <a href="{{ route('goDutch.index') }}">
+                    <a href="{{ route('goDutch.index', $itinerary->id) }}">
                         <button type="button" class="w-full bg-gray-500 font-semi-bold text-white py-2 rounded text-xl hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500">
                             Cancel
                         </button>

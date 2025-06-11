@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use App\Models\Post;
+use App\Models\GroupMember;
+use App\Models\Itinerary;
 
 class ProfileController extends Controller
 {
@@ -119,12 +123,44 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function show() {
-        $user = $this->user->findOrFail(Auth::user()->id);
+    public function show($user_id) {
+        $user = $this->user->findOrFail($user_id);
         $all_posts = $user->post()->paginate(6)->onEachSide(2);
         return view('profile.show')
             ->with('user', $user)
             ->with('all_posts', $all_posts);
+    }
+
+    public function index() {
+        $top3 = DB::table('likes')
+    ->select('post_id', DB::raw('count(*) as likes_count'))
+    ->groupBy('post_id')
+    ->orderByDesc('likes_count')
+    ->limit(3)
+    ->get();
+    $postIds = $top3->pluck('post_id')->toArray();
+    $posts = Post::whereIn('id', $postIds)->get();
+
+    $groups = GroupMember::where('user_id', Auth::User()->id);
+    $groupIds = $groups->pluck('group_id')->toArray();
+    $itineraries = Itinerary::whereIn('group_id', $groupIds)->get();
+    $tripSchedule = [];
+    $tripName = [];
+    $routeUrls = [];
+    foreach ($itineraries as $itinerary) {
+        $start_date = new \DateTime($itinerary->start_date);
+        $end_date = new \DateTime($itinerary->end_date);
+        $tripSchedule[] = [$start_date->format('Y-m-d'), $end_date->format('Y-m-d')];
+        $tripName[] = $itinerary->title;
+        $routeUrls[] = route('itinerary.show', $itinerary->id);
+    }
+
+    return view('dashboard')
+        ->with('posts', $posts)
+        ->with('tripSchedule', $tripSchedule)
+        ->with('tripName', $tripName)
+        ->with('routeUrls', $routeUrls)
+        ->with('top3', $top3);
     }
 
 }

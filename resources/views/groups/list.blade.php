@@ -6,9 +6,10 @@
                     {{-- title --}}
                     <div class="relative flex items-center justify-center h-16 my-5">
                         <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Group List</h1>
+                        <a href="{{ route('groups.create')}}" class="absolute right-4 ext-sm sm:text-base lg:text-lg font-medium text-green-300 hover:text-blue-600">New Group<i class="fa-solid fa-plus"></i></a>
                     </div>
                     {{-- contents --}}
-                    <div class="mx-auto h-full mt-8">
+                    <div class="mx-auto overflow-y-auto max-h-[450px] h-full mt-8">
                         @foreach ($groups as $group)
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                                 <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
@@ -19,29 +20,29 @@
                                         {{ strtoupper(substr($group->name, 0, 1)) }}
                                     </div>
                                     @endif
-
                                     <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
                                         <p class="font-semibold text-2xl truncate ">{{$group->name}}</p>
                                         <p class="text-lg ml-3">({{$group->members_count}})</p>
                                     </div>
                                 </a>
-                                    <div x-data="{ showEditModal: false, showDeleteModal: false }">
-                                        <x-dropdown align="right" width="46">
-                                            <x-slot name="trigger">
-                                                <i class="fa-solid fa-ellipsis cursor-pointer text-gray-600 hover:text-black mr-4"></i>
-                                            </x-slot>
 
-                                            <x-slot name="content">
-                                                <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">
-                                                    Edit
-                                                </button>
-                                                <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
-                                                    Delete
-                                                </button>
-                                            </x-slot>
-                                        </x-dropdown>
-                                        @include('groups.modals', ['group' => $group])
+                                <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
+                                    <div class="flex items-center justify-between  rounded">
+
+                                        <div class="relative" x-data="{ open: false }">
+                                            <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
+                                                <i class="fa-solid fa-ellipsis text-xl"></i>
+                                            </button>
+                                            <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
+                                                <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">Edit</button>
+                                                <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Delete</button>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    {{-- modal--}}
+                                    @include('groups.modals', ['group' => $group, 'users' => $users])
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -51,6 +52,3 @@
         </div>
     </div>
 </x-app-layout>
-
-
-<!--modal-->
