@@ -1,52 +1,68 @@
 <x-app-layout>
-    <div class= "mt-5 h-[880px]">
-        <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
-                <div class="p-6 text-black dark:text-gray-100">
-                    {{-- title --}}
-                    <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Group List</h1>
-                        <a href="{{ route('groups.create')}}" class="absolute right-4 ext-sm sm:text-base lg:text-lg font-medium text-green-300 hover:text-blue-600">New Group<i class="fa-solid fa-plus"></i></a>
-                    </div>
-                    {{-- contents --}}
-                    <div class="mx-auto overflow-y-auto max-h-[450px] h-full mt-8">
-                        @foreach ($groups as $group)
-                            <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
-                                <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
-                                    @if ($group->image)
-                                        <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-12 h-12 rounded-full object-cover">
-                                    @else
-                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                                        {{ strtoupper(substr($group->name, 0, 1)) }}
+    <div style="background-image: url('/images/pexels-quintingellar-844167.jpg'); background-size: cover; background-position: center">
+        <div class= "mt-5 h-[880px]">
+            <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
+                <div class="bg-white/95 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
+                    <div class=" text-black dark:text-gray-100">
+                        {{-- title --}}
+                        <div class="relative flex items-center justify-center h-16 my-5">
+                            <h1 class=" sm:text-5xl lg:text-5xl xl:text-6xl font-bold font-bree absolute left-1/2 transform -translate-x-1/2">Group List</h1>
+                            <a href="{{ route('groups.create')}}" class="absolute right-4 text-sm sm:text-base lg:text-lg font-medium text-green-300 hover:text-blue-600">New Group<i class="fa-solid fa-plus"></i></a>
+                        </div>
+                        <hr class="border-4 border-orange-200 shadow">
+                        {{-- contents --}}
+                        <div class="mx-auto overflow-y-auto max-h-[650px] mt-8 flex-1">
+                            @if ($groups->isEmpty())
+                                <div class="text-center text-lg my-60">
+                                    <h2 class="mb-4 text-gray-500">No group created yet.</h2>
+                                    <div class="text-blue-500">
+                                        <a href="{{ route('groups.create') }}">
+                                            <i class="fa-solid fa-plus"></i>
+                                            add group
+                                        </a>
                                     </div>
-                                    @endif
-                                    <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                        <p class="font-semibold text-2xl truncate ">{{$group->name}}</p>
-                                        <p class="text-lg ml-3">({{$group->members_count}})</p>
-                                    </div>
-                                </a>
-
-                                <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
-                                    <div class="flex items-center justify-between  rounded">
-
-                                        <div class="relative" x-data="{ open: false }">
-                                            <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
-                                                <i class="fa-solid fa-ellipsis text-xl"></i>
-                                            </button>
-                                            <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
-                                                <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">Edit</button>
-                                                <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Delete</button>
+                                </div>
+                            @else
+                                @foreach ($groups as $group)
+                                    <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow p-5 mb-3 mx-3 hover:bg-orange-100 transition">
+                                        <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
+                                            @if ($group->image)
+                                                <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">
+                                            @else
+                                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                                {{ strtoupper(substr($group->name, 0, 1)) }}
                                             </div>
+                                            @endif
+                                            <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                                <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
+                                                <p class="text-lg ml-3">({{ $group->members_count }})</p>
+                                            </div>
+                                        </a>
+
+                                        <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
+                                            <div class="flex items-center justify-between  rounded">
+                                                <div class="relative" x-data="{ open: false }">
+                                                    <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
+                                                        <i class="fa-solid fa-ellipsis text-xl"></i>
+                                                    </button>
+                                                    <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
+                                                        <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">
+                                                            Edit
+                                                        </button>
+                                                        <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{-- modal--}}
+                                            @include('groups.modals', ['group' => $group, 'users' => $users])
                                         </div>
                                     </div>
-
-                                    {{-- modal--}}
-                                    @include('groups.modals', ['group' => $group, 'users' => $users])
-                                </div>
-                            </div>
-                        @endforeach
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
-                    {{-- paginate --}}
                 </div>
             </div>
         </div>

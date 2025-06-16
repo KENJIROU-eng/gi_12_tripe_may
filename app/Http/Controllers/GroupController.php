@@ -67,7 +67,34 @@ class GroupController extends Controller
             return view('groups.show',compact('group','messages'));
     }
 
+    public function editMessage(Message $message){
 
+        $this->authorize('update', $message);
+        return view('groups.chats.edit', compact('message'));
+    }
+
+    public function destroyMessage(Message $message){
+
+        $this->authorize('delete', $message);
+        $message->delete();
+
+        return back()->with('success', 'メッセージを削除しました');
+    }
+
+    public function updateMessage(Request $request, Message $message){
+        
+    $this->authorize('update', $message);
+
+    $request->validate([
+        'message' => 'required|string',
+    ]);
+
+    $message->update([
+        'message' => $request->input('message'),
+    ]);
+
+    return redirect()->route('groups.show', $message->group_id)->with('success', 'メッセージを編集しました');
+}
 
     /**
      * Display a listing of the resource.

@@ -54,6 +54,9 @@ Route::middleware('auth')->group(function () {
     #chat
     Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('message.send');
     Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
+    Route::get('/chat/{message}/edit', [GroupController::class, 'editMessage'])->name('message.edit');
+    Route::delete('/chat/{message}/delete', [GroupController::class, 'destroyMessage'])->name('message.destroy');
+    Route::patch('/chat/{message}', [GroupController::class, 'updateMessage'])->name('message.update');
 
 
     #group
