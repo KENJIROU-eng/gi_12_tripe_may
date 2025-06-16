@@ -3,75 +3,58 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
             <div class="bg-white shadow-md dark:bg-gray-800 overflow-hidden sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
-{{-- タイトルとグループ表示 --}}
-<div class="relative my-5">
-    {{-- タイトル --}}
-    <div class="w-full text-center">
-        <h1 class="text-4xl sm:text-6xl font-bold">
-            Details
-        </h1>
-    </div>
+                    {{-- タイトルとグループ表示 --}}
+                    <div class="relative flex items-center justify-center h-16 my-5">
+                        <h1 class="text-4xl sm:text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">
+                            Details
+                        </h1>
 
-    {{-- グループ情報 --}}
-    @if ($itinerary->group_id != null)
-        <div
-            x-data="{ open: false }"
-            class="-mt-2 flex flex-col items-center md:absolute md:top-0 md:right-0 md:items-end space-y-2"
-        >
-            {{-- グループ名 --}}
-            <div class="text-lg text-blue-500">
-                <a href="{{ route('message.show', $itinerary->group_id) }}">
-                    {{ $itinerary->group->name }} <i class="fa-regular fa-comment-dots"></i>
-                </a>
-            </div>
+                        @if ($itinerary->group_id != null)
+                            <div x-data="{ open: false }" class="absolute right-0 flex flex-col items-end space-y-2">
+                                {{-- グループ名 --}}
+                                <div class="text-lg text-blue-500">
+                                    <a href="{{ route('message.show', $itinerary->group_id) }}">{{ $itinerary->group->name }} <i class="fa-regular fa-comment-dots"></i></a>
+                                </div>
 
-            {{-- アイコン --}}
-            <button @click="open = !open" class="flex -space-x-4">
-                @foreach ($itinerary->group->users->take(3) as $user)
-                    <img
-                        src="{{ $user->avatar_url ?? asset('images/user.png') }}"
-                        class="w-9 h-9 rounded-full border-2 border-white hover:z-10"
-                        alt="{{ $user->name }}"
-                    >
-                @endforeach
+                                {{-- アイコンとボタン --}}
+                                <button @click="open = !open" class="flex -space-x-4">
+                                    @foreach ($itinerary->group->users->take(3) as $user)
+                                        <img src="{{ $user->avatar_url ?? asset('images/user.png') }}"
+                                            class="w-9 h-9 rounded-full border-2 border-white hover:z-10"
+                                            alt="{{ $user->name }}">
+                                    @endforeach
 
-                @if ($itinerary->group->users->count() > 3)
-                    <div class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
-                        +{{ $itinerary->group->users->count() - 3 }}
+                                    @if ($itinerary->group->users->count() > 3)
+                                        <div class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
+                                            +{{ $itinerary->group->users->count() - 3 }}
+                                        </div>
+                                    @endif
+                                </button>
+
+                                {{-- メンバー一覧ポップアップ --}}
+                                <div x-show="open" @click.away="open = false" class="absolute right-0 mt-40 w-64 bg-white border rounded-lg shadow-lg z-50">
+                                    <div class="p-4">
+                                        <h2 class="text-sm font-semibold text-gray-600 mb-2">Group Member</h2>
+                                        <ul class="space-y-2 max-h-60 overflow-y-auto">
+                                            @foreach ($itinerary->group->users as $user)
+                                                <li class="flex items-center space-x-3">
+                                                    <a href="{{ route('profile.show', $user->id) }}">
+                                                        <img src="{{ $user->avatar_url ?? asset('images/user.png') }}"
+                                                            class="w-8 h-8 rounded-full text-sm"
+                                                            alt="{{ $user->name }}">
+                                                    </a>
+                                                    <a href="{{ route('profile.show', $user->id) }}">
+                                                        <p class="text-sm">{{ $user->name }}</p>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
-                @endif
-            </button>
-
-            {{-- メンバー一覧 --}}
-            <div
-                x-show="open"
-                @click.away="open = false"
-                class="mt-2 w-64 bg-white border rounded-lg shadow-lg z-50"
-            >
-                <div class="p-4">
-                    <h2 class="text-sm font-semibold text-gray-600 mb-2">Group Member</h2>
-                    <ul class="space-y-2 max-h-60 overflow-y-auto">
-                        @foreach ($itinerary->group->users as $user)
-                            <li class="flex items-center space-x-3">
-                                <a href="{{ route('profile.show', $user->id) }}">
-                                    <img
-                                        src="{{ $user->avatar_url ?? asset('images/user.png') }}"
-                                        class="w-8 h-8 rounded-full"
-                                        alt="{{ $user->name }}"
-                                    >
-                                </a>
-                                <a href="{{ route('profile.show', $user->id) }}">
-                                    <p class="text-sm">{{ $user->name }}</p>
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
-    @endif
-</div>
-
 
                     {{-- メインレイアウト（レスポンシブ対応） --}}
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">

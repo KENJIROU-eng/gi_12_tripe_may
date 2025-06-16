@@ -9,13 +9,6 @@ let radioCheckedStateBackup = {};
 
 
 function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
-
-    // indexが未定義/nullのとき、自動的に現在の件数を取得して補完
-    if (index === undefined || index === null) {
-        const container = document.querySelector(`[data-date="${dateKey}"] .destinations`);
-        index = container ? container.querySelectorAll('.destination-item').length : 0;
-    }
-    
     const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
     const travelModeLabels = {
         DRIVING: 'Car',
@@ -268,7 +261,6 @@ function attachAddDestinationButtons() {
             attachAutocomplete(newInput);
             attachRemoveButtons();
             attachInputChangeEvents();
-            handleTransitWarnings();
             updateFirstDestinationDisplay();
         };
     });

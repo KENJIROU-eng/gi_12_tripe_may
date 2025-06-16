@@ -1,7 +1,7 @@
 @props(['itinerary'])
 
 <div x-data="{ open: false }">
-    <button @click="open = true">
+    <button @click="open = true" title="Delete">
         <i class="fa-solid fa-trash-can text-red-500 flex"></i>
     </button>
 

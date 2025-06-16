@@ -423,9 +423,7 @@ public function index()
                 $group = Group::getOrCreatePersonalGroup(Auth::id());
                 $groupId = $group->id;
             }
-
-
-
+            
             // 目的地関連データ
             $destinationsAddress    = $request->input('destinations', []);
             $destinationsLat        = $request->input('destinations_lat', []);

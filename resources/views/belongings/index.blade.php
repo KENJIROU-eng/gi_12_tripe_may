@@ -57,8 +57,6 @@
     </div>
 </div>
 
-
-
 @push('scripts')
     <script>
         window.itineraryId = @json($itinerary->id);

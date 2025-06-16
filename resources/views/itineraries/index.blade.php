@@ -116,9 +116,13 @@
                                             </a>
                                         </div>
                                         {{-- delete --}}
-                                        <div class="md:col-span-1 w-full text-center">
+                                        <div class="md:col-span-1 w-full flex justify-center space-x-4">
+                                            <a href="{{ route('itinerary.edit', $itinerary->id) }}" title="Edit">
+                                                <i class="fa-solid fa-pen text-yellow-300"></i>
+                                            </a>
                                             @include('itineraries.modals.delete', ['itinerary' => $itinerary])
                                         </div>
+
                                     </div>
                                 @empty
                                     <div class="text-center text-lg my-60">

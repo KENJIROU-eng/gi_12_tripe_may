@@ -33,11 +33,9 @@ class FollowController extends Controller
         $this->follow->follower_id = Auth::User()->id;
         $this->follow->save();
 
-        $user = $this->user->findOrFail($following_id);
-        $all_posts = $user->post()->paginate(6)->onEachSide(2);
-        return view('profile.show')
-            ->with('user', $user)
-            ->with('all_posts', $all_posts);
+        // $user = $this->user->findOrFail($following_id);
+        // $all_posts = $user->post()->paginate(6)->onEachSide(2);
+        return redirect()->back();
     }
 
     /**
@@ -80,11 +78,12 @@ class FollowController extends Controller
         $follow = $this->follow->where('following_id', $following_id)->where('follower_id', Auth::User()->id);
         $follow->delete();
 
-        $user = $this->user->findOrFail($following_id);
-        $all_posts = $user->post()->paginate(6)->onEachSide(2);
-        return view('profile.show')
-            ->with('user', $user)
-            ->with('all_posts', $all_posts);
+        // $user = $this->user->findOrFail($following_id);
+        // $all_posts = $user->post()->paginate(6)->onEachSide(2);
+        // return view('profile.show')
+        //     ->with('user', $user)
+        //     ->with('all_posts', $all_posts);
+        return redirect()->back();
     }
 
     public function follower_show(User $user) {

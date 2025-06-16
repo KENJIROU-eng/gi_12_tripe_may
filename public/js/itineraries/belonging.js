@@ -76,8 +76,7 @@ if (newName && newName !== oldName) {
         console.error('Modal edit failed:', err);
         input.replaceWith(itemName);
     }
-}
- else {
+} else {
                 input.replaceWith(itemName);
             }
         };

@@ -21,7 +21,7 @@
                             <div class="flex justify-center">
                                 <div class="container mb-4 w-1/3">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
-                                    <div class="space-y-2 mt-2 h-2/3 overflow-y-auto border p-2 rounded">
+                                    <div class="space-y-2 mt-2 max-h-[500px] overflow-y-auto border p-2 rounded">
                                         @forelse ($users as $user)
                                             <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
                                                 <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer">
