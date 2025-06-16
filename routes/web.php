@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::get('/itineraries/{id}/edit', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::put('/itineraries/{id}/update', [ItineraryController::class, 'update'])->name('itinerary.update');
+    Route::get('/itinerary/load', [ItineraryController::class, 'loadMore'])->name('itinerary.load');
 
     #belonging
     Route::get('/belongings/{itinerary_id}', [BelongingController::class, 'index'])->name('belonging.index');

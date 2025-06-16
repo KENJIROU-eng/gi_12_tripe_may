@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
         //     BillSeeder::class,
         // ]);
 
-        Itinerary::factory()->count(50)->create();
+        $this->call([
+            GroupMemberSeeder::class,
+        ]);
+
         User::factory(10)->create();
 
     }

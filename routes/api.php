@@ -5,3 +5,4 @@ use Illuminate\Support\Facades\Route;
 
  //// Laravel Echo + Pusher の認証用エンドポイント
 Broadcast::routes(['middleware' => ['auth']]);
+

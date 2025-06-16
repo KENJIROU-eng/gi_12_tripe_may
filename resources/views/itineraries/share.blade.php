@@ -4,7 +4,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Sharing</h1>
+                        <h1 class="text-4xl md:text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Sharing</h1>
                     </div>
 
                     {{-- contents --}}
@@ -26,6 +26,9 @@
                                     <div class="px-4 py-2 border rounded-lg bg-gray-500 text-white peer-checked:bg-green-500 peer-checked:text-white">NO</div>
                                 </label>
                             </div>
+                            @error('share')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
 
 
                             {{-- YES Message --}}
@@ -37,6 +40,9 @@
                                         <option value="{{ $group->id }}">{{ $group->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('group')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- NO Message --}}

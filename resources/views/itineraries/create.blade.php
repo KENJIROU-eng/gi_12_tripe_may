@@ -5,7 +5,7 @@
                 <div class="text-black dark:text-gray-100">
                     {{-- タイトル --}}
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-3xl md:text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Create</h1>
+                        <h1 class="text-4xl md:text-6xl font-bold absolute left-1/2 transform -translate-x-1/2">Create</h1>
                     </div>
 
                     <div class="max-w-6xl mx-auto">
@@ -19,6 +19,9 @@
                                     <div class="md:col-span-4">
                                         <x-input-label for="title" value="Title" />
                                         <x-text-input name="title" id="title" placeholder="Please enter a title" required class="w-full" />
+                                        @error('title')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
 
                                     {{-- date --}}
@@ -35,12 +38,18 @@
                                         <div class="grid grid-cols-9 items-center">
                                             <div class="col-span-4">
                                                 <x-text-input name="start_date" type="date" id="start_date" class="w-full" />
+                                                @error('start_date')
+                                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                                @enderror
                                             </div>
                                             <div class="col-span-1 text-center">
                                                 <span class="text-lg">～</span>
                                             </div>
                                             <div class="col-span-4">
                                                 <x-text-input name="end_date" type="date" id="end_date" class="w-full" />
+                                                @error('end_date')
+                                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>

@@ -51,7 +51,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-
     public function itineraries() {
         return $this->hasMany(Itinerary::class)->latest();
     }

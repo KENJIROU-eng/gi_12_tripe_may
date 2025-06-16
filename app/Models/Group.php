@@ -32,4 +32,27 @@ class Group extends Model
         return $this->hasMany(GroupMember::class);
     }
 
+    public static function getOrCreatePersonalGroup($userId)
+    {
+        // すでに「一人グループ」があるか確認（user_id を owner として使う想定）
+        $group = self::where('user_id', $userId)
+            ->where('name', 'like', "ボッチ専用")
+            ->first();
+
+        if (!$group) {
+            // なければ作成
+            $group = self::create([
+                'name' => "ボッチ専用",
+                'user_id' => $userId,
+                'image' => null, // 必要であれば画像を指定
+            ]);
+
+            // 中間テーブルにもユーザーを追加
+            $group->users()->attach($userId);
+        }
+
+        return $group;
+    }
+
+
 }

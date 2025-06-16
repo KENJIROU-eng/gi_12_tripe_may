@@ -53,7 +53,6 @@
                                     {{ __('Admin') }}
                                 </x-dropdown-link>
                             @endcan
-                            <x-dropdown-link :href="route('profile.show')">
                             {{-- profile --}}
                             <x-dropdown-link :href="route('profile.show', Auth::User()->id)">
                                 {{ __('Profile') }}
@@ -82,11 +81,6 @@
     </div>
 
     @if (Auth::check())
-        <!-- Responsive Navigation -->
-        <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
@@ -124,9 +118,10 @@
                 </div>
 
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.show')">
+                    <x-responsive-nav-link :href="route('profile.show', Auth::user()->id)">
                         {{ __('Profile') }}
                     </x-responsive-nav-link>
+
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

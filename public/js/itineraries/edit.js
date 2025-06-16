@@ -3,6 +3,10 @@ let totalSummary = document.getElementById('totalSummary');
 let distanceMatrixService;
 let dailyDistances = {};
 let dailyDurations = {};
+let draggedTravelMode = null;
+let draggedTravelModeValue = null;
+let radioCheckedStateBackup = {};
+
 
 function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
     const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
@@ -21,6 +25,12 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         </label>
     `).join('');
 
+    const transitWarning = `
+        <div class="transit-warning text-xs text-red-500 mt-1 ${travelMode === 'TRANSIT' ? '' : 'hidden'}">
+            <i class="fa-solid fa-asterisk"></i> Distance and duration may not be available for public transit.
+        </div>
+    `;
+
     return `
         <div class="destination-item mb-3">
             <div class="flex items-center gap-2">
@@ -33,9 +43,11 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="ml-10 flex flex-wrap items-center mt-1 travel-mode-container">
+
+            <div class="ml-10 mt-1 grid grid-cols-2 sm:grid-cols-1 md:flex flex-wrap items-center gap-2 travel-mode-container">
                 ${radioButtons}
-                <span class="route-info text-sm text-gray-600 ml-4"></span>
+                ${transitWarning}
+                <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
             </div>
 
             <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
@@ -46,23 +58,20 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
     `;
 }
 
-
-function updateFirstDestinationVisibility() {
-    // 全 destination-item を取得（全日付順）
-    const items = Array.from(document.querySelectorAll('.destination-item'));
-
-    // 一旦全部表示
-    items.forEach(item => {
-        item.querySelector('.travel-mode-container')?.classList.remove('hidden');
-        item.querySelector('.route-info')?.classList.remove('hidden');
+function handleTransitWarnings() {
+    document.querySelectorAll('.travel-mode-radio').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const container = radio.closest('.travel-mode-container');
+            const warning = container.querySelector('.transit-warning');
+            if (warning) {
+                if (radio.value === 'TRANSIT' && radio.checked) {
+                    warning.classList.remove('hidden');
+                } else if (radio.checked) {
+                    warning.classList.add('hidden');
+                }
+            }
+        });
     });
-
-    // 最初の1件だけを非表示
-    const firstItem = items[0];
-    if (firstItem) {
-        firstItem.querySelector('.travel-mode-container')?.classList.add('hidden');
-        firstItem.querySelector('.route-info')?.classList.add('hidden');
-    }
 }
 
 
@@ -70,35 +79,43 @@ function saveCurrentDestinations() {
     const data = {};
     const dateDivs = dateFieldsContainer.children;
 
-    for (const dateDiv of dateDivs) {
-        const dateKey = dateDiv.dataset.date;
-        data[dateKey] = [];
+for (const dateDiv of dateDivs) {
+    const fallbackDateKey = dateDiv.dataset.date;
+    if (!data[fallbackDateKey]) data[fallbackDateKey] = [];
 
-        const items = dateDiv.querySelectorAll('.destination-item');
-        items.forEach(item => {
-            const address = item.querySelector('.destination-input').value;
-            const lat = item.querySelector('.destination-lat').value;
-            const lng = item.querySelector('.destination-lng').value;
-            const placeId = item.querySelector('.destination-place-id').value;
-            const placeName = item.querySelector('.destination-place-name')?.value || '';
-            const checkedRadio = item.querySelector('input.travel-mode-radio:checked');
-            const travelMode = checkedRadio ? checkedRadio.value : 'DRIVING';
+    const items = dateDiv.querySelectorAll('.destination-item');
+    items.forEach(item => {
+        const address = item.querySelector('.destination-input').value;
+        const lat = item.querySelector('.destination-lat').value;
+        const lng = item.querySelector('.destination-lng').value;
+        const placeId = item.querySelector('.destination-place-id').value;
+        const placeName = item.querySelector('.destination-place-name')?.value || '';
+        const radio = item.querySelector('input.travel-mode-radio:checked');
+        let travelMode = 'DRIVING';
+        let dateKey = fallbackDateKey;
 
-
-            if (address) {
-                data[dateKey].push({
-                    address,
-                    lat,
-                    lng,
-                    placeId,
-                    placeName,
-                    travelMode
-                });
+        if (radio) {
+            travelMode = radio.value;
+            const nameAttr = radio.name; // e.g. travel_modes[2025-06-13][0]
+            const match = nameAttr.match(/travel_modes\[(.+?)\]\[(\d+)\]/);
+            if (match) {
+                dateKey = match[1];
+                if (!data[dateKey]) data[dateKey] = []; // 新しい日付キーへの移動を考慮
             }
-        });
-    }
+        }
 
-    console.log('saveCurrentDestinations result:', data);
+        if (address) {
+            data[dateKey].push({
+                address,
+                lat,
+                lng,
+                placeId,
+                placeName,
+                travelMode
+            });
+        }
+    });
+}
     return data;
 }
 
@@ -106,7 +123,6 @@ function formatDateToDisplay(dateStr) {
     const date = new Date(dateStr);
     const options = { year: 'numeric', month: 'short', day: '2-digit' };
     const parts = date.toLocaleDateString('en-US', options).replace(',', '').split(' ');
-    // parts[0] = 'Jun', parts[1] = '05', parts[2] = '2025'
     return `${parts[0]}. ${parts[1]}, ${parts[2]}`;
 }
 
@@ -166,8 +182,6 @@ async function createDateFields(startDate, endDate, existingData = {}) {
                 destinationsContainer.insertAdjacentHTML(
                     'beforeend',
                     createInputField(dateStr, j, address, lat, lng, placeId, placeName, travelMode)
-
-
                 );
             }
         } else {
@@ -186,12 +200,10 @@ async function createDateFields(startDate, endDate, existingData = {}) {
     attachRemoveButtons();
     attachInputChangeEvents();
     initSortable();
-
-    attachTravelModeChangeEvents();
-
-    updateFirstDestinationVisibility();
+    // attachTravelModeChangeEvents();
+    updateFirstDestinationDisplay();
+    handleTransitWarnings();
 }
-
 
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
@@ -220,20 +232,17 @@ function attachAutocomplete(input) {
 
     autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
-        console.log('Place ID:', place.place_id);
-
-
         if (!place.geometry) {
-        alert('Please select an option from the dropdown.');
-        input.value = '';
-        return;
+            alert('Please select an option from the dropdown.');
+            input.value = '';
+            return;
         }
 
         const container = input.closest('.destination-item');
         if (container) {
-        container.querySelector('.destination-lat').value = place.geometry.location.lat();
-        container.querySelector('.destination-lng').value = place.geometry.location.lng();
-        container.querySelector('.destination-place-id').value = place.place_id;
+            container.querySelector('.destination-lat').value = place.geometry.location.lat();
+            container.querySelector('.destination-lng').value = place.geometry.location.lng();
+            container.querySelector('.destination-place-id').value = place.place_id;
         }
 
         updateAllDistanceTimes();
@@ -244,15 +253,15 @@ function attachAutocomplete(input) {
 function attachAddDestinationButtons() {
     document.querySelectorAll('.addDestinationBtn').forEach(btn => {
         btn.onclick = () => {
-        const dateDiv = btn.closest('div.mb-4');
-        const dateKey = dateDiv.dataset.date;
-        const container = dateDiv.querySelector('.destinations');
-        container.insertAdjacentHTML('beforeend', createInputField(dateKey));
-        const newInput = container.lastElementChild.querySelector('.destination-input');
-        attachAutocomplete(newInput);
-        attachRemoveButtons();
-        attachInputChangeEvents();
-        updateFirstDestinationVisibility();
+            const dateDiv = btn.closest('div.mb-4');
+            const dateKey = dateDiv.dataset.date;
+            const container = dateDiv.querySelector('.destinations');
+            container.insertAdjacentHTML('beforeend', createInputField(dateKey));
+            const newInput = container.lastElementChild.querySelector('.destination-input');
+            attachAutocomplete(newInput);
+            attachRemoveButtons();
+            attachInputChangeEvents();
+            updateFirstDestinationDisplay();
         };
     });
 }
@@ -260,10 +269,10 @@ function attachAddDestinationButtons() {
 function attachRemoveButtons() {
     document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.onclick = () => {
-        btn.closest('.destination-item').remove();
-        updateAllDistanceTimes();
-        updateMapByCurrentInputs();
-        updateFirstDestinationVisibility();
+            btn.closest('.destination-item').remove();
+            updateAllDistanceTimes();
+            updateMapByCurrentInputs();
+            updateFirstDestinationDisplay();
         };
     });
 }
@@ -275,41 +284,100 @@ function attachInputChangeEvents() {
             updateMapByCurrentInputs();
         };
     });
-
-    document.querySelectorAll('.travel-mode-select').forEach(select => {
-        select.onchange = () => {
-            updateAllDistanceTimes();
-            updateMapByCurrentInputs();
-        };
-    });
 }
 
-function attachTravelModeChangeEvents() {
-    document.querySelectorAll('.travel-mode-radio').forEach(radio => {
-        radio.addEventListener('change', () => {
-            updateAllDistanceTimes();
-            updateMapByCurrentInputs();
-        });
-    });
-}
-
+// function attachTravelModeChangeEvents() {
+//     document.querySelectorAll('.travel-mode-radio').forEach(radio => {
+//         radio.addEventListener('change', () => {
+//             updateAllDistanceTimes();
+//             updateMapByCurrentInputs();
+//         });
+//     });
+// }
 
 function initSortable() {
     document.querySelectorAll('.sortable-container').forEach(container => {
         new Sortable(container, {
-        group: 'destinations',
-        handle: '.drag-handle',
-        animation: 150,
-        onEnd: function(evt) {
-            const item = evt.item;
-            const newDateKey = item.closest('div.mb-4').dataset.date;
-            item.querySelectorAll('input').forEach(input => {
-            input.name = input.name.replace(/\[\d{4}-\d{2}-\d{2}\]/, `[${newDateKey}]`);
+            group: 'destinations',
+            handle: '.drag-handle',
+            animation: 150,
+
+    onStart: function (evt) {
+        const item = evt.item;
+        const checkedRadio = item.querySelector('input.travel-mode-radio:checked');
+        draggedTravelModeValue = checkedRadio ? checkedRadio.value : null;
+
+        // ラジオ状態バックアップ（place_id をキーに保存）
+        radioCheckedStateBackup = {};
+        document.querySelectorAll('#dateFieldsContainer > .mb-4').forEach(dateDiv => {
+            const dateKey = dateDiv.dataset.date;
+            radioCheckedStateBackup[dateKey] = {};
+
+            const items = dateDiv.querySelectorAll('.destination-item');
+            items.forEach(item => {
+                const placeId = item.querySelector('.destination-place-id')?.value;
+                const checked = item.querySelector('input.travel-mode-radio:checked');
+                if (placeId) {
+                    radioCheckedStateBackup[dateKey][placeId] = checked ? checked.value : null;
+                }
             });
-            updateAllDistanceTimes();
-            updateMapByCurrentInputs();
-            updateFirstDestinationVisibility();
+        });
+    },
+
+    onEnd: function (evt) {
+        const item = evt.item;
+
+        updateAllInputFieldNames();
+
+        const parent = item.closest('.mb-4');
+        const dateKey = parent?.dataset.date;
+
+        if (dateKey && radioCheckedStateBackup[dateKey]) {
+            const items = parent.querySelectorAll('.destination-item');
+
+            items.forEach(item => {
+                const placeId = item.querySelector('.destination-place-id')?.value;
+                const valueToRestore = placeId ? radioCheckedStateBackup[dateKey][placeId] : null;
+                if (!valueToRestore) return;
+
+                item.querySelectorAll('input.travel-mode-radio').forEach(radio => {
+                    radio.checked = (radio.value === valueToRestore);
+                });
+            });
         }
+
+        updateAllDistanceTimes();
+        updateMapByCurrentInputs();
+        updateFirstDestinationDisplay();
+
+        draggedTravelModeValue = null;
+        radioCheckedStateBackup = {};
+    }
+
+        });
+    });
+}
+
+function updateAllInputFieldNames() {
+    document.querySelectorAll('#dateFieldsContainer > .mb-4').forEach(dateDiv => {
+        const dateKey = dateDiv.dataset.date;
+        const items = dateDiv.querySelectorAll('.destination-item');
+
+        items.forEach((item, index) => {
+            // text input
+            const input = item.querySelector('.destination-input');
+            input.name = `destinations[${dateKey}][]`;
+
+            // hidden fields
+            item.querySelector('.destination-lat').name = `destinations_lat[${dateKey}][]`;
+            item.querySelector('.destination-lng').name = `destinations_lng[${dateKey}][]`;
+            item.querySelector('.destination-place-id').name = `destinations_place_id[${dateKey}][]`;
+            item.querySelector('.destination-place-name').name = `destinations_place_name[${dateKey}][]`;
+
+            // radio buttons
+            item.querySelectorAll('input.travel-mode-radio').forEach(radio => {
+                radio.name = `travel_modes[${dateKey}][${index}]`;
+            });
         });
     });
 }
@@ -320,7 +388,7 @@ function updateMapByCurrentInputs() {
         const lat = parseFloat(item.querySelector('.destination-lat').value);
         const lng = parseFloat(item.querySelector('.destination-lng').value);
         if (!isNaN(lat) && !isNaN(lng)) {
-        latLngs.push(new google.maps.LatLng(lat, lng));
+            latLngs.push(new google.maps.LatLng(lat, lng));
         }
     });
 
@@ -350,7 +418,7 @@ window.initializeCreateForm = function() {
                 const saveData = saveCurrentDestinations();
                 const filteredData = filterDataByDateRange(saveData, start, end);
                 createDateFields(start, end, filteredData);
-                attachTravelModeChangeEvents(); // ← 追加
+                // attachTravelModeChangeEvents();
                 updateAllDistanceTimes();
                 updateMapByCurrentInputs();
             }
@@ -375,7 +443,7 @@ function filterDataByDateRange(data, startDate, endDate) {
     for (const dateKey in data) {
         const dateObj = new Date(dateKey);
         if (dateObj >= start && dateObj <= end) {
-        filtered[dateKey] = data[dateKey];
+            filtered[dateKey] = data[dateKey];
         }
     }
 
@@ -534,12 +602,12 @@ function updateAllDistanceTimes() {
     });
 }
 
-
-
 // フォーム送信制御
 const form = document.querySelector('form'); // ここは正しいformセレクタに変更してください
 form.addEventListener('submit', async (e) => {
     e.preventDefault(); // まず送信停止
+
+    updateAllInputFieldNames();
 
     // 距離時間の更新を待ってから送信
     await updateAllDistanceTimes();
@@ -557,7 +625,83 @@ function formatDuration(seconds) {
     return `${m}m`;
 }
 
+function updateFirstDestinationDisplay() {
+    const allDateDivs = [...document.querySelectorAll('#dateFieldsContainer > div[data-date]')];
+    let firstItem = null;
 
+    for (const dateDiv of allDateDivs) {
+        const items = [...dateDiv.querySelectorAll('.destination-item')];
+        for (const item of items) {
+            if (!firstItem) {
+                firstItem = item;
+                break;
+            }
+        }
+    }
+
+    // すべての目的地を初期状態（表示）に戻す
+    document.querySelectorAll('.destination-item').forEach(item => {
+        item.querySelectorAll('.travel-mode-radio').forEach(radio => radio.disabled = false);
+        item.querySelector('.travel-mode-container').style.display = '';
+        const routeInfo = item.querySelector('.route-info');
+        if (routeInfo) routeInfo.style.display = '';
+    });
+
+    // 一番先頭の目的地を非表示にする
+    if (firstItem) {
+        firstItem.querySelectorAll('.travel-mode-radio').forEach(radio => radio.disabled = true);
+        const container = firstItem.querySelector('.travel-mode-container');
+        if (container) container.style.display = 'none';
+        const routeInfo = firstItem.querySelector('.route-info');
+        if (routeInfo) routeInfo.style.display = 'none';
+    }
+}
+
+document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('travel-mode-radio')) {
+        updateAllDistanceTimes();
+        updateMapByCurrentInputs();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const groupSelect = document.getElementById('group_id');
+    const groupModal = document.getElementById('groupModal');
+    const cancelBtn = document.getElementById('cancelGroupChange');
+    const confirmBtn = document.getElementById('confirmGroupChange');
+
+    let previousGroupValue = groupSelect.value;
+    let confirmed = false;
+
+    groupSelect.addEventListener('focus', () => {
+        previousGroupValue = groupSelect.value;
+    });
+
+    groupSelect.addEventListener('change', () => {
+        const original = window.originalGroupId ?? '';
+        const current = groupSelect.value;
+
+        if (current !== original && !confirmed) {
+            groupModal.classList.remove('hidden');
+            groupModal.classList.add('flex');
+        } else {
+            previousGroupValue = current;
+        }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        groupSelect.value = previousGroupValue;
+        groupModal.classList.remove('flex');
+        groupModal.classList.add('hidden');
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        confirmed = true;
+        previousGroupValue = groupSelect.value;
+        groupModal.classList.remove('flex');
+        groupModal.classList.add('hidden');
+    });
+});
 
 
 

@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Broadcast;
 use App\Models\Post;
 use App\Models\Group;
-use App\Models\Group;
 
 // Broadcast::channel('posts.{postId}', function ($user, $postId) {
     // return (int) $user->id === (int) $userId;

@@ -1,16 +1,17 @@
 @props(['itinerary'])
 
-<div x-data="{ open: false}">
+<div x-data="{ open: false }">
     <button @click="open = true">
         <i class="fa-solid fa-trash-can text-red-500 flex"></i>
     </button>
 
-    <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div x-show="open" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div @click.outside="open = false" class="bg-white rounded-lg w-full max-w-md overflow-hidden">
             {{-- header --}}
             <div class="bg-red-500 text-white px-6 py-4">
                 <h1 class="text-3xl font-bold">Delete Itinerary</h1>
             </div>
+
             {{-- body --}}
             <div class="px-6 py-4">
                 <p><i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl mb-2"></i></p>
