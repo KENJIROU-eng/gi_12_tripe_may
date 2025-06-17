@@ -192,7 +192,8 @@ if (groupId && myUserId) {
                                 </div>
                                 <div class="text-xs text-gray-400 items-end">
                                     ${e.time}
-                                </div>
+
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -207,4 +208,6 @@ if (groupId && myUserId) {
             messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
+
+
 

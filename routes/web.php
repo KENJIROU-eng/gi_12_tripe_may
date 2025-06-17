@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
+    Route::get('/post/load-more', [PostController::class, 'loadMore']) ->name('post.loadMore');
     // Route::get('/post/test', [PostController::class, 'test']);
     // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);

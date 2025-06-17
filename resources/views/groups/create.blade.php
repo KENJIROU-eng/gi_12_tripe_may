@@ -21,17 +21,16 @@
                             <div class="flex justify-center">
                                 <div class="container mb-4 w-1/3">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
-                                    <div class="space-y-2 mt-2 max-h-[500px] overflow-y-auto border p-2 rounded">
+                                    <div class="space-y-2 mt-2 overflow-y-auto border max-h-[500px] p-2 rounded">
                                         @forelse ($users as $user)
-                                        <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
-                                            <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer">
-
-
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
-                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
+                                                <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer">
+                                                <div class="flex items-center space-x-2 max-h-400px">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
+                                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                    </div>
+                                                    <span class="text-sm text-gray-700">{{ $user->name }}</span>
                                                 </div>
-                                                <span class="text-sm text-gray-700">{{ $user->name }}</span>
                                             </div>
                                             <div class=" w-4 h-4 rounded-full border-2 border-gray-400 peer-checked:bg-blue-400 peer-checked:border-blue-500 flex items-center justify-center transition">
                                                 <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>

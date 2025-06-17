@@ -40,7 +40,7 @@
                                 <div class="flex gap-4 mb-4">
                                     <div class="mt-2">
                                         <label for="image" class="block text-sm font-semibold mb-2">Image</label>
-                                        <img id="image-preview" class="rounded-md  hidden" src="" alt="Image Preview" style="min-width: 100px; max-width: 300px; width: auto;">
+                                        <img id="image-preview" class="rounded-md  hidden max-h-[200px]" src="" alt="Image Preview" style="min-width: 100px; max-width: 300px; width: auto;">
                                     </div>
                                     <div class="flex flex-col justify-end items-end">
                                         <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)">
