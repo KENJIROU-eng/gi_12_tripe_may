@@ -140,6 +140,10 @@ class ProfileController extends Controller
     ->get();
     $postIds = $top3->pluck('post_id')->toArray();
     $posts = Post::whereIn('id', $postIds)->get();
+    $likeCounts = [];
+    foreach ($posts as $post) {
+        $likeCounts[] = $post->likes()->count();
+    }
 
     $groups = GroupMember::where('user_id', Auth::User()->id);
     $groupIds = $groups->pluck('group_id')->toArray();
@@ -160,6 +164,7 @@ class ProfileController extends Controller
         ->with('tripSchedule', $tripSchedule)
         ->with('tripName', $tripName)
         ->with('routeUrls', $routeUrls)
+        ->with('likeCounts', $likeCounts)
         ->with('top3', $top3);
     }
 

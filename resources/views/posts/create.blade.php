@@ -85,7 +85,7 @@
                                 {{--button--}}
                                 <div class="grid grid-cols-4 w-full  gap-2">
                                     <div class="col-span-1 col-start-2 w-full">
-                                        <a href="{{ route('post.list') }}" class="block >Cancel</a>
+                                        <a href="{{ route('post.list') }}" class="block">Cancel</a>
                                     </div>
                                     <div class="col-span-1 col-start-3 w-full">
                                         <button type="submit" class="w-full bg-yellow-200 py-2 text-black hover: border-yellow-200 hover:bg-white transition duration-300 rounded-md">Create Post</button>

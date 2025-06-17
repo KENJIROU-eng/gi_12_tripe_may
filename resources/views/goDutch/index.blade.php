@@ -5,7 +5,7 @@
     </a>
 </div>
 
-<ul id="itemList" class="space-y-1 mb-4 max-h-72 overflow-y-auto overflow-x-hidden">
+<ul id="itemList" class="space-y-1 mb-4 max-h-[180px] overflow-y-auto overflow-x-hidden">
     @isset($itinerary->group)
         @forelse ($itinerary->group->users as $user)
             <li class="flex items-between gap-2 p-1 border rounded">

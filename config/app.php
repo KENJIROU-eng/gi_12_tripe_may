@@ -25,6 +25,7 @@ return [
         Illuminate\Hashing\HashServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
 
 
 
@@ -166,9 +167,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    // 'providers' => [
-
-    // App\Providers\BroadcastServiceProvider::class, // ✅ これを追加！
-    // ],
 
 ];

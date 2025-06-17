@@ -38,10 +38,10 @@
                                                         <a href="{{ route('post.edit', $post->id) }}" class="block px-4 py-2 text-sm text-green-700 hover:bg-green-100">
                                                             Edit
                                                         </a>
+                                                        <button @click="showModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                                            Delete
+                                                        </button>
                                                     @endif
-                                                    <button @click="showModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
-                                                        Delete
-                                                    </button>
                                                 </x-slot>
                                             </x-dropdown>
                                         </div>
@@ -71,7 +71,16 @@
                                                 </a>
                                             @endif
                                         </div>
-                                        <div class="col-auto ">{{ $post->likes()->count() }}</div>
+                                        <div class="col-auto ">
+                                            {{-- trigger --}}
+                                            <div x-data="{ open: false }">
+                                                <button @click="open = true">
+                                                    {{ $post->likes()->count() }}
+                                                </button>
+                                                {{-- modal content --}}
+                                                @include('posts.modals.likeUser', ['post' => $post])
+                                            </div>
+                                        </div>
                                         <div class="col text-end text-blue-400 font-light ml-auto mr-4">
                                             @foreach ($post->categoryPost as $categoryPost)
                                                 #{{ $categoryPost->category->name }}

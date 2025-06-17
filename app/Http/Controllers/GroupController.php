@@ -10,6 +10,7 @@ use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -191,10 +192,10 @@ class GroupController extends Controller
      */
     public function destroy($group_id)
     {
-
-
-
         $group = Group::findOrFail($group_id);
+        if ($group->image) {
+                Storage::disk('public')->delete($group->image);
+            }
         $group->delete();
 
     return redirect()->route('groups.index');

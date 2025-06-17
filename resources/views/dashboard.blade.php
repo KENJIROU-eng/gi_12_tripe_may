@@ -8,6 +8,12 @@
                     <div class="relative flex items-center justify-center h-16 my-5">
                         <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Welcome to Tripe@s</h1>
                     </div>
+
+                    {{-- notification --}}
+                    <div id="notify-box" class="fixed bottom-4 right-4 bg-white p-4 rounded shadow">
+                        <p>Do you wanna receive the notifications?</p>
+                        <button onclick="enableNotification()" class="bg-blue-500 text-white px-3 py-1 rounded mt-2">Yes</button>
+                    </div>
                     {{-- contents --}}
                     <div class="mx-auto h-4/5 mt-8 overflow-hidden">
                         <div class="grid grid-cols-3 gap-4 h-full">
@@ -48,10 +54,22 @@
                                     <div class="grid grid-rows-3 h-4/5 mt-6 gap-10">
                                         @foreach ($posts as $index => $post)
                                         <div class="grid grid-rows-4">
-                                            <div class="row-span-1 mx-auto text-yellow-300">
-                                                <i class="fa-solid fa-crown"></i> {{ $index + 1 }}st
-                                                <a href="{{ route('post.show', $post->id) }}" class="text-black hover:text-green-500">{{ $post->title }}</a>
-                                            </div>
+                                            @if ($likeCounts[$index] == $likeCounts[0])
+                                                <div class="row-span-1 mx-auto text-yellow-300">
+                                                    <i class="fa-solid fa-crown"></i> 1 st
+                                                    <a href="{{ route('post.show', $post->id) }}" class="text-black hover:text-green-500">{{ $post->title }}</a>
+                                                </div>
+                                            @elseif ($likeCounts[$index] == $likeCounts[1])
+                                                <div class="row-span-1 mx-auto text-gray-400">
+                                                    <i class="fa-solid fa-crown"></i> 2 nd
+                                                    <a href="{{ route('post.show', $post->id) }}" class="text-black hover:text-green-500">{{ $post->title }}</a>
+                                                </div>
+                                            @else
+                                                <div class="row-span-1 mx-auto text-yellow-500">
+                                                    <i class="fa-solid fa-crown"></i> 3 rd
+                                                    <a href="{{ route('post.show', $post->id) }}" class="text-black hover:text-green-500">{{ $post->title }}</a>
+                                                </div>
+                                            @endif
                                             <div class="row-span-3">
                                                 <div class="grid grid-cols-3 h-[96px]">
                                                     <div class="col-span-2">

@@ -35,7 +35,7 @@ class FollowController extends Controller
 
         $user = $this->user->findOrFail($following_id);
         $all_posts = $user->post()->paginate(6)->onEachSide(2);
-        return view('profile.show')
+        return redirect()->route('profile.show', ['id' => $following_id])
             ->with('user', $user)
             ->with('all_posts', $all_posts);
     }

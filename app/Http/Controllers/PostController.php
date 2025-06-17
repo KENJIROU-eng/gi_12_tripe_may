@@ -136,6 +136,7 @@ class PostController extends Controller
         foreach ($request->category_name as $category_name) {
             $category_id[] = ['category_id' => $category_name];
         }
+        $post->categoryPost()->delete();
         $post->categoryPost()->createMany($category_id);
 
         return view('posts.show')
