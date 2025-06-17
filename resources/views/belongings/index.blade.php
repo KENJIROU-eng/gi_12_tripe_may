@@ -8,15 +8,17 @@
     <input type="text" id="itemInput" placeholder="Add item..." class="flex-grow border px-2 py-1 rounded" />
     <button id="addItemBtn" class="bg-green-500 text-white px-2 py-1 rounded" type="button">Add</button>
 </div>
-<ul id="belongingList" class="space-y-1 mb-4 max-h-40 overflow-y-auto overflow-x-hidden">
+<ul id="belongingList" class="space-y-1 mb-4 max-h-[140px] overflow-y-auto overflow-x-hidden">
     @foreach ($all_belongings as $belonging)
     <li class="flex justify-between gap-2 p-1 border rounded" data-id="{{ $belonging->id }}">
         <div class="flex-shrink-0">
             <input type="checkbox" class="item-checkbox" data-id="{{ $belonging->id }}" {{ $belonging->checked ? 'checked' : '' }}>
         </div>
-        <div class="flex-grow text-center">
-            <span class="item-name {{ $belonging->checked ? 'text-gray-400 line-through' : '' }}">
-                {{ $belonging->name }}
+        <div class="flex-grow text-start ms-2">
+            <span class="item-name {{ $belonging->checked ? 'text-gray-400 line-through' : '' }}" title="{{ $belonging->name }}">
+                <span>
+                    {{ Str::limit($belonging->name, 20) }}
+                </span>
             </span>
         </div>
         <div class="flex-shrink-0 flex gap-2">

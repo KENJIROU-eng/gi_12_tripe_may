@@ -7,13 +7,17 @@
                     <div class="relative my-5">
                         {{-- タイトル --}}
                         <div class="w-full text-center">
-                            <h1 class="text-4xl sm:text-6xl font-bold">Details</h1>
+                            <h1 class="text-4xl sm:text-6xl font-bold">
+                                Details
+                            </h1>
                         </div>
 
                         {{-- グループ情報 --}}
                         @if ($itinerary->group_id != null)
-                            <div x-data="{ open: false }"
-                                 class="-mt-2 flex flex-col items-center md:absolute md:top-0 md:right-0 md:items-end space-y-2">
+                            <div
+                                x-data="{ open: false }"
+                                class="-mt-2 flex flex-col items-center md:absolute md:top-0 md:right-0 md:items-end space-y-2"
+                            >
                                 {{-- グループ名 --}}
                                 <div class="text-lg text-blue-500">
                                     <a href="{{ route('message.show', $itinerary->group_id) }}">
@@ -24,30 +28,37 @@
                                 {{-- アイコン --}}
                                 <button @click="open = !open" class="flex -space-x-4">
                                     @foreach ($itinerary->group->users->take(3) as $user)
-                                        <img src="{{ $user->avatar_url ?? asset('images/user.png') }}"
-                                             class="w-9 h-9 rounded-full border-2 border-white hover:z-10"
-                                             alt="{{ $user->name }}">
+                                        <img
+                                            src="{{ $user->avatar_url ?? asset('images/user.png') }}"
+                                            class="w-9 h-9 rounded-full border-2 border-white hover:z-10"
+                                            alt="{{ $user->name }}"
+                                        >
                                     @endforeach
+
                                     @if ($itinerary->group->users->count() > 3)
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
+                                        <div class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
                                             +{{ $itinerary->group->users->count() - 3 }}
                                         </div>
                                     @endif
                                 </button>
 
                                 {{-- メンバー一覧 --}}
-                                <div x-show="open" @click.away="open = false"
-                                     class="mt-2 w-64 bg-white border rounded-lg shadow-lg z-50">
+                                <div
+                                    x-show="open"
+                                    @click.away="open = false"
+                                    class="mt-2 w-64 bg-white border rounded-lg shadow-lg z-50"
+                                >
                                     <div class="p-4">
                                         <h2 class="text-sm font-semibold text-gray-600 mb-2">Group Member</h2>
                                         <ul class="space-y-2 max-h-60 overflow-y-auto">
                                             @foreach ($itinerary->group->users as $user)
                                                 <li class="flex items-center space-x-3">
                                                     <a href="{{ route('profile.show', $user->id) }}">
-                                                        <img src="{{ $user->avatar_url ?? asset('images/user.png') }}"
-                                                             class="w-8 h-8 rounded-full"
-                                                             alt="{{ $user->name }}">
+                                                        <img
+                                                            src="{{ $user->avatar_url ?? asset('images/user.png') }}"
+                                                            class="w-8 h-8 rounded-full"
+                                                            alt="{{ $user->name }}"
+                                                        >
                                                     </a>
                                                     <a href="{{ route('profile.show', $user->id) }}">
                                                         <p class="text-sm">{{ $user->name }}</p>
@@ -60,8 +71,6 @@
                             </div>
                         @endif
                     </div>
-
-                    {{-- メイングリッド --}}
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
                         {{-- 左：行程詳細 --}}
                         <div class="lg:col-span-2 flex flex-col border rounded-lg shadow-sm overflow-hidden">
@@ -95,18 +104,13 @@
                                         <h3 class="font-semibold mt-6 mb-2 text-blue-600 border-b pb-1 text-lg">
                                             {{ \Carbon\Carbon::parse($dateItinerary->date)->format('M. d, Y') }}
                                         </h3>
-                                        <div id="weatherContainer-{{ \Carbon\Carbon::parse($dateItinerary->date)->format('Ymd') }}" class="my-4 text-sm text-gray-700"></div>
-                                        <!-- purge対象クラスが消されないようにするダミー -->
-                                        <div class="hidden text-yellow-400 text-blue-500 text-gray-500 text-yellow-600 text-blue-300 text-gray-400"></div>
-
                                         <ul>
                                             @php
                                                 $dailyTotalDistance = 0;
                                                 $dailyDurationSeconds = 0;
                                             @endphp
                                             @foreach ($dateItinerary->mapItineraries as $map)
-                                                <li
-                                                    class="flex justify-between items-center py-1 border-b border-dashed border-gray-200">
+                                                <li class="flex justify-between items-center py-1 border-b border-dashed border-gray-200">
                                                     <span class="ml-4 flex items-center gap-2">
                                                         @php
                                                             $mode = strtoupper($map->travel_mode ?? 'DRIVING');
@@ -186,10 +190,6 @@
                             window.existingData = @json($itineraryData['destinations'] ?? []);
                             console.log('existingData:', existingData);
                         </script>
-                        <script>
-                            const weatherApiKey = @json(config('services.weatherapi.key'));
-                        </script>
-
                         <script src="{{ asset('js/itineraries/show.js') }}"></script>
                         <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places&callback=initShowMap&loading=async" async defer></script>
                     @endpush

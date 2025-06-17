@@ -49,7 +49,7 @@ function setupItemEvents(item) {
 
     // 編集
     editBtn.addEventListener('click', () => {
-        const oldName = itemName.title || itemName.textContent.trim();
+        const oldName = itemName.textContent.trim();
         const input = document.createElement('input');
         input.type = 'text';
         input.value = oldName;
@@ -59,26 +59,24 @@ function setupItemEvents(item) {
 
         const finishEdit = async () => {
             const newName = input.value.trim();
-            if (newName && newName !== oldName) {
-                try {
-                    await axios.put(`/belongings/${itemId}`, { name: newName });
+if (newName && newName !== oldName) {
+    try {
+        await axios.put(`/belongings/${itemId}`, { name: newName });
 
-                    const newSpan = document.createElement('span');
-                    newSpan.className = 'item-name';
-                    newSpan.title = newName;
-                    newSpan.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
-                    input.replaceWith(newSpan);
+        const newSpan = document.createElement('span');
+        newSpan.className = 'item-name';
+        newSpan.textContent = newName;
+        input.replaceWith(newSpan);
 
-                    const original = document.querySelector(`#belongingList li[data-id="${itemId}"] .item-name`);
-                    if (original) {
-                        original.title = newName;
-                        original.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
-                    }
-                } catch (err) {
-                    console.error('Modal edit failed:', err);
-                    input.replaceWith(itemName);
-                }
-            } else {
+        const original = document.querySelector(`#belongingList li[data-id="${itemId}"] .item-name`);
+        if (original) {
+            original.textContent = newName;
+        }
+    } catch (err) {
+        console.error('Modal edit failed:', err);
+        input.replaceWith(itemName);
+    }
+} else {
                 input.replaceWith(itemName);
             }
         };
@@ -91,7 +89,6 @@ function setupItemEvents(item) {
             }
         });
     });
-
 
     // 削除
     deleteBtn.addEventListener('click', () => {
@@ -139,18 +136,9 @@ function addItemToDOM(belonging) {
 
     const nameDiv = document.createElement('div');
     nameDiv.className = 'flex-grow text-center';
-
-const span = document.createElement('span');
-span.className = 'item-name' + (belonging.is_checked ? ' text-gray-400 line-through' : '');
-
-// 最大20文字で省略表示（完全な名前はtitle属性に）
-const fullName = belonging.name;
-const truncatedName = fullName.length > 20 ? fullName.slice(0, 20) + '...' : fullName;
-
-span.textContent = truncatedName;
-span.title = fullName; // ツールチップで完全表示
-
-
+    const span = document.createElement('span');
+    span.className = 'item-name' + (belonging.is_checked ? ' text-gray-400 line-through' : '');
+    span.textContent = belonging.name;
     nameDiv.appendChild(span);
 
     const buttonDiv = document.createElement('div');
@@ -227,7 +215,7 @@ document.addEventListener('click', async (e) => {
     // 編集
     if (target.closest('.edit-btn')) {
         const span = li.querySelector('.item-name');
-        const oldName = span.title || span.textContent.trim(); // title優先で取得
+        const oldName = span.textContent.trim();
         const input = document.createElement('input');
         input.type = 'text';
         input.value = oldName;
@@ -240,11 +228,9 @@ document.addEventListener('click', async (e) => {
             if (newName && newName !== oldName) {
                 try {
                     await axios.put(`/belongings/${id}`, { name: newName });
-
                     const newSpan = document.createElement('span');
                     newSpan.className = 'item-name';
-                    newSpan.title = newName;
-                    newSpan.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
+                    newSpan.textContent = newName;
                     input.replaceWith(newSpan);
                 } catch (err) {
                     console.error('Update failed:', err);
@@ -263,7 +249,6 @@ document.addEventListener('click', async (e) => {
             }
         });
     }
-
 
 
     // 削除
