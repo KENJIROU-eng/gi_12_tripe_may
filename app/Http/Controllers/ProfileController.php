@@ -125,7 +125,7 @@ class ProfileController extends Controller
 
     public function show($user_id) {
         $user = $this->user->findOrFail($user_id);
-        $all_posts = $user->post()->paginate(6)->onEachSide(2);
+        $all_posts = $user->post->all();
         return view('profile.show')
             ->with('user', $user)
             ->with('all_posts', $all_posts);

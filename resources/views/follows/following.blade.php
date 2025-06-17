@@ -11,23 +11,21 @@
                     <div class="mx-auto h-full mt-8">
                         @foreach ($followings as $following)
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
-                                <a href="" class="flex items-center space-x-4 w-full ml-2">
-                                    @if ($following->following->avatar)
-                                        <img src="{{ $following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
+                                <a href="{{ route('profile.show', $following->following->id) }}" class="flex items-center space-x-4 w-full ml-2">
+                                    @if ($following->avatar)
+                                        <img src="{{ $$following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
                                     @else
-                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                                        {{ strtoupper(substr($following->following->name, 0, 1)) }}
-                                    </div>
+                                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                            {{ strtoupper(substr($following->following->name, 0, 1)) }}
+                                        </div>
                                     @endif
-
-                                    <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                        <p class="font-semibold text-2xl truncate ">{{$following->following->name}}</p>
+                                    <div class="text-center">
+                                        <p class="font-semibold text-2xl truncate">{{ $following->following->name }}</p>
                                     </div>
                                 </a>
                             </div>
                         @endforeach
                     </div>
-                    {{-- paginate --}}
                 </div>
             </div>
         </div>

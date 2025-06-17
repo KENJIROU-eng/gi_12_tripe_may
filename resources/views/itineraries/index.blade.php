@@ -71,7 +71,7 @@
                         </div>
 
                         {{-- body --}}
-                        <div id="scrollContainer" class="max-h-[660px] overflow-y-auto border rounded mb-3">
+                        <div id="scrollContainer" class="max-h-[600px] overflow-y-auto border rounded mb-3">
                             <div id="itineraryContainer" class="max-w-6xl mx-auto">
                                 @forelse ($all_itineraries as $itinerary)
                                     <div class="flex flex-col md:grid md:grid-cols-12 items-center text-md gap-4 py-2 text-center border-b itinerary-row"
