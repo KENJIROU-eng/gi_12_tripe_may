@@ -25,7 +25,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $all_posts = $this->post->paginate(6)->onEachSide(2);
+        $all_posts = $this->post->latest()->get();
         $all_categories = $this->category->all();
         return view('posts.list')
             ->with('all_posts', $all_posts)
@@ -136,6 +136,7 @@ class PostController extends Controller
         foreach ($request->category_name as $category_name) {
             $category_id[] = ['category_id' => $category_name];
         }
+        $post->categoryPost()->delete();
         $post->categoryPost()->createMany($category_id);
 
         return view('posts.show')
@@ -211,4 +212,14 @@ class PostController extends Controller
 
         return response()->json(['success' => true, 'post_id' => $post->id]);
     }
+
+    public function loadMore(Request $request)
+{
+    $offset = $request->input('offset', 0);
+    $posts = Post::with('user')->skip($offset)->take(10)->get();
+
+    return response()->json([
+        'posts' => $posts,
+    ]);
+}
 }

@@ -10,6 +10,7 @@ use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -66,7 +67,34 @@ class GroupController extends Controller
             return view('groups.show',compact('group','messages'));
     }
 
+    public function editMessage(Message $message){
 
+        $this->authorize('update', $message);
+        return view('groups.chats.edit', compact('message'));
+    }
+
+    public function destroyMessage(Message $message){
+
+        $this->authorize('delete', $message);
+        $message->delete();
+
+        return back()->with('success', 'メッセージを削除しました');
+    }
+
+    public function updateMessage(Request $request, Message $message){
+        
+    $this->authorize('update', $message);
+
+    $request->validate([
+        'message' => 'required|string',
+    ]);
+
+    $message->update([
+        'message' => $request->input('message'),
+    ]);
+
+    return redirect()->route('groups.show', $message->group_id)->with('success', 'メッセージを編集しました');
+}
 
     /**
      * Display a listing of the resource.
@@ -191,10 +219,10 @@ class GroupController extends Controller
      */
     public function destroy($group_id)
     {
-
-
-
         $group = Group::findOrFail($group_id);
+        if ($group->image) {
+                Storage::disk('public')->delete($group->image);
+            }
         $group->delete();
 
     return redirect()->route('groups.index');

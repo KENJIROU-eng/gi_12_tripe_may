@@ -30,7 +30,7 @@ class BillController extends Controller
     {
         // ItineraryのIDの付与
         $itinerary = $this->itinerary->findOrFail($itinerary_id);
-        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
+        $all_bills = $itinerary->bills()->latest()->paginate(5)->onEachSide(2);
 
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail($itinerary->group_id);
@@ -46,12 +46,17 @@ class BillController extends Controller
             $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
             $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
         }
+        $total_Pay_alone = 0;
+        foreach ($all_bills as $bill) {
+            $total_Pay_alone = $total_Pay_alone + $bill->cost;
+        }
 
         return view('goDutch.show')
             ->with('all_bills', $all_bills)
             ->with('itinerary', $itinerary)
             ->with('groupMembers', $groupMembers)
             ->with('total_getPay', $total_getPay)
+            ->with('total_Pay_alone', $total_Pay_alone)
             ->with('total_Pay', $total_Pay);
     }
 
@@ -111,12 +116,12 @@ class BillController extends Controller
             $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
         }
 
-        return view('goDutch.show')
-        ->with('all_bills', $all_bills)
-        ->with('itinerary', $itinerary)
-        ->with('groupMembers', $groupMembers)
-        ->with('total_getPay', $total_getPay)
-        ->with('total_Pay', $total_Pay);
+        $total_Pay_alone = 0;
+        foreach ($all_bills as $bill) {
+            $total_Pay_alone = $total_Pay_alone + $bill->cost;
+        }
+
+        return redirect()->route('goDutch.index', $itinerary_id);
     }
 
     /**

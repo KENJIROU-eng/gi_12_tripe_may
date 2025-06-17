@@ -40,7 +40,9 @@
             @php $isMine = $message->user_id === auth()->id();@endphp
 
                 @if ($isMine)
-                    <div class="flex justify-end items-end">
+                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+
+
                         <div class="text-xs text-right mt-1 text-gray-400 mr-2">
                             {{ $message->created_at->format('H:i') }}
                         </div>
@@ -50,7 +52,7 @@
                             @endif
                         </div>
                         @if ($message->image_url)
-                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg">
+                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
                         @endif
                     </div>
                 @else
@@ -66,7 +68,7 @@
                                     @endif
                                 </div>
                                 @if ($message->image_url)
-                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg">
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
                                 @endif
                             </div>
                             <div class="text-xs text-gray-400 items-end">
@@ -78,6 +80,54 @@
                 @endif
         @endforeach
     </div>
+
+    <ul id="custom-menu"
+    class="absolute hidden bg-gray-100  rounded shadow z-50">
+    <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
+        Edit
+    </li>
+    <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
+        Delete
+    </li>
+</ul>
+
+<script>
+    let currentMessageId = null;
+
+    function openCustomMenu(event, messageId) {
+        event.preventDefault();
+
+        currentMessageId = messageId;
+
+        const menu = document.getElementById('custom-menu');
+        menu.style.top = event.clientY + 'px';
+        menu.style.left = event.clientX + 'px';
+        menu.classList.remove('hidden');
+    }
+
+    document.getElementById('edit-item').addEventListener('click', () => {
+        if (currentMessageId) {
+            window.location.href = `/chat/${currentMessageId}/edit`;
+        }
+    });
+
+    document.getElementById('delete-item').addEventListener('click', () => {
+        if (currentMessageId && confirm('本当に削除しますか？')) {
+            fetch(`/chat/${currentMessageId}/delete`, {
+                method:'DELETE',
+                headers:{'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+            }).then(response=>{
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    });
+
+    document.addEventListener('click', () => {
+        document.getElementById('custom-menu').classList.add('hidden');
+    });
+</script>
 
 
     <form id="chat-form" action="{{ route('message.send')}}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
@@ -91,8 +141,5 @@
         <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send
         </button>
     </form>
-
-
->>>>>>> 06/05/2025_mayu
 </x-app-layout>
 

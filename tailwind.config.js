@@ -14,6 +14,8 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                bree: ['Bree Serif', ...defaultTheme.fontFamily.sans],
+                serif: ['Slabo 27px', ...defaultTheme.fontFamily.serif],
             },
         },
     },

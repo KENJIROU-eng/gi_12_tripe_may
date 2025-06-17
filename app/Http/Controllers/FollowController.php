@@ -33,8 +33,6 @@ class FollowController extends Controller
         $this->follow->follower_id = Auth::User()->id;
         $this->follow->save();
 
-        // $user = $this->user->findOrFail($following_id);
-        // $all_posts = $user->post()->paginate(6)->onEachSide(2);
         return redirect()->back();
     }
 

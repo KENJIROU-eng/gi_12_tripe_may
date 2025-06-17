@@ -6,6 +6,17 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 Alpine.start();
+window.enableNotification = function () {
+    Notification.requestPermission().then(permission => {
+        console.log('通知許可状態:', permission);
+        if (permission === 'granted') {
+            new Notification('You can receive the notifications in the application', {
+                body: 'Thank you for permitting to receive the notifications',
+            });
+            document.getElementById('notify-box').style.display = 'none';
+        }
+    });
+};
 
 // main.js
 // import { login } from './auth.js';

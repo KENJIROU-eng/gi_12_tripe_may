@@ -20,15 +20,32 @@
                         </div>
                     </div>
                     {{-- contents --}}
-                    <div class="mx-auto h-4/5 mt-8 overflow-hidden">
+                    <div class="mx-auto h-4/5 mt-6 overflow-hidden">
+                        @if ($all_bills->count() > 1)
+                            <div class="grid grid-cols-7 items-center text-center text-md my-4 gap-4 pb-4 bg-green-500 text-white py-2 font-bold">
+                                {{-- user avatar --}}
+                                <div class="col-span-1">
+                                    {{-- user show --}}
+                                    <p>The User who pay for the bill</p>
+                                </div>
+                                {{-- bill name --}}
+                                <div class="col-span-1">
+                                    <p>The bill name</p>
+                                </div>
+                                {{-- bill cost --}}
+                                <div class="col-span-1">
+                                    <p>The bill cost</p>
+                                </div>
+                            </div>
+                        @endif
                         @forelse ($all_bills as $bill)
                             <div class="grid grid-cols-7 items-center text-center text-md my-4 gap-4 pb-4">
                                 {{-- user avatar --}}
                                 <div class="col-span-1">
                                     {{-- user show --}}
-                                    <a href="{{ route('profile.show', $bill->userPay->id) }}" class="text-xl w-6 h-6 rounded-full">
+                                    <a href="{{ route('profile.show', $bill->userPay->id) }}" class="block w-6 h-6 rounded-full overflow-hidden mx-auto">
                                         @if ($bill->userPay->avatar)
-                                            <img src="{{ $bill->userPay->avatar }}" alt="{{ $bill->userPay->name }}">
+                                            <img src="{{ $bill->userPay->avatar }}" alt="{{ $bill->userPay->name }}" class="w-full h-full object-cover">
                                         @else
                                             <i class="fa-solid fa-circle-user"></i>
                                         @endif
@@ -80,7 +97,7 @@
                             </div>
                         @endforelse
                         <h1 class="text-xl text-center">Calculation Result for payment per each person</h1>
-                        <div class="mx-auto w-2/3 max-h-30 space-y-2 mt-2 overflow-y-auto p-2 rounded">
+                        <div class="mx-auto w-2/3 max-h-[110px] space-y-2 mt-2 overflow-y-auto p-2 rounded">
                             @forelse ($groupMembers as $groupMember)
                                 <div class="flex">
                                     <span class="text-md text-gray-700">{{ $groupMember->name }}</span>
@@ -93,7 +110,7 @@
                                     @endif
                                 </div>
                             @empty
-                                <p class="text-sm text-gray-500">No Users</p>
+                                <p class="text-sm text-gray-500">$ {{ $total_Pay_alone }}</p>
                             @endforelse
                         </div>
                     </div>

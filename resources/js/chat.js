@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
     //2.フォームと入力要素の取得
     const form = document.getElementById('chat-form');
-    const messageInput = form.querySelector('input[name="message"]');
-    const imageInput = form.querySelector('input[name="image"]');
+    // const messageInput = form.querySelector('input[name="message"]');
+    // const imageInput = form.querySelector('input[name="image"]');
 
     //3.フォーム送信イベントをキャッチ
     form.addEventListener('submit', async (e) => {
@@ -173,6 +173,9 @@ if (groupId && myUserId) {
                     </div>
                 `;
             } else {
+                new Notification(`you receive a message by ${e.user_name}`, {
+                    body: `${e.message.text}`,
+                });
                 messageElement.innerHTML = `
                     <div>
                         <div class="flex items-start">
@@ -189,7 +192,8 @@ if (groupId && myUserId) {
                                 </div>
                                 <div class="text-xs text-gray-400 items-end">
                                     ${e.time}
-                                </div>
+
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -204,4 +208,6 @@ if (groupId && myUserId) {
             messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
+
+
 

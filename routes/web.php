@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
+    Route::get('/post/load-more', [PostController::class, 'loadMore']) ->name('post.loadMore');
     // Route::get('/post/test', [PostController::class, 'test']);
     // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);
@@ -54,6 +55,9 @@ Route::middleware('auth')->group(function () {
     #chat
     Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('message.send');
     Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
+    Route::get('/chat/{message}/edit', [GroupController::class, 'editMessage'])->name('message.edit');
+    Route::delete('/chat/{message}/delete', [GroupController::class, 'destroyMessage'])->name('message.destroy');
+    Route::patch('/chat/{message}', [GroupController::class, 'updateMessage'])->name('message.update');
 
 
     #group
