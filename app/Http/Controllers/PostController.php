@@ -63,7 +63,6 @@ class PostController extends Controller
             'title' => 'required|min:1|max:50',
             'description' => 'required|min:1|max:1000',
             'image' => 'required|mimes:jpeg,jpg,png,gif|max:1048',
-            'category_name' => 'required'
         ]);
 
         $this->post->user_id = Auth::User()->id;
@@ -72,15 +71,15 @@ class PostController extends Controller
         $this->post->image = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
         $this->post->save();
 
+        if ($request->category_name != NULL)  {
         $category_id = [];
         foreach ($request->category_name as $category_name) {
             $category_id[] = ['category_id' => $category_name];
         }
         $this->post->categoryPost()->createMany($category_id);
+        };
 
-        $all_posts = $this->post->paginate(6)->onEachSide(2);
-        return redirect()->route('post.list')
-            ->with('all_posts', $all_posts);
+        return redirect()->route('post.list');
     }
 
     /**

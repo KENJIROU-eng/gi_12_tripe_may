@@ -29,11 +29,11 @@
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
-        {{-- <style>
+        <style>
             [x-cloak] {
                 display: none !important;
             }
-        </style> --}}
+        </style>
     </head>
     <body data-user-id="{{ Auth::user()->id }} ">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -44,5 +44,13 @@
             </main>
         </div>
         @stack('scripts')
+        <script>
+            window.appData = {
+                groupIds: @json($groupIds ?? []),
+                tripSchedule: @json($tripSchedule ?? []),
+                tripName: @json($tripName ?? []),
+            };
+            const routeUrls = @json($routeUrls ?? []);
+        </script>
     </body>
 </html>

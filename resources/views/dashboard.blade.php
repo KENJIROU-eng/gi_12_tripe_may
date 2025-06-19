@@ -10,9 +10,12 @@
                     </div>
 
                     {{-- notification --}}
-                    <div id="notify-box" class="fixed bottom-4 right-4 bg-white p-4 rounded shadow">
+                    <div id="notify-box" class="fixed bottom-4 right-4 bg-white p-4 rounded shadow max-w-sm">
                         <p>Do you wanna receive the notifications?</p>
-                        <button onclick="enableNotification()" class="bg-blue-500 text-white px-3 py-1 rounded mt-2">Yes</button>
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="enableNotification()" class="bg-blue-500 text-white w-1/2 py-1 rounded ">Yes</button>
+                            <button onclick="dismissNotification()" class="bg-gray-300 text-gray-800 w-1/2 py-1 rounded">Cancel</button>
+                        </div>
                     </div>
                     {{-- contents --}}
                     <div class="mx-auto h-4/5 mt-8 overflow-hidden">
@@ -98,13 +101,6 @@
         </div>
     </div>
 </x-app-layout>
-<script>
-    window.appData = {
-        tripSchedule: @json($tripSchedule),
-        tripName: @json($tripName),
-    };
-    const routeUrls = @json($routeUrls); // Laravelの配列をJSに渡す
-</script>
 {{-- caldender js --}}
 <script src="{{ asset('js/homepage_calender.js') }}"></script>
 

@@ -6,8 +6,10 @@ use App\Models\Bill;
 use App\Models\Group;
 use App\Models\Itinerary;
 use App\Models\BillUser;
+use App\Models\Pay;
 use Illuminate\Http\Request;
 use App\Services\CostCalculator;
+use Illuminate\Support\Facades\Auth;
 
 class BillController extends Controller
 {
@@ -15,13 +17,15 @@ class BillController extends Controller
     private $group;
     private $itinerary;
     private $billUser;
+    private $pay;
 
-    public function __construct(Bill $bill, Group $group, Itinerary $itinerary, BillUser $billUser)
+    public function __construct(Bill $bill, Group $group, Itinerary $itinerary, BillUser $billUser, Pay $pay)
     {
         $this->bill = $bill;
         $this->billUser = $billUser;
         $this->group = $group;
         $this->itinerary = $itinerary;
+        $this->pay = $pay;
     }
     /**
      * Display a listing of the resource.
@@ -30,7 +34,7 @@ class BillController extends Controller
     {
         // ItineraryのIDの付与
         $itinerary = $this->itinerary->findOrFail($itinerary_id);
-        $all_bills = $itinerary->bills()->latest()->paginate(5)->onEachSide(2);
+        $all_bills = $itinerary->bills()->latest()->get();
 
         // groupIDの付与ー＞のちに行う
         $group = $this->group->findOrFail($itinerary->group_id);
@@ -51,19 +55,26 @@ class BillController extends Controller
             $total_Pay_alone = $total_Pay_alone + $bill->cost;
         }
 
+        $pays = $this->pay->where('user_id', Auth::User()->id)->where('itinerary_id', $itinerary_id)->get();
+        $price = 0;
+        foreach ($pays as $pay) {
+            $price = $price + $pay->Price;
+        }
+
         return view('goDutch.show')
             ->with('all_bills', $all_bills)
             ->with('itinerary', $itinerary)
             ->with('groupMembers', $groupMembers)
             ->with('total_getPay', $total_getPay)
             ->with('total_Pay_alone', $total_Pay_alone)
-            ->with('total_Pay', $total_Pay);
+            ->with('total_Pay', $total_Pay)
+            ->with('price', $price);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, CostCalculator $costCalculator, $itinerary_id)
+    public function store(Request $request, $itinerary_id)
     {
         $request->validate([
             'user_paid_id' => 'required',
@@ -98,28 +109,6 @@ class BillController extends Controller
             }
         }
         $this->bill->billUser()->createMany($billUser);
-
-        $itinerary = $this->itinerary->findOrFail($itinerary_id);
-        $all_bills = $itinerary->bills()->latest()->paginate(6)->onEachSide(2);
-        // groupIDの付与ー＞のちに行う
-        $group = $this->group->findOrFail($itinerary->id);
-        $groupMembers = [];
-        foreach ($group->members as $groupMember) {
-            $groupMembers[] = $groupMember->user;
-        }
-
-        //calculation
-        $total_getPay = [];
-        $total_Pay = [];
-        foreach ($groupMembers as $member) {
-            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
-            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
-        }
-
-        $total_Pay_alone = 0;
-        foreach ($all_bills as $bill) {
-            $total_Pay_alone = $total_Pay_alone + $bill->cost;
-        }
 
         return redirect()->route('goDutch.index', $itinerary_id);
     }

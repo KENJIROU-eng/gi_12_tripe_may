@@ -7,10 +7,12 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\PayPalController;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
 
@@ -52,13 +54,16 @@ Route::middleware('auth')->group(function () {
     // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);
 
+    #comment
+    Route::post('/comment/{post_id}/store', [CommentController::class, 'store'])->name('comment.store');
+    Route::delete('/comment/{comment_id}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
+
     #chat
     Route::post('/chat/send', [GroupController::class, 'sendMessage'])->name('message.send');
     Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
     Route::get('/chat/{message}/edit', [GroupController::class, 'editMessage'])->name('message.edit');
     Route::delete('/chat/{message}/delete', [GroupController::class, 'destroyMessage'])->name('message.destroy');
     Route::patch('/chat/{message}', [GroupController::class, 'updateMessage'])->name('message.update');
-
 
     #group
     Route::get('/group', [GroupController::class, 'index'])->name('groups.index');
@@ -90,6 +95,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/goDutch/{itinerary_id}/create', [BillController::class, 'store'])->name('goDutch.create');
     Route::delete('/goDutch/delete/{bill_id}/{itinerary_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
     Route::patch('/goDutch/update/{bill_id}/{itinerary_id}', [BillController::class, 'update'])->name('goDutch.update');
+
+    #paypal
+    Route::get('/paypal/{itinerary_id}/{total}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');
+    Route::get('/paypal/{itinerary_id}/success', [PayPalController::class, 'captureTransaction'])->name('paypal.success');
 
     #ADMIN Routes
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){

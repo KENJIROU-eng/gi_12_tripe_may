@@ -82,6 +82,16 @@
                                                 @include('posts.modals.likeUser', ['post' => $post])
                                             </div>
                                         </div>
+                                        <div class="col-auto ">
+                                            {{-- trigger --}}
+                                            <div x-data="{ open: false }">
+                                                <button @click="open = true">
+                                                    {{ $post->likes()->count() }}
+                                                </button>
+                                                {{-- modal content --}}
+                                                @include('posts.modals.comments', ['post' => $post])
+                                            </div>
+                                        </div>
                                         <div class="col text-end text-blue-400 font-light ml-auto mr-4">
                                             @foreach ($post->categoryPost as $categoryPost)
                                                 #{{ $categoryPost->category->name }}

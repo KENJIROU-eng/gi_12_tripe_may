@@ -35,7 +35,7 @@
                                             @endif
                                             <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
                                                 <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
-                                                <p class="text-lg ml-3">({{ $group->members_count }})</p>
+                                                <p class="text-lg ml-3">({{ $group->members->count() }})</p>
                                             </div>
                                         </a>
 

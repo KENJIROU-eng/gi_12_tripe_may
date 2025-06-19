@@ -26,6 +26,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\Mail\MailServiceProvider::class,
+        Srmklive\PayPal\Providers\PayPalServiceProvider::class,
 
 
 

@@ -4,12 +4,13 @@
             <!-- Logo -->
             <div class="w-28 my-auto">
                 <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                    <a href="{{ route('dashboard') }}" class="block h-12 w-12">
+                        <img src="{{ asset('images/tripeas_logo_20250617.png') }}" alt="application logo" class="w-full h-full object-cover">
                     </a>
-                    <span class="ms-3 text-sm 2xl:text-xl font-semibold">Tripe@s</span>
+                    <span class="ms-3 text-sm 2xl:text-xl font-semibold title-lg">Tripe@s</span>
                 </div>
             </div>
+            <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
             @if (Auth::check())
                 <!-- Navigation Links -->

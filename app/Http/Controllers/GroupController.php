@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\GroupMember;
 use App\Models\User;
 use App\Models\Message;
+use App\Models\ReadMessage;
 use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,17 @@ class GroupController extends Controller
             'image_url' => $imageUrl,
         ]);
 
+        // $group = Group::findOrFail($request->group_id);
+        // $groupMembers = $group->members;
+
+        // foreach ($groupMembers as $member) {
+        ReadMessage::create([
+            'user_id' => $user->id,
+            'message_id' => $message->id,
+        ]);
+        // }
+
+
         broadcast(new MessageSent($message));
 
         return response()->json(['success' => true]); //成功したらJSONレスポンスを返す
@@ -62,9 +74,23 @@ class GroupController extends Controller
             ->orderBy('created_at')
             ->get();
 
+        $groups = Group::all();
+        $groupKey = [];
+        foreach ($group->users as $user) {
+            $group_private = $groups->first(function ($group_single) use ($user) {
+                return (
+                    ($group_single->user_id === Auth::id() && $group_single->name === $user->name) ||
+                    ($group_single->user_id === $user->id && $group_single->name === Auth::user()->name)
+                );
+            });
+            if ($group_private) {
+                $groupKey[$user->id] = $group_private ? $group_private->id : null;
+            };
+        };
+
         // broadcast(new MessageSent($user, $request->message, $imageUrl, $request->group_id))->toOthers();
 
-            return view('groups.show',compact('group','messages'));
+            return view('groups.show',compact('group','messages', 'groupKey'));
     }
 
     public function editMessage(Message $message){
@@ -82,7 +108,7 @@ class GroupController extends Controller
     }
 
     public function updateMessage(Request $request, Message $message){
-        
+
     $this->authorize('update', $message);
 
     $request->validate([
@@ -103,11 +129,25 @@ class GroupController extends Controller
     {
         $user = auth()->user();
 
+        $groupIds = GroupMember::where('user_id', $user->id)
+            ->pluck('group_id')
+            ->toArray();
+
+        // group_idごとに最新のメッセージだけ取得
+        $latestMessages = Message::whereIn('group_id', $groupIds)
+            ->with('group')
+            ->latest()
+            ->get()
+            ->unique('group_id') // 各グループで1つだけ（最新）
+            ->values(); // インデックス整理
+
+        // 各メッセージに紐づくグループを取り出す（順番はメッセージ準拠）
+        $groups = $latestMessages->pluck('group');
 
         //ログインユーザーが所属しているグループを取得
-        $groups = Group::whereHas('members',function($quely) use ($user){
-            $quely->where('user_id',$user->id);
-        })->withCount('members')->get();
+        // $groups = Group::whereHas('members',function($quely) use ($user){
+        //     $quely->where('user_id',$user->id);
+        // })->withCount('members')->get();
 
         $users = User::all();
 
