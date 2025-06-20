@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col lg:flex-row max-w-full mx-auto px-4">
+        <div class="flex flex-col lg:flex-row max-w-full mx-auto px-4 gap-4">
             {{-- 左：旅程表 --}}
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
                 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
@@ -214,7 +214,7 @@
             </div>
 
             {{-- 右：ルート表示 --}}
-            <div class="w-1/5 lg:w-[320px] xl:w-[400px] border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit">
+            <div class="w-full lg:w-[320px] xl:w-[400px] border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit">
                 <h2 class="text-lg font-semibold text-blue-600 mb-2">Route Steps</h2>
                 <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[600px]">
                     {{-- JavaScriptでステップ追加 --}}
