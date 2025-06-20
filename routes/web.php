@@ -80,10 +80,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/load', [ItineraryController::class, 'loadMore'])->name('itinerary.load');
 
     #belonging
-    Route::get('/belongings/{itinerary_id}', [BelongingController::class, 'index'])->name('belonging.index');
-    Route::post('/belongings/store', [BelongingController::class, 'store'])->name('belonging.store');
-    Route::put('/belongings/{belonging}', [BelongingController::class, 'update'])->name('belonging.update');
-    Route::delete('/belongings/{belonging}', [BelongingController::class, 'destroy'])->name('belonging.destroy');
+    Route::get('/belonging/check-duplicate', [BelongingController::class, 'checkDuplicate'])->name('belonging.checkDuplicate');
+    Route::patch('/belonging/{belonging}/add-members', [BelongingController::class, 'addMembers']);
+    Route::post('/belonging/{itinerary_id}/store', [BelongingController::class, 'store'])->name('belonging.store');
+    Route::patch('/belonging/{belonging_id}/user/{user}', [BelongingController::class, 'updateCheck']);
+    Route::patch('/belonging/{belonging_id}/update', [BelongingController::class, 'update'])->name('belonging.update');
+    Route::delete('/belonging/{belonging_id}/destroy', [BelongingController::class, 'destroy'])->name('belonging.destroy');
+    Route::get('/belonging/{belonging_id}', [BelongingController::class, 'index'])->name('belonging.index');
+
 
     #goDutch
     Route::get('/{itinerary_id}/goDutch', [BillController::class, 'index'])->name('goDutch.index');

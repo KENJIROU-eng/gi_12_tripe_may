@@ -1,13 +1,16 @@
-let dateFieldsContainer = document.getElementById('dateFieldsContainer');
-let totalSummary = document.getElementById('totalSummary');
-let distanceMatrixService;
-let dailyDistances = {};
-let dailyDurations = {};
-let draggedTravelMode = null;
-let draggedTravelModeValue = null;
-let radioCheckedStateBackup = {};
+// グローバル変数定義
+let dateFieldsContainer = document.getElementById('dateFieldsContainer'); // 日付別の目的地入力欄全体を格納する親要素
+let totalSummary = document.getElementById('totalSummary'); // 画面下部に表示される総移動距離・所要時間の要素
+let distanceMatrixService; // Google Maps の距離計算サービス（DistanceMatrixService）のインスタンス
+let dailyDistances = {}; // 各日付ごとの合計移動距離（メートル単位）を格納する連想配列
+let dailyDurations = {}; // 各日付ごとの合計所要時間（秒単位）を格納する連想配列
+let draggedTravelMode = null; // 並び替え中に使用する現在ドラッグ中の移動手段名（未使用であればnull）
+let draggedTravelModeValue = null; // 並び替え中に使用する現在選択中の移動手段の値（例: 'DRIVING'）
+let radioCheckedStateBackup = {}; // 並び替え開始前に保存しておくラジオボタンのチェック状態（placeId をキーに保持）
 
 
+
+// 目的地入力フィールドを1件分HTMLで生成
 function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
 
     // indexが未定義/nullのとき、自動的に現在の件数を取得して補完
@@ -15,7 +18,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         const container = document.querySelector(`[data-date="${dateKey}"] .destinations`);
         index = container ? container.querySelectorAll('.destination-item').length : 0;
     }
-    
+
     const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
     const travelModeLabels = {
         DRIVING: 'Car',
@@ -65,6 +68,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
     `;
 }
 
+// ラジオボタンのTRANSIT警告表示制御
 function handleTransitWarnings() {
     document.querySelectorAll('.travel-mode-radio').forEach(radio => {
         radio.addEventListener('change', () => {
@@ -81,7 +85,7 @@ function handleTransitWarnings() {
     });
 }
 
-
+// 現在入力中の目的地データをすべて保存
 function saveCurrentDestinations() {
     const data = {};
     const dateDivs = dateFieldsContainer.children;
@@ -126,6 +130,7 @@ for (const dateDiv of dateDivs) {
     return data;
 }
 
+// yyyy-mm-ddを『Jun. 19, 2025』形式に整形
 function formatDateToDisplay(dateStr) {
     const date = new Date(dateStr);
     const options = { year: 'numeric', month: 'short', day: '2-digit' };
@@ -133,6 +138,7 @@ function formatDateToDisplay(dateStr) {
     return `${parts[0]}. ${parts[1]}, ${parts[2]}`;
 }
 
+// 指定された日付範囲に応じて入力フィールドを再生成
 async function createDateFields(startDate, endDate, existingData = {}) {
     dateFieldsContainer.innerHTML = '';
     const start = new Date(startDate);
@@ -207,11 +213,11 @@ async function createDateFields(startDate, endDate, existingData = {}) {
     attachRemoveButtons();
     attachInputChangeEvents();
     initSortable();
-    // attachTravelModeChangeEvents();
     updateFirstDestinationDisplay();
     handleTransitWarnings();
 }
 
+// 住所をGoogle Geocoderで緯度経度に変換
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
@@ -231,6 +237,7 @@ function geocodeAddress(address) {
     });
 }
 
+// inputにGoogle Autocompleteを適用する
 function attachAutocomplete(input) {
     const autocomplete = new google.maps.places.Autocomplete(input, {
         fields: ['formatted_address', 'geometry', 'name', 'place_id'],
@@ -257,6 +264,7 @@ function attachAutocomplete(input) {
     });
 }
 
+// ＋ボタンで新しい目的地入力を追加する処理
 function attachAddDestinationButtons() {
     document.querySelectorAll('.addDestinationBtn').forEach(btn => {
         btn.onclick = () => {
@@ -274,6 +282,7 @@ function attachAddDestinationButtons() {
     });
 }
 
+// ×ボタンで目的地を削除する処理
 function attachRemoveButtons() {
     document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.onclick = () => {
@@ -285,6 +294,7 @@ function attachRemoveButtons() {
     });
 }
 
+// 入力欄のonchangeイベントに距離再計算・地図更新を追加
 function attachInputChangeEvents() {
     document.querySelectorAll('.destination-input').forEach(input => {
         input.onchange = () => {
@@ -294,15 +304,7 @@ function attachInputChangeEvents() {
     });
 }
 
-// function attachTravelModeChangeEvents() {
-//     document.querySelectorAll('.travel-mode-radio').forEach(radio => {
-//         radio.addEventListener('change', () => {
-//             updateAllDistanceTimes();
-//             updateMapByCurrentInputs();
-//         });
-//     });
-// }
-
+// Sortable.jsによる並び替え機能の初期化
 function initSortable() {
     document.querySelectorAll('.sortable-container').forEach(container => {
         new Sortable(container, {
@@ -366,6 +368,7 @@ function initSortable() {
     });
 }
 
+// 並び替え後にname属性を更新（サーバー側が配列で受けるため）
 function updateAllInputFieldNames() {
     document.querySelectorAll('#dateFieldsContainer > .mb-4').forEach(dateDiv => {
         const dateKey = dateDiv.dataset.date;
@@ -390,6 +393,7 @@ function updateAllInputFieldNames() {
     });
 }
 
+// 現在の全目的地をもとに地図を更新する
 function updateMapByCurrentInputs() {
     const latLngs = [];
     document.querySelectorAll('.destination-item').forEach(item => {
@@ -408,6 +412,7 @@ function updateMapByCurrentInputs() {
     }
 }
 
+// 緯度経度からマーカーとルートを描画する
 function updateMapRoutesByLatLngs(latLngs) {
     clearMarkers();
     latLngs.forEach((loc, i) => {
@@ -416,6 +421,7 @@ function updateMapRoutesByLatLngs(latLngs) {
     drawRoute(latLngs);
 }
 
+// フォーム読み込み時の初期化（日付範囲など）
 window.initializeCreateForm = function() {
     distanceMatrixService = new google.maps.DistanceMatrixService();
     ['start_date', 'end_date'].forEach(id => {
@@ -426,7 +432,6 @@ window.initializeCreateForm = function() {
                 const saveData = saveCurrentDestinations();
                 const filteredData = filterDataByDateRange(saveData, start, end);
                 createDateFields(start, end, filteredData);
-                // attachTravelModeChangeEvents();
                 updateAllDistanceTimes();
                 updateMapByCurrentInputs();
             }
@@ -443,6 +448,7 @@ window.initializeCreateForm = function() {
     }
 };
 
+// start/end範囲外のデータを除外するフィルタ処理
 function filterDataByDateRange(data, startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -458,7 +464,7 @@ function filterDataByDateRange(data, startDate, endDate) {
     return filtered;
 }
 
-// Promise対応のupdateAllDistanceTimes
+// Google DistanceMatrixを使って距離時間を日別・合計で計算
 function updateAllDistanceTimes() {
     return new Promise((resolve) => {
         const totalSummary = document.getElementById('totalSummary');
@@ -610,7 +616,7 @@ function updateAllDistanceTimes() {
     });
 }
 
-// フォーム送信制御
+// フォーム送信時、距離更新を待ってから送信する（submit防止＋再送信）
 const form = document.querySelector('form'); // ここは正しいformセレクタに変更してください
 form.addEventListener('submit', async (e) => {
     e.preventDefault(); // まず送信停止
@@ -625,6 +631,7 @@ form.addEventListener('submit', async (e) => {
     form.submit();
 });
 
+// 秒数を "1h 12m" 形式に変換
 function formatDuration(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -633,6 +640,7 @@ function formatDuration(seconds) {
     return `${m}m`;
 }
 
+// 最初の目的地は移動がないため、移動手段UIを非表示化
 function updateFirstDestinationDisplay() {
     const allDateDivs = [...document.querySelectorAll('#dateFieldsContainer > div[data-date]')];
     let firstItem = null;
@@ -665,6 +673,7 @@ function updateFirstDestinationDisplay() {
     }
 }
 
+// === 移動手段ラジオの変更時に距離・地図を再計算 ===
 document.addEventListener('change', function (e) {
     if (e.target.classList.contains('travel-mode-radio')) {
         updateAllDistanceTimes();
@@ -672,6 +681,7 @@ document.addEventListener('change', function (e) {
     }
 });
 
+// DOM読み込み後にタイトル文字数カウントとグループ変更モーダル処理
 document.addEventListener('DOMContentLoaded', () => {
     const groupSelect = document.getElementById('group_id');
     const groupModal = document.getElementById('groupModal');
@@ -709,7 +719,16 @@ document.addEventListener('DOMContentLoaded', () => {
         groupModal.classList.remove('flex');
         groupModal.classList.add('hidden');
     });
+
+    const titleInput = document.getElementById('title');
+    const counter = document.getElementById('titleCharCount');
+    const maxLength = titleInput.getAttribute('maxlength') || 100;
+
+    const updateCounter = () => {
+        const length = titleInput.value.length;
+        counter.textContent = `${length} / ${maxLength}`;
+    };
+
+    titleInput.addEventListener('input', updateCounter);
+    updateCounter(); // 初期表示
 });
-
-
-

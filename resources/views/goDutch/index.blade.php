@@ -1,11 +1,11 @@
 <div class="relative flex justify-center items-center mb-4">
     <h2 class="text-xl font-bold">Bill</h2>
-    <a href="{{ route('goDutch.index', $itinerary->id) }}" class="absolute right-6 text-2xl">
+    <a href="{{ route('goDutch.index', $itinerary->id) }}" class="absolute right-6 text-2xl" title="Bill">
         <i class="fa-solid fa-money-bill text-blue-500"></i>
     </a>
 </div>
 
-<ul id="itemList" class="space-y-1 mb-4 max-h-[180px] overflow-y-auto overflow-x-hidden">
+<ul id="itemList" class="space-y-1 mb-4 max-h-[300px] overflow-y-auto overflow-x-hidden">
     @isset($itinerary->group)
         @forelse ($itinerary->group->users as $user)
             <li class="flex items-between gap-2 p-1 border rounded">
@@ -40,7 +40,7 @@
         @endforelse
     @endisset
 </ul>
-<div class="flex space-x-2 p-2">
+<div class="flex space-x-2">
     <a href="{{ route('goDutch.index', $itinerary->id) }}" class="mx-auto text-xl text-blue-500">
         add Bill
     </a>

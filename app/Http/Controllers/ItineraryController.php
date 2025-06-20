@@ -33,36 +33,33 @@ class ItineraryController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index()
-{
-    $user = Auth::user();
+    public function index()
+    {
+        $user = Auth::user();
 
-    // 自分が作成した行程
-    $ownItineraries = Itinerary::with(['user', 'group'])
-        ->where('created_by', $user->id)
-        ->get();
+        // 自分が作成した行程
+        $ownItineraries = Itinerary::with(['user', 'group'])
+            ->where('created_by', $user->id)
+            ->get();
 
-    // 所属グループの行程
-    $groupIds = $user->groups->pluck('id');
-    $groupItineraries = Itinerary::with(['user', 'group'])
-        ->whereIn('group_id', $groupIds)
-        ->get();
+        // 所属グループの行程
+        $groupIds = $user->groups->pluck('id');
+        $groupItineraries = Itinerary::with(['user', 'group'])
+            ->whereIn('group_id', $groupIds)
+            ->get();
 
-    // 合体・重複排除・日付で並び替え
-    $merged = $ownItineraries
-        ->merge($groupItineraries)
-        ->unique('id')
-        ->sortByDesc('created_at')
-        ->values();
+        // 合体・重複排除・日付で並び替え
+        $merged = $ownItineraries
+            ->merge($groupItineraries)
+            ->unique('id')
+            ->sortByDesc('created_at')
+            ->values();
 
-    return view('itineraries.index', [
-        'all_itineraries' => $merged,          // フィルター・セレクト用
-        'initial_itineraries' => $merged,      // 初期表示（必要なら slice 可）
-    ]);
-}
-
-
-
+        return view('itineraries.index', [
+            'all_itineraries' => $merged,          // フィルター・セレクト用
+            'initial_itineraries' => $merged,      // 初期表示（必要なら slice 可）
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -283,7 +280,7 @@ public function index()
     /**
      * Display the specified resource.
      */
-    public function show($itinerary_id, CostCalculator $costCalculator)
+public function show($itinerary_id, CostCalculator $costCalculator)
     {
         $itinerary = $this->itinerary
             ->with(['dateItineraries.mapItineraries', 'group.users'])
@@ -423,7 +420,7 @@ public function index()
                 $group = Group::getOrCreatePersonalGroup(Auth::id());
                 $groupId = $group->id;
             }
-            
+
             // 目的地関連データ
             $destinationsAddress    = $request->input('destinations', []);
             $destinationsLat        = $request->input('destinations_lat', []);
@@ -612,5 +609,4 @@ public function index()
 
         return view('itineraries.partials.list', compact('itineraries'))->render(); // ←部分テンプレートで返す
     }
-
 }
