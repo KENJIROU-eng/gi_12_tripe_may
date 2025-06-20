@@ -19,7 +19,7 @@
                             </a>
                         </div>
                     </div>
-                    <hr class="border-t border-green-300 w-full my-4">
+                    <div class="h-[2px] w-full bg-gradient-to-r from-green-500 via-lime-500 to-emerald-500 my-4"></div>
                     {{-- contents --}}
                     <div class="mx-auto h-full mt-8 ">
                         <form action="{{ route('post.update', $post->id) }}" method="post" enctype="multipart/form-data">
@@ -41,7 +41,7 @@
                                 <div class="flex gap-4 mb-4">
                                     <div class="mt-2">
                                         <label for="image" class="block text-sm font-semibold mb-2">Image</label>
-                                        <img id="image-preview" class="rounded-md" src="{{ $post->image }}" alt="Image Preview" style="min-width: 100px; max-width: 300px; width: auto;">
+                                        <img id="image-preview" class="rounded-md" src="{{ $post->image }}" alt="Image Preview" style="min-width: 100px; max-width: 200px; width: auto;">
                                     </div>
                                     <div class="flex flex-col justify-end items-end">
                                         <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)">
@@ -96,7 +96,13 @@
                                         <a href="{{ route('post.show', $post->id) }}" class="block text-center w-full border border-gray-400 py-2 text-black rounded-md">Cancel</a>
                                     </div>
                                     <div class="col-span-1 col-start-3 w-full">
-                                        <button type="submit" class="text-white w-full bg-green-500 py-2 text-black hover: border-green-500 hover:bg-green-600 transition duration-300 rounded-md">Edit Post</button>
+                                        <button type="submit"
+                                            class="w-full bg-green-500
+                                                text-white py-2 rounded-md transition duration-300
+                                                hover:bg-gradient-to-r  from-green-500 via-lime-500 to-emerald-500 hover:text-white hover:shadow-lg">
+                                            Edit Post
+                                        </button>
+                                        {{-- <button type="submit" class="text-white w-full bg-green-500 py-2 hover: border-green-500 hover:bg-green-600 transition duration-300 rounded-md">Edit Post</button> --}}
                                     </div>
                                 </div>
                             </div>

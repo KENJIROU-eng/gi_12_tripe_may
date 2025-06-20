@@ -61,7 +61,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|min:1|max:50',
-            'description' => 'required|min:1|max:1000',
+            'description' => 'required|min:1|max:500',
             'image' => 'required|mimes:jpeg,jpg,png,gif|max:1048',
             'category_name' => 'required'
         ]);
@@ -119,7 +119,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|min:1|max:50',
-            'description' => 'required|min:1|max:1000',
+            'description' => 'required|min:1|max:500',
             'image' => 'mimes:jpeg,jpg,png,gif|max:1048',
             'category_name' => 'required'
         ]);
@@ -164,16 +164,18 @@ class PostController extends Controller
             'user_id' => Auth::User()->id,
         ]);
 
-        return view('posts.show')
-            ->with('post', $post);
+        return redirect()->back();
+        // return view('posts.show')
+        //     ->with('post', $post);
     }
     public function like_delete($post_id) {
         $post = $this->post->findOrFail($post_id);
         $like = $post->likes()->where('user_id', Auth::User()->id);
         $like->delete();
 
-        return view('posts.show')
-            ->with('post', $post);
+        return redirect()->back();
+        // return view('posts.show')
+        //     ->with('post', $post);
     }
 
     // 以降不要
@@ -213,13 +215,4 @@ class PostController extends Controller
         return response()->json(['success' => true, 'post_id' => $post->id]);
     }
 
-    public function loadMore(Request $request)
-{
-    $offset = $request->input('offset', 0);
-    $posts = Post::with('user')->skip($offset)->take(10)->get();
-
-    return response()->json([
-        'posts' => $posts,
-    ]);
-}
 }
