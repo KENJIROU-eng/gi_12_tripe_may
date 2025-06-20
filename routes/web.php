@@ -49,7 +49,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
-    Route::get('/post/load-more', [PostController::class, 'loadMore']) ->name('post.loadMore');
     // Route::get('/post/test', [PostController::class, 'test']);
     // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);
@@ -85,10 +84,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/load', [ItineraryController::class, 'loadMore'])->name('itinerary.load');
 
     #belonging
-    Route::get('/belongings/{itinerary_id}', [BelongingController::class, 'index'])->name('belonging.index');
-    Route::post('/belongings/store', [BelongingController::class, 'store'])->name('belonging.store');
-    Route::put('/belongings/{belonging}', [BelongingController::class, 'update'])->name('belonging.update');
-    Route::delete('/belongings/{belonging}', [BelongingController::class, 'destroy'])->name('belonging.destroy');
+    Route::get('/belonging/check-duplicate', [BelongingController::class, 'checkDuplicate'])->name('belonging.checkDuplicate');
+    Route::patch('/belonging/{belonging}/add-members', [BelongingController::class, 'addMembers']);
+    Route::post('/belonging/{itinerary_id}/store', [BelongingController::class, 'store'])->name('belonging.store');
+    Route::patch('/belonging/{belonging_id}/user/{user}', [BelongingController::class, 'updateCheck']);
+    Route::patch('/belonging/{belonging_id}/update', [BelongingController::class, 'update'])->name('belonging.update');
+    Route::delete('/belonging/{belonging_id}/destroy', [BelongingController::class, 'destroy'])->name('belonging.destroy');
+    Route::get('/belonging/{belonging_id}', [BelongingController::class, 'index'])->name('belonging.index');
+
 
     #goDutch
     Route::get('/{itinerary_id}/goDutch', [BillController::class, 'index'])->name('goDutch.index');

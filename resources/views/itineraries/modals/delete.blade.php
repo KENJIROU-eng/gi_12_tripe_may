@@ -14,11 +14,29 @@
 
             {{-- body --}}
             <div class="px-6 py-4">
-                <p><i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl mb-2"></i></p>
-                <p class="mb-2">Are you sure you want to delete this itinerary?</p>
-                <p class="text-sm text-gray-500 mb-2">Created by: {{ $itinerary->user->name }}</p>
-                <p class="text-sm text-gray-500">{{ $itinerary->start_date }} ~ {{ $itinerary->end_date }}</p>
-                <p class="text-sm text-gray-500">{{ $itinerary->title }}</p>
+                <p class="text-center">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl mb-2"></i>
+                </p>
+                <p class="mb-2 text-center">Are you sure you want to delete this itinerary?</p>
+
+                <div class="text-sm text-gray-500 space-y-1">
+                    <div class="flex items-start">
+                        <span class="min-w-[100px] font-medium">Created by :</span>
+                        <span>{{ $itinerary->user->name }}</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="min-w-[100px] font-medium">Title :</span>
+                        <span class="break-words whitespace-pre-wrap text-left max-w-[300px]">{{ $itinerary->title }}</span>
+
+                    </div>
+                    <div class="flex items-start">
+                        <span class="min-w-[100px] font-medium">Date :</span>
+                        <span>
+                            {{ \Carbon\Carbon::parse($itinerary->start_date)->format('Y-m-d') }} ~
+                            {{ \Carbon\Carbon::parse($itinerary->end_date)->format('Y-m-d') }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             {{-- footer --}}

@@ -1,313 +1,285 @@
-// axiosのCSRFトークン設定（Laravel用）
-axios.defaults.headers.common['X-CSRF-TOKEN'] =
-    document.querySelector('meta[name="csrf-token"]').content;
+/**
+ * belongings UI handler
+ *
+ * このスクリプトは、旅行持ち物機能におけるUIの挙動を担当します。
+ * - チェック状態の同期と背景グレーアウト制御
+ * - 編集・削除機能の実装
+ * - 新規アイテム登録時の重複チェック処理
+ * - 全選択/解除、文字数カウント表示
+ */
 
-let hideChecked = false;
-
-// グローバル関数：モーダルリストを再描画
-function renderModalList() {
-    const modalList = document.getElementById('modalBelongingList');
-    const list = document.getElementById('belongingList');
-
-    modalList.innerHTML = '';
-
-    const items = list.querySelectorAll('li');
-    items.forEach((item) => {
-        const clone = item.cloneNode(true);
-        const checkbox = clone.querySelector('.item-checkbox');
-        if (hideChecked && checkbox.checked) {
-            clone.style.display = 'none';
-        }
-        setupItemEvents(clone);
-        modalList.appendChild(clone);
-    });
-}
-
-// グローバル関数：イベント付与（モーダル用）
-function setupItemEvents(item) {
-    const checkbox = item.querySelector('.item-checkbox');
-    const editBtn = item.querySelector('.edit-btn');
-    const deleteBtn = item.querySelector('.delete-btn');
-    const itemName = item.querySelector('.item-name');
-    const itemId = item.getAttribute('data-id');
-    const list = document.getElementById('belongingList');
-
-    // チェック操作同期
-    checkbox.addEventListener('change', () => {
-        const isChecked = checkbox.checked;
-        itemName.classList.toggle('line-through', isChecked);
-        itemName.classList.toggle('text-gray-400', isChecked);
-
-        const original = list.querySelector(`li[data-id="${itemId}"]`);
-        const originalCheckbox = original.querySelector('.item-checkbox');
-        const originalName = original.querySelector('.item-name');
-
-        originalCheckbox.checked = isChecked;
-        originalName.classList.toggle('line-through', isChecked);
-        originalName.classList.toggle('text-gray-400', isChecked);
-    });
-
-    // 編集
-    editBtn.addEventListener('click', () => {
-        const oldName = itemName.title || itemName.textContent.trim();
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = oldName;
-        input.className = 'border rounded px-1 py-0.5';
-        itemName.replaceWith(input);
-        input.focus();
-
-        const finishEdit = async () => {
-            const newName = input.value.trim();
-            if (newName && newName !== oldName) {
-                try {
-                    await axios.put(`/belongings/${itemId}`, { name: newName });
-
-                    const newSpan = document.createElement('span');
-                    newSpan.className = 'item-name';
-                    newSpan.title = newName;
-                    newSpan.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
-                    input.replaceWith(newSpan);
-
-                    const original = document.querySelector(`#belongingList li[data-id="${itemId}"] .item-name`);
-                    if (original) {
-                        original.title = newName;
-                        original.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
-                    }
-                } catch (err) {
-                    console.error('Modal edit failed:', err);
-                    input.replaceWith(itemName);
-                }
-            } else {
-                input.replaceWith(itemName);
-            }
-        };
-
-        input.addEventListener('blur', finishEdit);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // フォーム送信防止
-                input.blur();       // blurを発火して編集を確定
-            }
-        });
-    });
-
-
-    // 削除
-    deleteBtn.addEventListener('click', () => {
-        const original = list.querySelector(`li[data-id="${itemId}"]`);
-        item.remove();
-        original.remove();
-    });
-}
-
-// DOM構築完了後の処理
 document.addEventListener('DOMContentLoaded', () => {
-    const viewAllBtn = document.getElementById('viewAllBtn');
-    const modal = document.getElementById('viewAllModal');
-    const closeModal = document.getElementById('closeModal');
-    const list = document.getElementById('belongingList');
+    // --- CSRFトークン取得とaxiosの存在チェック ---
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (!csrfToken) return console.error('CSRF token not found.');
+    if (typeof axios === 'undefined') return console.error('Axios is not loaded.');
 
-    // モーダル開く
-    viewAllBtn.addEventListener('click', () => {
-        renderModalList();
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    });
+    /**
+     * グレーアウト表示を更新（全員チェック済みなら灰色、自分のみチェックなら青）
+     */
+    const updateGrayoutState = (belongingElement) => {
+        const userId = document.body.dataset.userId?.trim();
+        const allCheckboxes = belongingElement.querySelectorAll('.member-checkbox');
+        const checkedCount = [...allCheckboxes].filter(cb => cb.checked).length;
+        const ownCheckbox = belongingElement.querySelector(`.member-checkbox[data-user-id="${userId}"]`);
+        const selfChecked = ownCheckbox?.checked;
+        const allChecked = allCheckboxes.length > 0 && checkedCount === allCheckboxes.length;
 
-    // モーダル閉じる
-    closeModal.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    });
-});
+        belongingElement.classList.remove(
+            'opacity-50', 'bg-white', 'dark:bg-gray-700', 'bg-blue-100', 'dark:bg-blue-200', 'bg-gray-200'
+        );
 
-// アイテムDOM追加関数
-function addItemToDOM(belonging) {
-    const li = document.createElement('li');
-    li.className = 'flex items-center justify-between gap-2 p-2 border rounded';
-    li.dataset.id = belonging.id;
+        if (allChecked) belongingElement.classList.add('opacity-50', 'bg-gray-200');
+        else if (selfChecked) belongingElement.classList.add('bg-blue-100', 'dark:bg-blue-200');
+        else belongingElement.classList.add('bg-white', 'dark:bg-gray-700');
 
-    const checkboxDiv = document.createElement('div');
-    checkboxDiv.className = 'flex-shrink-0';
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'item-checkbox';
-    checkbox.setAttribute('data-id', belonging.id);
-    checkbox.checked = belonging.is_checked;
-    checkboxDiv.appendChild(checkbox);
+        belongingElement.dataset.checked = allChecked ? '1' : '0';
+    };
 
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'flex-grow text-center';
-
-const span = document.createElement('span');
-span.className = 'item-name' + (belonging.is_checked ? ' text-gray-400 line-through' : '');
-
-// 最大20文字で省略表示（完全な名前はtitle属性に）
-const fullName = belonging.name;
-const truncatedName = fullName.length > 20 ? fullName.slice(0, 20) + '...' : fullName;
-
-span.textContent = truncatedName;
-span.title = fullName; // ツールチップで完全表示
-
-
-    nameDiv.appendChild(span);
-
-    const buttonDiv = document.createElement('div');
-    buttonDiv.className = 'flex-shrink-0 flex gap-2';
-
-    const editBtn = document.createElement('button');
-    editBtn.type = 'button';
-    editBtn.className = 'edit-btn';
-    editBtn.setAttribute('data-id', belonging.id);
-    editBtn.innerHTML = '<i class="fa-solid fa-pen text-yellow-300"></i>';
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.setAttribute('data-id', belonging.id);
-    deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can text-red-500"></i>';
-
-    buttonDiv.appendChild(editBtn);
-    buttonDiv.appendChild(deleteBtn);
-
-    li.appendChild(checkboxDiv);
-    li.appendChild(nameDiv);
-    li.appendChild(buttonDiv);
-
-    document.getElementById('belongingList').appendChild(li);
-}
-
-// 追加ボタン
-document.getElementById('addItemBtn').addEventListener('click', async () => {
-    const input = document.getElementById('itemInput');
-    const name = input.value.trim();
-    if (!name) return;
-
-    try {
-        const res = await axios.post('/belongings/store', {
-            name: name,
-            itinerary_id: itineraryId,
+    /**
+     * チェックボックスの変更監視と同期処理
+     */
+    const initBelongingCheckboxes = () => {
+        document.querySelectorAll('.belonging-item').forEach(item => {
+            updateGrayoutState(item);
+            item.querySelectorAll('.member-checkbox').forEach(cb => {
+                cb.addEventListener('change', async (e) => {
+                    const checkbox = e.target;
+                    const { belongingId, userId } = checkbox.dataset;
+                    try {
+                        await axios.patch(`/belonging/${belongingId}/user/${userId}`, {
+                            is_checked: checkbox.checked
+                        }, {
+                            headers: { 'X-CSRF-TOKEN': csrfToken }
+                        });
+                        updateGrayoutState(item);
+                    } catch (err) {
+                        checkbox.checked = !checkbox.checked;
+                        alert('Check update failed');
+                    }
+                });
+            });
         });
-        addItemToDOM(res.data);
-        input.value = '';
-        renderModalList();
-    } catch (err) {
-        console.error('Add failed:', err);
-    }
-});
+    };
 
-// チェック更新
-document.addEventListener('change', async (e) => {
-    if (e.target.classList.contains('item-checkbox')) {
-        const checkbox = e.target;
-        const li = checkbox.closest('li');
-        const id = checkbox.dataset.id;
-        const checked = checkbox.checked;
+    /**
+     * 編集・削除ボタンの初期化
+     */
+    const initEditAndDeleteButtons = () => {
+        const modal = document.getElementById('editModal');
+        const form = document.getElementById('editForm');
+        const nameInput = document.getElementById('editName');
+        const descInput = document.getElementById('editDescription');
+        const idInput = document.getElementById('editBelongingId');
+        const memberCheckboxes = document.querySelectorAll('.edit-member-checkbox');
 
-        try {
-            await axios.put(`/belongings/${id}`, { is_checked: checked });
-            const nameSpan = li.querySelector('.item-name');
-            nameSpan.classList.toggle('text-gray-400', checked);
-            nameSpan.classList.toggle('line-through', checked);
-            if (hideChecked) li.style.display = checked ? 'none' : '';
-        } catch (err) {
-            console.error('Check update failed:', err);
-        }
-    }
-});
+        // 編集ボタンクリック時、モーダルに情報をセット
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.belonging-item');
+                idInput.value = item.dataset.belongingId;
+                nameInput.value = item.dataset.belongingName;
+                descInput.value = item.dataset.belongingDescription;
+                const userIds = JSON.parse(item.dataset.belongingUsers || '[]');
+                memberCheckboxes.forEach(cb => cb.checked = userIds.includes(Number(cb.value)));
+                modal.classList.remove('hidden');
+            });
+        });
 
-// 編集/削除（通常画面）
-document.addEventListener('click', async (e) => {
-    const target = e.target;
-    const li = target.closest('li');
-    if (!li) return;
-    const id = li.dataset.id;
+        // キャンセルでモーダルを閉じる
+        document.getElementById('cancelEdit').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
 
-    // 編集
-    if (target.closest('.edit-btn')) {
-        const span = li.querySelector('.item-name');
-        const oldName = span.title || span.textContent.trim(); // title優先で取得
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = oldName;
-        input.className = 'border rounded px-1 py-0.5';
-        span.replaceWith(input);
-        input.focus();
+        // 更新送信処理
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const members = [...memberCheckboxes].filter(cb => cb.checked).map(cb => Number(cb.value));
+            try {
+                await axios.patch(`/belonging/${idInput.value}/update`, {
+                    name: nameInput.value.trim(),
+                    description: descInput.value.trim(),
+                    members
+                }, {
+                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                });
+                location.reload();
+            } catch (err) {
+                alert('Update failed.');
+            }
+        });
 
-        const finishEdit = async () => {
-            const newName = input.value.trim();
-            if (newName && newName !== oldName) {
+        // 削除処理
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
                 try {
-                    await axios.put(`/belongings/${id}`, { name: newName });
-
-                    const newSpan = document.createElement('span');
-                    newSpan.className = 'item-name';
-                    newSpan.title = newName;
-                    newSpan.textContent = newName.length > 20 ? newName.slice(0, 20) + '...' : newName;
-                    input.replaceWith(newSpan);
+                    await axios.delete(`/belonging/${btn.dataset.belongingId}/destroy`, {
+                        headers: { 'X-CSRF-TOKEN': csrfToken }
+                    });
+                    btn.closest('.belonging-item').remove();
                 } catch (err) {
-                    console.error('Update failed:', err);
-                    input.replaceWith(span);
+                    alert('Deletion failed.');
                 }
-            } else {
-                input.replaceWith(span);
+            });
+        });
+    };
+
+    /**
+     * 要素が表示されるまで待ってから初期化関数を実行
+     */
+    const waitForElements = (selector, callback, timeout = 3000) => {
+        const check = () => {
+            if (document.querySelector(selector)) callback();
+            else if ((timeout -= 100) > 0) setTimeout(check, 100);
+        };
+        check();
+    };
+
+    waitForElements('.edit-btn', initEditAndDeleteButtons);
+    waitForElements('.member-checkbox', initBelongingCheckboxes);
+
+    /**
+     * チェック済みアイテムの表示・非表示切り替え
+     */
+    const toggleBtn = document.getElementById('toggleCheckedBtn');
+    if (toggleBtn) {
+        let showChecked = true;
+        toggleBtn.addEventListener('click', () => {
+            showChecked = !showChecked;
+            document.querySelectorAll('.belonging-item').forEach(item => {
+                const isChecked = item.dataset.checked === '1' || item.classList.contains('is-checked');
+                item.classList.toggle('hidden', !showChecked && isChecked);
+            });
+            toggleBtn.innerHTML = showChecked
+                ? '<i class="fa-solid fa-eye"></i>'
+                : '<i class="fa-solid fa-eye-slash"></i>';
+        });
+    }
+
+    /**
+     * 新規フォーム送信時の重複チェックと統合処理
+     */
+    const form = document.getElementById('belongingForm');
+    if (form) {
+        const duplicateModal = document.getElementById('duplicateModal');
+        const addToExistingBtn = document.getElementById('addToExistingBtn');
+        const createNewBtn = document.getElementById('createNewBtn');
+        const cancelDuplicate = document.getElementById('cancelDuplicate');
+
+        let lastItemName = '', lastDescription = '', lastMembers = [], lastItineraryId = '', duplicateId = null;
+
+        const handleFormSubmit = async function (e) {
+            e.preventDefault();
+
+            const itemName = form.querySelector('input[name="item"]').value.trim();
+            const description = form.querySelector('textarea[name="description"]').value;
+            const members = [...form.querySelectorAll('input[name="members[]"]:checked')].map(cb => cb.value);
+            const itineraryId = form.action.split('/').slice(-2, -1)[0];
+
+            if (!itemName || members.length === 0) {
+                alert('Please enter the item name and member');
+                return;
+            }
+
+            try {
+                const res = await axios.get(`/belonging/check-duplicate`, {
+                    params: { name: itemName, itinerary_id: itineraryId }
+                });
+
+                if (res.data.exists) {
+                    lastItemName = itemName;
+                    lastDescription = description;
+                    lastMembers = members;
+                    lastItineraryId = itineraryId;
+                    duplicateId = res.data.id;
+                    duplicateModal.classList.remove('hidden');
+                } else {
+                    form.removeEventListener('submit', handleFormSubmit);
+                    form.submit();
+                }
+            } catch (error) {
+                console.error('Duplicate check failed:', error);
+                alert('Duplicate check failed.');
             }
         };
 
-        input.addEventListener('blur', finishEdit);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                input.blur(); // blurを発火させてfinishEditを呼ぶ
+        form.addEventListener('submit', handleFormSubmit);
+
+        addToExistingBtn.addEventListener('click', async () => {
+            try {
+                await axios.patch(`/belonging/${duplicateId}/add-members`, {
+                    members: lastMembers
+                }, {
+                    headers: { 'X-CSRF-TOKEN': csrfToken }
+                });
+                location.reload();
+            } catch (error) {
+                alert('Failed to append to existing item.');
             }
+        });
+
+        createNewBtn.addEventListener('click', () => {
+            duplicateModal.classList.add('hidden');
+            form.removeEventListener('submit', handleFormSubmit);
+            form.submit();
+        });
+
+        cancelDuplicate.addEventListener('click', () => {
+            duplicateModal.classList.add('hidden');
+        });
+
+        // 全選択トグル（新規フォーム）
+        const toggleSelectBtn = document.getElementById('toggleSelectAllMembers');
+        if (toggleSelectBtn) {
+            const checkboxes = form.querySelectorAll('input[name="members[]"]');
+            const updateLabel = () => {
+                const allChecked = [...checkboxes].every(cb => cb.checked);
+                toggleSelectBtn.textContent = allChecked ? 'Unselect All' : 'Select All';
+            };
+
+            toggleSelectBtn.addEventListener('click', () => {
+                const allChecked = [...checkboxes].every(cb => cb.checked);
+                checkboxes.forEach(cb => cb.checked = !allChecked);
+                updateLabel();
+            });
+
+            updateLabel();
+        }
+    }
+
+    // 編集モーダル内の全選択トグル
+    const editSelectAllBtn = document.getElementById('editToggleSelectAll');
+    if (editSelectAllBtn) {
+        editSelectAllBtn.addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.edit-member-checkbox');
+            const allChecked = [...checkboxes].every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            editSelectAllBtn.textContent = allChecked ? 'Select All' : 'Unselect All';
         });
     }
 
+    /**
+     * 入力欄の文字数カウント（リアルタイム）
+     */
+    function setupCharCount(inputId, counterId, defaultMaxLength = 100) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        if (!input || !counter) return;
 
+        const maxLength = input.getAttribute('maxlength') || defaultMaxLength;
 
-    // 削除
-    if (target.closest('.delete-btn')) {
-        try {
-            await axios.delete(`/belongings/${id}`);
-            li.remove();
-        } catch (err) {
-            console.error('Delete failed:', err);
-        }
+        const updateCounter = () => {
+            const length = input.value.length;
+            counter.textContent = `${length} / ${maxLength}`;
+        };
+
+        input.addEventListener('input', updateCounter);
+        updateCounter();
     }
-});
 
-// 表示切替（通常）
-document.getElementById('toggleVisibility').addEventListener('click', () => {
-    hideChecked = !hideChecked;
-    document.querySelectorAll('.item-checkbox').forEach(checkbox => {
-        const li = checkbox.closest('li');
-        if (checkbox.checked) {
-            li.style.display = hideChecked ? 'none' : '';
-        }
-    });
-
-    const icon = document.querySelector('#toggleVisibility i');
-    icon.classList.toggle('fa-eye', !hideChecked);
-    icon.classList.toggle('fa-eye-slash', hideChecked);
-});
-
-// 表示切替（モーダル）
-document.getElementById('modalToggleVisibility').addEventListener('click', () => {
-    hideChecked = !hideChecked;
-    document.querySelectorAll('#modalBelongingList .item-checkbox').forEach(checkbox => {
-        const li = checkbox.closest('li');
-        li.style.display = (hideChecked && checkbox.checked) ? 'none' : '';
-    });
-
-    const icon = document.querySelector('#modalToggleVisibility i');
-    icon.classList.toggle('fa-eye', !hideChecked);
-    icon.classList.toggle('fa-eye-slash', hideChecked);
-});
-
-// Enterで追加
-document.getElementById('itemInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        document.getElementById('addItemBtn').click();
-    }
+    // 文字数カウント適用箇所
+    setupCharCount('item', 'itemCharCount', 50);
+    setupCharCount('description', 'descriptionCharCount', 500);
+    setupCharCount('editName', 'editNameCharCount', 50);
+    setupCharCount('editDescription', 'editDescriptionCharCount', 500);
 });
