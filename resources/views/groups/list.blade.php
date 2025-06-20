@@ -12,7 +12,7 @@
                         <hr class="border-4 border-orange-200 shadow">
                         {{-- contents --}}
                         <div class="mx-auto overflow-y-auto max-h-[650px] mt-8 flex-1">
-                            @if ($groups->isEmpty())
+                            @if (!($groups->exists()))
                                 <div class="text-center text-lg my-60">
                                     <h2 class="mb-4 text-gray-500">No group created yet.</h2>
                                     <div class="text-blue-500">
@@ -23,49 +23,96 @@
                                     </div>
                                 </div>
                             @else
-                                @foreach ($groups as $group)
-                                    <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow p-5 mb-3 mx-3 hover:bg-orange-100 transition">
-                                        <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
-                                            @if ($group->image)
-                                                <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">
-                                            @else
-                                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                                                {{ strtoupper(substr($group->name, 0, 1)) }}
-                                            </div>
-                                            @endif
-                                            <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                                <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
-                                                <p class="text-lg ml-3">({{ $group->members->count() }})</p>
-                                            </div>
-                                            @if ($nonReadCount)
-                                                @if ($nonReadCount[$group->id] > 0)
-                                                    <div class="flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full">
-                                                        <p class="text-sm font-semibold">{{ $nonReadCount[$group->id] }}</p>
-                                                    </div>
+                                @if(($latestMessages->isNotEmpty()))
+                                    @foreach ($groups as $group)
+                                        <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow p-5 mb-3 mx-3 hover:bg-orange-100 transition">
+                                            <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
+                                                @if ($group->image)
+                                                    <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">
+                                                @else
+                                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                                    {{ strtoupper(substr($group->name, 0, 1)) }}
+                                                </div>
                                                 @endif
-                                            @endif
-                                        </a>
-                                        <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
-                                            <div class="flex items-center justify-between  rounded">
-                                                <div class="relative" x-data="{ open: false }">
-                                                    <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
-                                                        <i class="fa-solid fa-ellipsis text-xl"></i>
-                                                    </button>
-                                                    <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
-                                                        <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">
-                                                            Edit
+                                                <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                                    <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
+                                                    <p class="text-lg ml-3">({{ $group->members->count() }})</p>
+                                                </div>
+                                                @if ($nonReadCount)
+                                                    @if ($nonReadCount[$group->id] > 0)
+                                                        <div class="flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full">
+                                                            <p class="text-sm font-semibold">{{ $nonReadCount[$group->id] }}</p>
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                            </a>
+                                            <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
+                                                <div class="flex items-center justify-between  rounded">
+                                                    <div class="relative" x-data="{ open: false }">
+                                                        <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
+                                                            <i class="fa-solid fa-ellipsis text-xl"></i>
                                                         </button>
-                                                        <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
-                                                            Delete
-                                                        </button>
+                                                        <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
+                                                            <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">
+                                                                Edit
+                                                            </button>
+                                                            <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                                                Delete
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                {{-- modal--}}
+                                                @include('groups.modals', ['group' => $group, 'users' => $users])
                                             </div>
-                                            {{-- modal--}}
-                                            @include('groups.modals', ['group' => $group, 'users' => $users])
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+
+                                @else
+                                    @foreach ($groups_ini as $group)
+                                        <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow p-5 mb-3 mx-3 hover:bg-orange-100 transition">
+                                            <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
+                                                @if ($group->image)
+                                                    <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">
+                                                @else
+                                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                                    {{ strtoupper(substr($group->name, 0, 1)) }}
+                                                </div>
+                                                @endif
+                                                <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                                    <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
+                                                    <p class="text-lg ml-3">({{ $group->members->count() }})</p>
+                                                </div>
+                                                @if ($nonReadCount)
+                                                    @if ($nonReadCount[$group->id] > 0)
+                                                        <div class="flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full">
+                                                            <p class="text-sm font-semibold">{{ $nonReadCount[$group->id] }}</p>
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                            </a>
+                                            <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
+                                                <div class="flex items-center justify-between  rounded">
+                                                    <div class="relative" x-data="{ open: false }">
+                                                        <button @click="open = !open" class="text-gray-600 hover:text-black focus:outline-none">
+                                                            <i class="fa-solid fa-ellipsis text-xl"></i>
+                                                        </button>
+                                                        <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
+                                                            <button @click="showEditModal = true" class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-100">
+                                                                Edit
+                                                            </button>
+                                                            <button @click="showDeleteModal = true" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{-- modal--}}
+                                                @include('groups.modals', ['group' => $group, 'users' => $users])
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
                             @endif
                         </div>
                     </div>

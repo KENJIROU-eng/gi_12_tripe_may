@@ -42,6 +42,9 @@
                                 @else
                                     <i class="fa-solid fa-circle-user text-blue-600 text-base lg:text-lg"></i>
                                 @endif
+                                {{-- <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                    {{ $nonReadCount_total }}
+                                </span> --}}
                             </button>
                         </x-slot>
 
@@ -70,7 +73,6 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                                         </svg>
                                     </button>
-
                                     <!-- sub menu -->
                                     <div x-show="open" @click.outside="open = false"
                                         class="absolute left-full top-0 mt-0 ml-1 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">

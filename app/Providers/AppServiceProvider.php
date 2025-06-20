@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\GroupMember;
 use App\Models\Itinerary;
 use App\Models\Message;
+use App\Models\Group;
 use App\Models\ReadMessage;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,8 +29,9 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
         if (Auth::check()) {
-            $groups = GroupMember::where('user_id', Auth::User()->id);
-            $groupIds = $groups->pluck('group_id')->toArray();
+            $groupMembers = GroupMember::where('user_id', Auth::User()->id);
+            $groupIds = $groupMembers->pluck('group_id')->toArray();
+            $groups = Group::whereIn('id', $groupIds)->get();
             $itineraries = Itinerary::whereIn('group_id', $groupIds)->get();
             $tripSchedule = [];
             $tripName = [];

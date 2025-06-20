@@ -145,9 +145,9 @@ class GroupController extends Controller
         $groups = $latestMessages->pluck('group');
 
         //ログインユーザーが所属しているグループを取得
-        // $groups = Group::whereHas('members',function($quely) use ($user){
-        //     $quely->where('user_id',$user->id);
-        // })->withCount('members')->get();
+        $groups_ini = Group::whereHas('members',function($quely) use ($user){
+            $quely->where('user_id',$user->id);
+        })->withCount('members')->get();
 
         $users = User::all();
 
@@ -158,7 +158,7 @@ class GroupController extends Controller
             $nonReadCount[$group->id] = $readMessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
         }
 
-        return view('groups.list', compact('groups','users', 'nonReadCount'));
+        return view('groups.list', compact('groups','users', 'nonReadCount', 'latestMessages', 'groups_ini'));
     }
 
     /**

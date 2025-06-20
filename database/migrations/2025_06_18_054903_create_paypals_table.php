@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('Price');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('itinerary_id')->references('id')->on('itinerary');
+            $table->foreign('itinerary_id')->references('id')->on('itineraries');
         });
     }
 
