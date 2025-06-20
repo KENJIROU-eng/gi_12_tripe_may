@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\GroupMember;
 use App\Models\Itinerary;
+use App\Models\Message;
+use App\Models\ReadMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,7 +41,18 @@ class AppServiceProvider extends ServiceProvider
                 $tripName[] = $itinerary->title;
                 $routeUrls[] = route('itinerary.show', $itinerary->id);
             }
+            $nonReadCount = [];
+            $nonReadCount_total = 0;
+            foreach ($groupIds as $groupId) {
+                $messageIds = Message::where('group_id', $groupId)->pluck('id')->toArray();
+                $readmessages = ReadMessage::whereIn('message_id', $messageIds)->get();
+                $nonReadCount[$groupId] = $readmessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
+                $nonReadCount_total = $nonReadCount_total + $readmessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
+            }
             $view->with('groupIds', $groupIds)
+                ->with('groups', $groups)
+                ->with('nonReadCount', $nonReadCount)
+                ->with('nonReadCount_total', $nonReadCount_total)
                 ->with('tripSchedule', $tripSchedule)
                 ->with('tripName', $tripName)
                 ->with('routeUrls', $routeUrls);

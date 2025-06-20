@@ -46,15 +46,15 @@ class GroupController extends Controller
             'image_url' => $imageUrl,
         ]);
 
-        // $group = Group::findOrFail($request->group_id);
-        // $groupMembers = $group->members;
+        $group = Group::findOrFail($request->group_id);
+        $groupMembers = $group->members;
 
-        // foreach ($groupMembers as $member) {
+        foreach ($groupMembers as $member) {
         ReadMessage::create([
-            'user_id' => $user->id,
+            'user_id' => $member->user->id,
             'message_id' => $message->id,
         ]);
-        // }
+        }
 
 
         broadcast(new MessageSent($message));
@@ -151,7 +151,14 @@ class GroupController extends Controller
 
         $users = User::all();
 
-        return view('groups.list', compact('groups','users'));
+        $nonReadCount = [];
+        foreach ($groups as $group) {
+            $messages = $group->messages->pluck('id')->toArray();
+            $readMessages = ReadMessage::whereIn('message_id', $messages)->get();
+            $nonReadCount[$group->id] = $readMessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
+        }
+
+        return view('groups.list', compact('groups','users', 'nonReadCount'));
     }
 
     /**

@@ -54,6 +54,37 @@
                             <x-dropdown-link :href="route('profile.show', Auth::user()->id)">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
+                            <!--  Messages -->
+                            @if ($groupIds)
+                                <div x-data="{ open: false }" class="relative">
+                                    <button @click.stop="open = !open"
+                                        class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <span>
+                                            {{ __('New Messages') }}
+                                            <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                                {{ $nonReadCount_total }}
+                                            </span>
+                                        </span>
+                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+
+                                    <!-- sub menu -->
+                                    <div x-show="open" @click.outside="open = false"
+                                        class="absolute left-full top-0 mt-0 ml-1 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                        @foreach ($groups as $group)
+                                            @if ($nonReadCount[$group->id] > 0)
+                                                <a href="{{ route('message.show', $group->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $group->name }}</a>
+                                                <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                                    {{ $nonReadCount[$group->id] }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
@@ -78,7 +109,7 @@
         </div>
     </div>
 
-    @if (Auth::check())
+    {{-- @if (Auth::check())
         <!-- Responsive Navigation Menu -->
         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
             <div class="pt-4 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-600">
@@ -113,5 +144,5 @@
                 </form>
             </div>
         </div>
-    @endif
+    @endif --}}
 </nav>

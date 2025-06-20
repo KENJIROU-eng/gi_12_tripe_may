@@ -37,8 +37,14 @@
                                                 <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
                                                 <p class="text-lg ml-3">({{ $group->members->count() }})</p>
                                             </div>
+                                            @if ($nonReadCount)
+                                                @if ($nonReadCount[$group->id] > 0)
+                                                    <div class="flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full">
+                                                        <p class="text-sm font-semibold">{{ $nonReadCount[$group->id] }}</p>
+                                                    </div>
+                                                @endif
+                                            @endif
                                         </a>
-
                                         <div x-data="{ showEditModal: false, showDeleteModal: false }" class="mb-6 relative">
                                             <div class="flex items-center justify-between  rounded">
                                                 <div class="relative" x-data="{ open: false }">

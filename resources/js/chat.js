@@ -178,7 +178,14 @@ for (let i = 0; i < length; i++) {
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
-                    }, 10000);
+                        location.reload(); //notification count 用
+                    }, 7000);
+                };
+            };
+        } else {
+            if (!groupId) {
+                if (myUserId != e.user_id) {
+                    location.reload(); //notification count 用
                 };
             };
         };
