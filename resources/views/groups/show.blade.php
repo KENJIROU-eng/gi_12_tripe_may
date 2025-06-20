@@ -5,12 +5,21 @@
 
     <div class="relative flex bg-yellow-100 w-full h-16 items-center justify-between">
         <a href="{{ route('groups.index') }}"><i class="fa-regular fa-less-than text-black hover:text-gray-500 ml-4 text-xl"></i></a>
-        <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}} ({{ $group->users->count()}})</p>
-
+        @if ($group->users->count() > 2)
+            <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}} ({{ $group->users->count()}})</p>
+        @elseif ($group->users->count() == 2)
+            @foreach ($group->users as $user)
+                @if ($user->id != Auth::User()->id)
+                    <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $user->name}}</p>
+                @endif
+            @endforeach
+        @else
+            <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $Auth::User()->name}}</p>
+        @endif
         <div x-data="{ open: false }" class="flex ">
             <button @click="open = !open" class="flex -space-x-4">
                 @foreach ($group->users->take(3) as $user)
-                    <img src="{{ $user->avatar_url ?? asset('images/user.png') }}" class="w-9 h-9 rounded-full border-2 border-white hover:z-10" alt="{{ $user->name }}">
+                    <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-9 h-9 rounded-full border-2 border-white hover:z-10" alt="{{ $user->name }}">
                 @endforeach
                 @if ($group->users->count() > 3)
                     <div class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
@@ -24,8 +33,15 @@
                     <ul class="space-y-6 max-h-60 overflow-y-auto">
                         @foreach ($group->users as $user)
                             <li class="flex items-center space-x-3">
-                                <img src="{{ $user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
-                                <span class="text-sm">{{ $user->name }}</span>
+                                @if(isset($groupKey[$user->id]))
+                                    <a href="{{ route('message.show', $groupKey[$user->id]) }}">
+                                        <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
+                                        <span class="text-sm">{{ $user->name }}</span>
+                                    </a>
+                                @else
+                                    <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
+                                    <span class="text-sm">{{ $user->name }}</span>
+                                @endif
                             </li>
                         @endforeach
                     </ul>
@@ -44,7 +60,7 @@
 
 
                         <div class="text-xs text-right mt-1 text-gray-400 mr-2">
-                            {{ $message->created_at->format('H:i') }}
+                            {{ $message->created_at->format('Y-m-d H:i') }}
                         </div>
                         <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow ">
                             @if ($message->message)
@@ -72,7 +88,7 @@
                                 @endif
                             </div>
                             <div class="text-xs text-gray-400 items-end">
-                                {{ $message->created_at->format('H:i') }}
+                                {{ $message->created_at->format(' H:i') }}
                             </div>
                         </div>
                     </div>
@@ -143,3 +159,4 @@
     </form>
 </x-app-layout>
 
+Y-m-d

@@ -21,8 +21,9 @@
                     </div>
                     {{-- contents --}}
                     <div class="mx-auto h-4/5 mt-6 overflow-hidden">
-                        @if ($all_bills->count() > 1)
-                            <div class="grid grid-cols-7 items-center text-center text-md my-4 gap-4 pb-4 bg-green-500 text-white py-2 font-bold">
+                        @if (count($all_bills) > 0)
+                            <h1 class="text-xl font-bold italic text-center">History of payment of the trip</h1>
+                            <div class="grid grid-cols-5 items-center text-center text-md mb-4 mt-8 gap-4 pb-4 border-b-2 border-t-2 border-green-500 py-2 font-bold">
                                 {{-- user avatar --}}
                                 <div class="col-span-1">
                                     {{-- user show --}}
@@ -30,16 +31,21 @@
                                 </div>
                                 {{-- bill name --}}
                                 <div class="col-span-1">
-                                    <p>The bill name</p>
+                                    <p>Item description</p>
                                 </div>
                                 {{-- bill cost --}}
                                 <div class="col-span-1">
-                                    <p>The bill cost</p>
+                                    <p>Price</p>
                                 </div>
                             </div>
+                        @else
+                            <div class="text-center text-lg my-60">
+                                <h2 class="mb-4 text-gray-500">No Bill created yet.</h2>
+                            </div>
                         @endif
-                        @forelse ($all_bills as $bill)
-                            <div class="grid grid-cols-7 items-center text-center text-md my-4 gap-4 pb-4">
+                        <div class="max-h-[200px] overflow-y-auto">
+                        @foreach ($all_bills as $bill)
+                            <div class="grid grid-cols-5 items-center text-center text-md my-4 gap-4 pb-4">
                                 {{-- user avatar --}}
                                 <div class="col-span-1">
                                     {{-- user show --}}
@@ -50,6 +56,7 @@
                                             <i class="fa-solid fa-circle-user"></i>
                                         @endif
                                     </a>
+                                    <p>{{ $bill->userPay->name }}</p>
                                 </div>
                                 {{-- bill name --}}
                                 <div class="col-span-1">
@@ -60,7 +67,7 @@
                                     <p>{{ $bill->cost }}</p>
                                 </div>
                                 {{--edit and delete button --}}
-                                <div class="col-span-1 col-start-6">
+                                <div class="col-span-1">
                                     @php
                                         $hasEditError = $errors->has('user_pay_id_edit') || $errors->has('bill_name_edit') || $errors->has('cost_edit') || $errors->has('user_paid_id_edit');
                                     @endphp
@@ -72,7 +79,7 @@
                                         @include('goDutch.modals.edit', ['bill' => $bill, 'groupMembers' => $groupMembers, 'itinerary' => $itinerary])
                                     </div>
                                 </div>
-                                <div class="col-span-2 col-start-7">
+                                <div class="col-span-1">
                                     <form action="{{ route('goDutch.delete', ['itinerary_id' => $itinerary->id, 'bill_id' => $bill->id]) }}" method="post">
                                         @csrf
                                         @method('DELETE')
@@ -82,42 +89,105 @@
                                     </form>
                                 </div>
                             </div>
-                        @empty
-                            <div class="text-center text-lg my-60">
-                                <h2 class="mb-4 text-gray-500">No Bill created yet.</h2>
-                                <div class="text-blue-500">
-                                    <div x-data="{ open: {{ $hasCreateError ? 'true' : 'false' }} }">
-                                        {{-- trigger --}}
-                                        <button @click="open = true">
-                                            <i class="fa-solid fa-plus"></i>
-                                            add Bill
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforelse
-                        <h1 class="text-xl text-center">Calculation Result for payment per each person</h1>
-                        <div class="mx-auto w-2/3 max-h-[110px] space-y-2 mt-2 overflow-y-auto p-2 rounded">
-                            @forelse ($groupMembers as $groupMember)
-                                <div class="flex">
-                                    <span class="text-md text-gray-700">{{ $groupMember->name }}</span>
-                                    @if ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] > 0)
-                                        <span class="text-md text-gray-700 ml-auto block text-green-500">Get ${{  number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
-                                    @elseif ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] < 0)
-                                        <span class="text-md text-gray-700 ml-auto block text-red-500">Pay ${{  number_format(abs($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
-                                    @else
-                                        <span class="text-md text-gray-700 ml-auto block">$ 0</span>
-                                    @endif
-                                </div>
-                            @empty
-                                <p class="text-sm text-gray-500">$ {{ $total_Pay_alone }}</p>
-                            @endforelse
+
+                        @endforeach
                         </div>
+                        @if (count($all_bills) > 0)
+                        <h1 class="text-xl font-bold italic text-center mt-3">Calculation Result for payment per each person</h1>
+                        <div class="grid grid-cols-4 items-center text-center text-md mb-4 mt-8 gap-4 pb-4 border-b-2 border-t-2 border-green-500 py-2 font-bold">
+                            {{-- user avatar --}}
+                            <div class="col-span-1">
+                                {{-- user show --}}
+                                <p>User name</p>
+                            </div>
+                            <div class="col-span-1">
+                                <p>Price</p>
+                            </div>
+                            <div class="col-span-1">
+                                <p>Pay status</p>
+                            </div>
+                            <div class="col-span-1">
+                                <p>Pay now (PayPal)</p>
+                            </div>
+                        </div>
+                        <div class="max-h-[200px] mt-2 overflow-y-auto">
+                                @forelse ($groupMembers as $groupMember)
+                                    <div class="grid grid-cols-4 items-center text-center text-md my-4 gap-4 pb-4">
+                                        {{-- user avatar --}}
+                                        <div class="col-span-1">
+                                            {{-- user show --}}
+                                            <a href="{{ route('profile.show', $groupMember->id) }}" class="block w-6 h-6 rounded-full overflow-hidden mx-auto">
+                                                @if ($groupMember->avatar)
+                                                    <img src="{{ $groupMember->avatar }}" alt="{{ $groupMember->name }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <i class="fa-solid fa-circle-user"></i>
+                                                @endif
+                                            </a>
+                                            <p>{{ $groupMember->name }}</p>
+                                        </div>
+                                        <div class="col-span-1">
+                                            @if ($groupMember->id != Auth::User()->id)
+                                                @if ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] > 0)
+                                                    <span class="text-md text-gray-700 text-green-500">Get ${{  number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
+                                                @elseif ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] < 0)
+                                                    <span class="text-md text-gray-700 text-red-500">Pay ${{  number_format(abs($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id]), 0) }}</span>
+                                                @else
+                                                    <span class="text-md text-gray-700 text-gray-500">$0</span>
+                                                @endif
+                                            @else
+                                                @if ( number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) > 0)
+                                                    <span class="text-md text-gray-700 text-green-500">Get ${{  number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) }}</span>
+                                                @elseif (number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) < 0)
+                                                    <span class="text-md text-gray-700 text-red-500">Pay ${{  number_format(abs($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) }}</span>
+                                                @else
+                                                    <span class="text-md text-gray-700 text-gray-500">$0</span>
+                                                @endif
+                                            @endif
+                                        </div>
+                                        <div class="col-span-1">
+                                            @if ($groupMember->id != Auth::User()->id)
+                                                @if ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] > 0)
+                                                    <a href="{{ route('message.show', $itinerary->group_id) }}" class="hover:text-blue-500">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                        <p>Go to chat to request payment</p>
+                                                    </a>
+                                                @elseif ($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] < 0)
+                                                    <i class="fa-solid fa-circle-xmark text-red-500"></i>
+                                                @else
+                                                    <i class="fa-solid fa-circle-check text-green-500"></i>
+                                                @endif
+                                            @else
+                                                @if (number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) > 0)
+                                                    <a href="{{ route('message.show', $itinerary->group_id) }}" class="hover:text-blue-500">
+                                                        <i class="fa-solid fa-comment"></i> Go to chat to request payment
+                                                    </a>
+                                                @elseif (number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) < 0)
+                                                    <i class="fa-solid fa-circle-xmark text-red-500"></i>
+                                                @else
+                                                    <i class="fa-solid fa-circle-check text-green-500"></i>
+                                                @endif
+                                            @endif
+                                        </div>
+                                        <div class="col-span-1">
+                                            @if (Auth::User()->id == $groupMember->id && number_format(($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id] + $price), 0) < 0)
+                                                <a href="{{ route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => abs($total_getPay[$groupMember->id] - $total_Pay[$groupMember->id])]) }}">
+                                                    <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                        {{-- {{ $pay->Price }} --}}
+                                    </div>
+                                @empty
+                                    <p class="text-sm text-gray-500">$ {{ $total_Pay_alone }}</p>
+                                @endforelse
+                            </div>
+                        </div>
+                        @endif
                     </div>
                     {{-- paginate --}}
-                    <div class="flex justify-center">
+                    {{-- <div class="flex justify-center">
                         {{ $all_bills->links('vendor.pagination.custom') }}
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

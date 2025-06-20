@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // \u00A0（ノーブレークスペース）
             span.textContent = char === ' ' ? '\u00A0' : char;  // 空白はノーブレークスペースに
             span.classList.add('opacity-0', 'inline-block', 'text-center', 'mx-auto', 'text-4xl');    // 初期は非表示
+            span.style.textShadow = '5px 5px 5px rgba(0, 0, 0, 0.5)';
             div.appendChild(span);
             container.appendChild(div);
 

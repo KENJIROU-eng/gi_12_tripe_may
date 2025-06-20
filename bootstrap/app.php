@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\TrackTransitionChatroom;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,7 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
 
+        // 既読判定用middleware
         $middleware->appendToGroup('admin', [AdminMiddleware::class]);
+        //Admin middleware
+        $middleware->appendToGroup('web', [\App\Http\Middleware\TrackTransitionChatroom::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

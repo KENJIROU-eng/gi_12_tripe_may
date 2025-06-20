@@ -8,6 +8,7 @@
 <ul id="itemList" class="space-y-1 mb-4 max-h-[300px] overflow-y-auto overflow-x-hidden">
     @isset($itinerary->group)
         @forelse ($itinerary->group->users as $user)
+        @if ($total_getPay[$user->id] - $total_Pay[$user->id] != 0)
             <li class="flex items-between gap-2 p-1 border rounded">
                 <div class="flex">
                     <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-300 bg-gray-100 flex items-center justify-center text-gray-400">
@@ -29,12 +30,11 @@
                             <span class="text-md text-red-500 ml-auto text-end">
                                 Pay ${{ number_format(abs($total_getPay[$user->id] - $total_Pay[$user->id]), 0) }}
                             </span>
-                        @else
-                            <span class="text-md ml-auto text-end">$ 0</span>
                         @endif
                     </div>
                 </div>
             </li>
+        @endif
         @empty
             <p class="text-sm text-gray-500">No Bills</p>
         @endforelse

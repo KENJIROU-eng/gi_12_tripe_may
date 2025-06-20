@@ -61,12 +61,19 @@
                             @if (Auth::id() !== $user->id)
                                 <div class="mt-4">
                                     @if ($user->isFollowed())
-                                        <form action="{{ route('follow.delete', $user->id) }}" method="post">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="bg-gray-500 text-white px-4 py-1 rounded-md hover:bg-gray-600">
-                                                Following
-                                            </button>
-                                        </form>
+                                        <div class="flex  gap-2">
+                                            <form action="{{ route('follow.delete', $user->id) }}" method="post">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="bg-gray-500 text-white px-4 py-1 rounded-md hover:bg-gray-600">
+                                                    Following
+                                                </button>
+                                            </form>
+                                            @if ($group)
+                                                <a href="{{ route('message.show', $group->id) }}" class="block bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600">
+                                                    message
+                                                </a>
+                                            @endif
+                                        </div>
                                     @else
                                         <form action="{{ route('follow.create', $user->id) }}" method="post">
                                             @csrf

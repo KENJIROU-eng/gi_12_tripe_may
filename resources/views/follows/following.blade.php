@@ -5,7 +5,7 @@
                 <div class="p-6 text-black dark:text-gray-100">
                     {{-- title --}}
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Follower List</h1>
+                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Following List</h1>
                     </div>
                     {{-- contents --}}
                     <div class="mx-auto h-full mt-8">
@@ -13,7 +13,7 @@
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                                 <a href="{{ route('profile.show', $following->following->id) }}" class="flex items-center space-x-4 w-full ml-2">
                                     @if ($following->avatar)
-                                        <img src="{{ $$following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
+                                        <img src="{{ $following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
                                     @else
                                         <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
                                             {{ strtoupper(substr($following->following->name, 0, 1)) }}

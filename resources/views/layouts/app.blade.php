@@ -44,5 +44,13 @@
             </main>
         </div>
         @stack('scripts')
+        <script>
+            window.appData = {
+                groupIds: @json($groupIds ?? []),
+                tripSchedule: @json($tripSchedule ?? []),
+                tripName: @json($tripName ?? []),
+            };
+            const routeUrls = @json($routeUrls ?? []);
+        </script>
     </body>
 </html>
