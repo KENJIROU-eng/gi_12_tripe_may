@@ -1,7 +1,7 @@
 <div class="relative flex justify-center items-center mb-4">
     <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Belonging List</h2>
     <button id="toggleCheckedBtn" type="button" class="absolute right-6 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-xl" title="Toggle Checked Items">
-        <i class="fa-solid fa-eye"></i>
+        <i class="fa-solid fa-eye text-blue-500"></i>
     </button>
 </div>
 

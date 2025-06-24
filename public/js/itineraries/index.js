@@ -12,15 +12,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const itineraryContainer = document.getElementById('itineraryContainer');
     const scrollContainer = document.getElementById('scrollContainer');
-    const sortIcons = document.querySelectorAll('.sort-icon');
     const clearBtn = document.getElementById('clearSearchBtn');
     const mobileClearBtn = document.getElementById('mobileClearSearchBtn');
-
     const rows = Array.from(document.querySelectorAll('.itinerary-row'));
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
     let currentSort = { key: '', direction: 'asc' };
-    let currentPage = 1;
-    let loading = false;
-    let noMoreData = false;
 
     // 指定IDのfilter要素を取得（モバイル/PC共通）
     function getFilterValue(id) {
@@ -47,6 +44,29 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         } else {
             filteredRows.forEach(row => itineraryContainer.appendChild(row));
+
+            // ✅ スマホ用ラベルが無ければ追加
+            filteredRows.forEach(row => {
+                const labels = [
+                    { selector: '.md\\:col-span-2', text: 'Created by' },
+                    { selector: '.md\\:col-span-2:nth-of-type(3)', text: 'Group' },
+                    { selector: '.md\\:col-span-3:nth-of-type(4)', text: 'Date' },
+                    { selector: '.md\\:col-span-3:nth-of-type(5)', text: 'Title' },
+                ];
+
+                labels.forEach(({ selector, text }) => {
+                    const el = row.querySelector(selector);
+                    if (el && !el.querySelector('.mobile-label')) {
+                        const label = document.createElement('span');
+                        label.className = 'mobile-label block text-xs text-gray-500 dark:text-gray-400 md:hidden mb-0.5';
+                        label.textContent = text;
+
+                        el.classList.add('flex', 'flex-col', 'items-center', 'md:items-start', 'text-center', 'md:text-left');
+                        el.insertBefore(label, el.firstChild);
+                    }
+                });
+            });
+
         }
 
         updateClearButtonVisibility();
@@ -54,16 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ソートアイコン（矢印）の表示更新
     function updateSortIcons() {
-        sortIcons.forEach(icon => {
+        document.querySelectorAll('.sort-icon').forEach(icon => {
             const key = icon.dataset.key;
-            icon.innerHTML = '';
+            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+
             if (key === currentSort.key) {
-                icon.innerHTML = currentSort.direction === 'asc'
-                    ? '<i class="fa-solid fa-arrow-up-a-z"></i>'
-                    : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+                icon.classList.add(currentSort.direction === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+            } else {
+                icon.classList.add('fa-sort');
             }
         });
     }
+
 
     // クリアボタンの表示切替（検索・フィルタ・ソート条件があるか）
     function updateClearButtonVisibility() {
@@ -97,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        const query = document.getElementById('searchInput')?.value || document.getElementById('mobileSearchInput')?.value || '';
-        const filtered = filterRows(query);
+        const filtered = filterRows(getSearchQuery());
+
         updateSortIcons();
         render(filtered);
     }
@@ -127,14 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function getSearchQuery() {
+        const desktop = document.getElementById('searchInput')?.value || '';
+        const mobile = document.getElementById('mobileSearchInput')?.value || '';
+        return `${desktop} ${mobile}`.trim();
+    }
+
     // フィルタ条件が変更された時の監視
     ['filterUser', 'filterGroup', 'filterDateFrom', 'filterDateTo', 'mobileFilterUser', 'mobileFilterGroup', 'mobileFilterDateFrom', 'mobileFilterDateTo']
         .forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', () => {
-                    const input = document.getElementById('searchInput') || document.getElementById('mobileSearchInput');
-                    const filtered = filterRows(input?.value || '');
+                    const filtered = filterRows(getSearchQuery());
                     render(filtered);
                 });
             }
@@ -144,11 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const mobileSearchInput = document.getElementById('mobileSearchInput');
     searchInput?.addEventListener('input', () => {
-        const filtered = filterRows(searchInput.value);
+        const filtered = filterRows(getSearchQuery());
         render(filtered);
     });
     mobileSearchInput?.addEventListener('input', () => {
-        const filtered = filterRows(mobileSearchInput.value);
+        const filtered = filterRows(getSearchQuery());
         render(filtered);
     });
 
@@ -184,45 +211,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 無限スクロール：下端到達時に次のページを読み込む
-    scrollContainer.addEventListener('scroll', async () => {
-        if (loading || noMoreData) return;
+    // scrollContainer.addEventListener('scroll', async () => {
+    //     if (loading || noMoreData) return;
 
-        const scrollTop = scrollContainer.scrollTop;
-        const scrollHeight = scrollContainer.scrollHeight;
-        const clientHeight = scrollContainer.clientHeight;
-        const threshold = 100; // 残り100pxで読み込む
+    //     const scrollTop = scrollContainer.scrollTop;
+    //     const scrollHeight = scrollContainer.scrollHeight;
+    //     const clientHeight = scrollContainer.clientHeight;
+    //     const threshold = 100;
 
-        if (scrollTop + clientHeight >= scrollHeight - threshold) {
-            loading = true;
-            currentPage++;
+    //     if (scrollTop + clientHeight >= scrollHeight - threshold) {
+    //         loading = true;
+    //         currentPage++;
 
-            try {
-                const response = await fetch(`/itinerary/load?page=${currentPage}`);
-                const html = await response.text();
+    //         try {
+    //             const response = await fetch(`/itinerary/load?page=${currentPage}`);
+    //             const html = await response.text();
 
-                if (html.trim() === '') {
-                    noMoreData = true;
-                    return;
-                }
+    //             if (html.trim() === '') {
+    //                 noMoreData = true;
+    //                 return;
+    //             }
 
-                itineraryContainer.insertAdjacentHTML('beforeend', html);
-                const newRows = Array.from(document.querySelectorAll('.itinerary-row'));
-                rows.length = 0;
-                rows.push(...newRows);
+    //             itineraryContainer.insertAdjacentHTML('beforeend', html);
+    //             const newRows = Array.from(document.querySelectorAll('.itinerary-row'));
+    //             rows.length = 0;
+    //             rows.push(...newRows);
 
-                const query = searchInput?.value || mobileSearchInput?.value || '';
-                const filtered = filterRows(query);
-                render(filtered);
-            } catch (error) {
-                console.error('Error loading more itineraries:', error);
-            } finally {
-                loading = false;
-            }
-        }
-    });
+    //             const filtered = filterRows(getSearchQuery());
+    //             render(filtered);
+    //         } catch (error) {
+    //             console.error('Error loading more itineraries:', error);
+    //         } finally {
+    //             loading = false;
+    //         }
+    //     }
+    // });
 
     // 初期表示用
     updateSortIcons();
     render(rows);
     scrollContainer.dispatchEvent(new Event('scroll')); // 最初の読み込みトリガー
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            scrollToTopBtn?.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            scrollToTopBtn?.classList.add('opacity-0', 'pointer-events-none');
+        }
+    });
+
+    scrollToTopBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
 });

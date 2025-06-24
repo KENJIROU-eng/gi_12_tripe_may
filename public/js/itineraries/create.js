@@ -1,4 +1,3 @@
-
 // グローバル変数の定義
 let dateFieldsContainer = document.getElementById('dateFieldsContainer'); // 日付ごとの入力欄を格納する親要素
 let totalSummary = document.getElementById('totalSummary'); // 全体の距離/所要時間表示
@@ -8,7 +7,7 @@ let dailyDurations = {}; // 各日付ごとの合計所要時間
 const destinationCounts = {}; // 各日付ごとの目的地数
 
 // 目的地の入力フィールドを生成
-function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
+function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING', isFirst = false) {
     const travelModes = ['DRIVING', 'MOTORCYCLE', 'WALKING', 'TRANSIT'];
     const travelModeLabels = {
         DRIVING: 'Car',
@@ -31,31 +30,38 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         </div>
     `;
 
+    const startLabel = isFirst
+        ? `<div class="text-sm text-blue-600 font-semibold mb-1 flex items-center gap-1">
+           </div>`
+        : '';
+
     return `
-        <div class="destination-item mb-3">
-            <div class="flex items-center gap-2">
-                <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
-                    <i class="fa-solid fa-grip-lines"></i>
-                </span>
-                <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
-                    class="p-1 border rounded destination-input w-4/5" placeholder="Please enter a destination" />
-                <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
+            <div class="destination-item mb-3 ${isFirst ? 'bg-blue-50 border-l-4 border-blue-400 pl-2' : ''}">
+                ${startLabel}
+                <div class="flex items-center gap-2">
+                    <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
+                        <i class="fa-solid fa-grip-lines"></i>
+                    </span>
+                    <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
+                        class="p-1 border rounded destination-input w-4/5"
+                        placeholder="${isFirst ? 'Please enter your departure point' : 'Please enter your destination'}" />
+                    <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
 
-            <div class="ml-10 mt-1 grid grid-cols-2 sm:grid-cols-1 md:flex flex-wrap items-center gap-2 travel-mode-container">
-                ${radioButtons}
-                ${transitWarning}
-                <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
-            </div>
+                <div class="ml-10 mt-1 grid grid-cols-2 sm:grid-cols-1 md:flex flex-wrap items-center gap-2 travel-mode-container">
+                    ${radioButtons}
+                    ${transitWarning}
+                    <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
+                </div>
 
-            <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
-            <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
-            <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
-            <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
-        </div>
-    `;
+                <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
+                <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
+                <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
+                <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
+            </div>
+        `;
 }
 
 // 現在の目的地データを日付ごとにまとめて保存する
@@ -115,6 +121,8 @@ function createDateFields(startDate, endDate, existingData = {}) {
     const end = new Date(endDate);
     const dayCount = (end - start) / (1000 * 3600 * 24) + 1;
 
+    let isFirstDestination = true;
+
     for (let i = 0; i < dayCount; i++) {
         const currentDate = new Date(start);
         currentDate.setDate(start.getDate() + i);
@@ -124,10 +132,10 @@ function createDateFields(startDate, endDate, existingData = {}) {
         dateDiv.className = 'mb-4 border-b pb-2';
         dateDiv.dataset.date = dateStr;
         dateDiv.innerHTML = `
-        <h3 class="font-bold mb-2">${formatDateToDisplay(dateStr)}</h3>
-        <div class="destinations sortable-container"></div>
-        <button type="button" class="addDestinationBtn px-2 py-1 bg-green-500 text-white rounded"><i class="fa-solid fa-plus"></i> Add More Field</button>
-        <div class="summary mt-1 text-sm text-end text-gray-600"></div>
+            <h3 class="font-bold mb-2">${formatDateToDisplay(dateStr)}</h3>
+            <div class="destinations sortable-container"></div>
+            <button type="button" class="addDestinationBtn px-2 py-1 bg-green-500 text-white rounded"><i class="fa-solid fa-plus"></i> Add More Field</button>
+            <div class="summary mt-1 text-sm text-end text-gray-600"></div>
         `;
         dateFieldsContainer.appendChild(dateDiv);
 
@@ -135,19 +143,28 @@ function createDateFields(startDate, endDate, existingData = {}) {
 
         // 既存データがあれば復元
         if (existingData[dateStr]) {
-            existingData[dateStr].forEach((dest, i) => {
+            existingData[dateStr].forEach((dest, j) => {
                 destinationsContainer.insertAdjacentHTML(
                     'beforeend',
-                    createInputField(dateStr, i, dest.address, dest.lat, dest.lng, dest.placeId, dest.placeName, dest.travelMode || 'DRIVING')
+                    createInputField(
+                        dateStr, j,
+                        dest.address, dest.lat, dest.lng, dest.placeId, dest.placeName, dest.travelMode || 'DRIVING',
+                        isFirstDestination
+                    )
                 );
+                isFirstDestination = false;
             });
         } else {
-            destinationsContainer.insertAdjacentHTML('beforeend', createInputField(dateStr, 0));
+            destinationsContainer.insertAdjacentHTML(
+                'beforeend',
+                createInputField(dateStr, 0, '', '', '', '', '', 'DRIVING', isFirstDestination)
+            );
+            isFirstDestination = false;
         }
 
-        // オートコンプリート設定（すべてのinputに対して）
+        // オートコンプリート設定
         destinationsContainer.querySelectorAll('.destination-input').forEach(input => {
-        attachAutocomplete(input);
+            attachAutocomplete(input);
         });
     }
 
@@ -157,7 +174,7 @@ function createDateFields(startDate, endDate, existingData = {}) {
     initSortable();
     updateAllInputFieldNames();
     updateFirstDestinationDisplay();
-    handleTransitWarnings()
+    handleTransitWarnings();
 }
 
 // Googleオートコンプリート設定
@@ -221,6 +238,7 @@ function attachRemoveButtons() {
         updateAllDistanceTimes();
         updateMapByCurrentInputs();
         updateFirstDestinationDisplay();
+        clearSummariesIfNoDestinations();
         };
     });
 }
@@ -287,6 +305,7 @@ function initSortable() {
                 updateAllDistanceTimes();
                 updateMapByCurrentInputs();
                 updateFirstDestinationDisplay();
+                clearSummariesIfNoDestinations(); 
             }
         });
     });
@@ -299,17 +318,27 @@ function updateMapByCurrentInputs() {
         const lat = parseFloat(item.querySelector('.destination-lat').value);
         const lng = parseFloat(item.querySelector('.destination-lng').value);
         if (!isNaN(lat) && !isNaN(lng)) {
-        latLngs.push(new google.maps.LatLng(lat, lng));
+            latLngs.push(new google.maps.LatLng(lat, lng));
         }
     });
 
-    if (latLngs.length >= 2) {
+    clearMarkers(); // 常に既存ピンをクリア
+
+    if (latLngs.length === 1) {
+        // 1地点だけ → ピンだけ表示
+        addMarker(latLngs[0], "1");
+
+        //ルート表示は消す
+        directionsRenderer.set('directions', null);
+    } else if (latLngs.length >= 2) {
+        // 2地点以上 → ルート＋ピンを描画
         updateMapRoutesByLatLngs(latLngs);
     } else {
-        clearMarkers();
+        // 入力なし → ルートもマーカーもすべて消す
         directionsRenderer.set('directions', null);
     }
 }
+
 
 // 指定LatLngリストに基づいてマップ描画（ルート）
 function updateMapRoutesByLatLngs(latLngs) {
@@ -454,13 +483,33 @@ function updateAllDistanceTimes() {
                 if (pending === 0) {
                     for (const d in perDayStats) {
                         const stat = perDayStats[d];
-                        stat.summaryEl.textContent = `Distance: ${(stat.distance / 1000).toFixed(2)} km, Duration: ${formatDuration(stat.duration)}`;
+                        const dateDiv = document.querySelector(`[data-date="${d}"]`);
+                        const items = dateDiv ? dateDiv.querySelectorAll('.destination-item') : [];
+                        const destinationCount = items.length;
+
+                        const distanceKm = (stat.distance / 1000).toFixed(2);
+                        const durationStr = formatDuration(stat.duration);
+
+                        if (destinationCount === 0) {
+                            // ✅ 目的地が完全に削除された日付 → 非表示にする
+                            stat.summaryEl.textContent = '';
+                        } else if (
+                            destinationCount >= 2 ||
+                            (destinationCount === 1 && stat.distance > 0 && stat.duration > 0)
+                        ) {
+                            stat.summaryEl.textContent = `Distance: ${distanceKm} km, Duration: ${durationStr}`;
+                        } else {
+                            stat.summaryEl.textContent = ''; // 1件のみかつ距離ゼロ → 非表示
+                        }
+
                         dailyDistances[d] = stat.distance;
                         dailyDurations[d] = stat.duration;
                     }
+
                     totalSummary.textContent = `Total Distance: ${(totalDistance / 1000).toFixed(2)} km, Total Duration: ${formatDuration(totalDuration)}`;
                     totalSummary.classList.remove('hidden');
                 }
+
             });
         }
         previousLatLng = currentLatLng;
@@ -471,6 +520,18 @@ function updateAllDistanceTimes() {
     }
 }
 
+function clearSummariesIfNoDestinations() {
+    const dateDivs = document.querySelectorAll('#dateFieldsContainer > [data-date]');
+    dateDivs.forEach(dateDiv => {
+        const destinations = dateDiv.querySelectorAll('.destination-item');
+        const summary = dateDiv.querySelector('.summary');
+        if (destinations.length === 0 && summary) {
+            summary.textContent = '';
+        }
+    });
+}
+
+
 // 1番目の目的地は出発地点として移動手段UIを無効化
 function updateFirstDestinationDisplay() {
     const allDateDivs = [...document.querySelectorAll('#dateFieldsContainer > div[data-date]')];
@@ -478,6 +539,7 @@ function updateFirstDestinationDisplay() {
 
     // すべての目的地を初期状態に戻す
     document.querySelectorAll('.destination-item').forEach(item => {
+        // travel mode 表示を元に戻す
         item.querySelectorAll('.travel-mode-radio').forEach((radio) => {
             radio.disabled = false;
             if (radio.dataset.originalName) {
@@ -489,6 +551,19 @@ function updateFirstDestinationDisplay() {
         if (container) container.style.display = '';
         const routeInfo = item.querySelector('.route-info');
         if (routeInfo) routeInfo.style.display = '';
+
+        // プレースホルダー戻す
+        const input = item.querySelector('.destination-input');
+        if (input) {
+            input.placeholder = 'Please enter your destination';
+        }
+
+        // 出発ラベルがあれば削除
+        const oldLabel = item.querySelector('.start-label');
+        if (oldLabel) oldLabel.remove();
+
+        // 装飾も削除
+        item.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-400', 'pl-2');
     });
 
     // 全期間の先頭の目的地を見つける（最も早い日付）
@@ -500,8 +575,8 @@ function updateFirstDestinationDisplay() {
         }
     }
 
-    // 先頭だけを非表示・無効化（※radio.name は維持）
     if (firstItem) {
+        // travel mode 無効化・非表示
         firstItem.querySelectorAll('.travel-mode-radio').forEach((radio) => {
             if (!radio.dataset.originalName) {
                 radio.dataset.originalName = radio.name;
@@ -513,6 +588,21 @@ function updateFirstDestinationDisplay() {
         if (container) container.style.display = 'none';
         const routeInfo = firstItem.querySelector('.route-info');
         if (routeInfo) routeInfo.style.display = 'none';
+
+        // プレースホルダーを「出発地点」に
+        const input = firstItem.querySelector('.destination-input');
+        if (input) {
+            input.placeholder = 'Please enter your departure point';
+        }
+
+        // 出発ラベル追加
+        const label = document.createElement('div');
+        label.className = 'start-label text-sm text-blue-600 font-semibold mb-1 flex items-center gap-1';
+        label.innerHTML = '<i class="fa-solid fa-flag-checkered text-blue-500"></i> Departure Point';
+        firstItem.prepend(label);
+
+        // 装飾追加
+        // firstItem.classList.add('bg-blue-50', 'border-l-4', 'border-blue-400', 'pl-2');
     }
 }
 

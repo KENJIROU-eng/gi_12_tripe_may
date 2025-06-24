@@ -151,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.classList.toggle('hidden', !showChecked && isChecked);
             });
             toggleBtn.innerHTML = showChecked
-                ? '<i class="fa-solid fa-eye"></i>'
-                : '<i class="fa-solid fa-eye-slash"></i>';
+                ? '<i class="fa-solid fa-eye text-blue-500"></i>'
+                : '<i class="fa-solid fa-eye-slash text-blue-500"></i>';
         });
     }
 

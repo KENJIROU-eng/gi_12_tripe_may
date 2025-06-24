@@ -36,13 +36,13 @@ class Group extends Model
     {
         // すでに「一人グループ」があるか確認（user_id を owner として使う想定）
         $group = self::where('user_id', $userId)
-            ->where('name', 'like', "ボッチ専用")
+            ->where('name', 'like', "Bocchi")
             ->first();
 
         if (!$group) {
             // なければ作成
             $group = self::create([
-                'name' => "ボッチ専用",
+                'name' => "Bocci",
                 'user_id' => $userId,
                 'image' => null, // 必要であれば画像を指定
             ]);

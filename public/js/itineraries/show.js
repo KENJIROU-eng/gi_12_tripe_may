@@ -4,9 +4,10 @@ let markers = [];
 let shareMapUrl = null;
 
 window.initShowMap = async function () {
+    // 初期マップ（仮の中心）を表示
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 10.3302385, lng: 123.906207 },
-        zoom: 8,
+        zoom: 10,
     });
 
     directionsService = new google.maps.DirectionsService();
@@ -18,6 +19,7 @@ window.initShowMap = async function () {
 
     const allPlaces = [];
     let labelCount = 1;
+    let hasSetCenter = false; // ← 1回だけ map.setCenter する用
 
     for (const date of sortedDates) {
         const places = existingData[date];
@@ -27,6 +29,13 @@ window.initShowMap = async function () {
         const lat = parseFloat(first.latitude || first.lat);
         const lng = parseFloat(first.longitude || first.lng);
 
+        // 中心位置設定（最初の地点）
+        if (!hasSetCenter && !isNaN(lat) && !isNaN(lng)) {
+            map.setCenter({ lat, lng });
+            hasSetCenter = true;
+        }
+
+        // 天気取得
         if (!isNaN(lat) && !isNaN(lng)) {
             try {
                 const weather = await fetchWeather(lat, lng, date);
@@ -42,6 +51,7 @@ window.initShowMap = async function () {
             }
         }
 
+        // ピン追加
         for (const place of places) {
             if (!place.address && place.place_id) {
                 try {
@@ -65,12 +75,19 @@ window.initShowMap = async function () {
         }
     }
 
-    // 区間ごとにルートを描画・ステップ表示
+    // 区間ごとのルート描画
     for (let i = 0; i < allPlaces.length - 1; i++) {
         await drawSegmentRoute(allPlaces[i], allPlaces[i + 1]);
     }
 
     generateShareMapLink(allPlaces);
+
+    // Total summary を表示する（地図描画完了後）
+    const summary = document.getElementById('totalSummary');
+    if (summary) {
+        summary.classList.remove('hidden');
+        summary.classList.add('animate-fadeIn');
+    }
 };
 
 function addMarker(latLng, label) {
@@ -96,6 +113,7 @@ async function drawSegmentRoute(origin, destination) {
             travelMode: google.maps.TravelMode.DRIVING,
         });
 
+        console.log('Route result:', result);
         renderer.setDirections(result);
 
         const steps = result.routes[0].legs[0].steps;

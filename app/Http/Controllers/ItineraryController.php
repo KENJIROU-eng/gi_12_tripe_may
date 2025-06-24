@@ -599,14 +599,22 @@ public function show($itinerary_id, CostCalculator $costCalculator)
 
     }
 
-    public function loadMore(Request $request)
-    {
-        $page = $request->get('page', 1);
+    // public function loadMore(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $groupIds = $user->groups->pluck('id');
 
-        $itineraries = Itinerary::with(['user', 'group'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'page', $page);
+    //     $page = $request->get('page', 1);
 
-        return view('itineraries.partials.list', compact('itineraries'))->render(); // ←部分テンプレートで返す
-    }
+    //     $itineraries = Itinerary::with(['user', 'group'])
+    //         ->where('created_by', $user->id)
+    //         ->orWhereIn('group_id', $groupIds)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate(10, ['*'], 'page', $page);
+
+    //     return view('itineraries.partials.scroll', [
+    //         'all_itineraries' => $itineraries
+    //     ]);
+    // }
+
 }

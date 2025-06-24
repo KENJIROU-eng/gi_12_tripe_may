@@ -9,7 +9,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: italic;
-    font-size:  400;
+    font-size:  400px;
     background: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 221, 255)); /* 赤→青のグラデーション */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -20,7 +20,7 @@
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
-    font-size:  500;
+    font-size:  500px;
     background: linear-gradient(to right, rgb(0, 0, 255), rgb(0, 221, 255)); /* 赤→青のグラデーション */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

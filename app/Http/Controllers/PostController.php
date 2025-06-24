@@ -151,8 +151,8 @@ class PostController extends Controller
         $post->delete();
         $all_categories = $this->category->all();
 
-        $all_posts = $this->post->paginate(6)->onEachSide(2);
-        return view('posts.list')
+        $all_posts = $this->post->latest()->get();
+        return route('post.list')
             ->with('all_posts', $all_posts)
             ->with('all_categories', $all_categories);
     }

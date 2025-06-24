@@ -4,14 +4,16 @@
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
                 <div class="text-black dark:text-gray-100">
                     {{-- title --}}
-                    <div class="relative flex items-center justify-center mb-10">
-                        {{-- 戻るボタン --}}
-                        <div class="absolute left-0 top-0 mt-1 ml-2 z-10">
+                    <div class="flex flex-col md:flex-row items-center justify-between text-center mb-10 gap-2 md:gap-0 relative">
+                        {{-- Backボタン（モバイルは上、PCは左） --}}
+                        <div class="order-1 md:order-1">
                             <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
                                 <i class="fa-solid fa-arrow-left mr-1"></i> Back
                             </a>
                         </div>
-                        <h1 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
+
+                        {{-- タイトル（モバイル中央、PC中央） --}}
+                        <h1 class="order-2 md:order-2 text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
                             <i class="fa-solid fa-i"></i>
                             <i class="fa-solid fa-t"></i>
                             <i class="fa-solid fa-i"></i>
@@ -22,9 +24,15 @@
                             <i class="fa-solid fa-r"></i>
                             <i class="fa-solid fa-y"></i>
                         </h1>
-                        <a href="{{ route('itinerary.share') }}" class="absolute right-6 md:right-40 text-green-500">
-                            <i class="fa-solid fa-circle-plus text-xl"></i>
-                        </a>
+
+                        {{-- Createボタン（モバイルは下、PCは右） --}}
+                        <div class="order-3 md:order-3">
+                            <a href="{{ route('itinerary.share') }}"
+                            class="inline-flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-lg shadow">
+                                <i class="fa-solid fa-circle-plus mr-2"></i>
+                                Create
+                            </a>
+                        </div>
                     </div>
 
                     {{-- Contents --}}
@@ -32,18 +40,18 @@
                         {{-- header --}}
                         <div class="hidden md:grid md:grid-cols-12 items-center text-sm font-semibold border-b-2 border-gray-500 pb-2">
                             <div class="md:col-span-1 ms-4">Avatar</div>
-                            <div class="md:col-span-2 cursor-pointer flex items-center gap-1" data-sort="user">
-                                Created by <span class="sort-icon" data-key="user"></span>
-                            </div>
-                            <div class="md:col-span-2 cursor-pointer flex items-center gap-1" data-sort="group">
-                                Group <span class="sort-icon" data-key="group"></span>
-                            </div>
-                            <div class="md:col-span-3 cursor-pointer flex items-center gap-1" data-sort="date">
-                                Date <span class="sort-icon" data-key="date"></span>
-                            </div>
-                            <div class="md:col-span-3 cursor-pointer flex items-center gap-1" data-sort="title">
-                                Title <span class="sort-icon" data-key="title"></span>
-                            </div>
+                                <div class="md:col-span-2 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="user">
+                                    Created by <i class="fa-solid fa-sort sort-icon" data-key="user"></i>
+                                </div>
+                                <div class="md:col-span-2 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="group">
+                                    Group <i class="fa-solid fa-sort sort-icon" data-key="group"></i>
+                                </div>
+                                <div class="md:col-span-3 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="date">
+                                    Date <i class="fa-solid fa-sort sort-icon" data-key="date"></i>
+                                </div>
+                                <div class="md:col-span-3 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="title">
+                                    Title <i class="fa-solid fa-sort sort-icon" data-key="title"></i>
+                                </div>
                             <div class="md:col-span-1 text-center"></div>
                         </div>
 
@@ -140,10 +148,11 @@
 
 
                         {{-- body --}}
-                        <div id="scrollContainer" class="max-h-[600px] overflow-y-auto border rounded mb-3">
+                        <div id="scrollContainer" class="w-full overflow-x-hidden overflow-y-auto border rounded mb-3 max-h-none md:max-h-[600px]">
+
                             <div id="itineraryContainer" class="max-w-6xl mx-auto">
-                                @foreach ($all_itineraries as $itinerary)
-                                    <div class="flex flex-col md:grid md:grid-cols-12 items-center text-md gap-4 py-2 text-center border-b itinerary-row"
+                                @forelse ($all_itineraries as $itinerary)
+                                    <div class="itinerary-row w-full flex flex-col md:grid md:grid-cols-12 gap-2 py-4 border-b text-sm md:text-base"
                                         data-user="{{ strtolower($itinerary->user->name) }}"
                                         data-group="{{ strtolower($itinerary->group->name ?? 'no-group') }}"
                                         data-title="{{ strtolower($itinerary->title) }}"
@@ -151,7 +160,7 @@
                                         data-created="{{ $itinerary->created_at }}">
 
                                         {{-- user avatar --}}
-                                        <div class="md:col-span-1 w-full flex justify-center md:justify-start ms-6">
+                                        <div class="md:col-span-1 flex flex-col items-center md:items-start justify-start ms-0 md:ms-6">
                                             <a href="{{ route('profile.show', $itinerary->created_by) }}">
                                                 @if ($itinerary->user->avatar)
                                                     <img src="{{ $itinerary->user->avatar }}" alt="{{ $itinerary->user->name }}" class="w-12 h-12 rounded-full object-cover">
@@ -162,43 +171,49 @@
                                         </div>
 
                                         {{-- created by --}}
-                                        <div class="md:col-span-2 w-full flex justify-center md:justify-start">
-                                            <a href="{{ route('profile.show', $itinerary->created_by) }}" class="text-blue-600">{{ $itinerary->user->name }}</a>
+                                        <div class="md:col-span-2 flex flex-col items-center md:items-center justify-center text-center md:text-center">
+                                            <a href="{{ route('profile.show', $itinerary->created_by) }}" class="text-blue-600 font-semibold">
+                                                {{ Str::limit($itinerary->user->name, 20) }}
+                                            </a>
                                         </div>
 
                                         {{-- group --}}
-                                        <div class="md:col-span-2 w-full flex justify-center md:justify-start">
+                                        <div class="md:col-span-2 flex flex-col items-center md:items-center justify-center text-center md:text-center">
                                             @if ($itinerary->group)
-                                                <a href="{{ route('message.show', $itinerary->group->id) }}" class="text-blue-600">{{ $itinerary->group->name ?? 'No Group' }}</a>
+                                                <a href="{{ route('message.show', $itinerary->group->id) }}" class="text-blue-600 font-semibold">{{ Str::limit($itinerary->group->name, 15) }}</a>
                                             @else
                                                 <span class="text-gray-400">No Group</span>
                                             @endif
                                         </div>
 
                                         {{-- date --}}
-                                        <div class="md:col-span-3 w-full text-center md:text-start">
-                                            <p class="inline-block max-w-full md:w-60 text-sm md:text-base">
-                                                {{ \Carbon\Carbon::parse($itinerary->start_date)->format('M. d, Y') }} ～
-                                                {{ \Carbon\Carbon::parse($itinerary->end_date)->format('M. d, Y') }}
-                                            </p>
+                                        <div class="md:col-span-3 flex flex-col items-center md:items-center justify-center text-center md:text-center">
+                                            <span>
+                                                {{ \Carbon\Carbon::parse($itinerary->start_date)->format('M. d, Y') }}
+                                                ～ {{ \Carbon\Carbon::parse($itinerary->end_date)->format('M. d, Y') }}
+                                            </span>
                                         </div>
 
                                         {{-- title --}}
-                                        <div class="md:col-span-3 w-full text-center md:text-start">
-                                            <a href="{{ route('itinerary.show', $itinerary->id) }}">
-                                                <p class="text-blue-600 hover:underline break-words">{{ Str::limit($itinerary->title, 30) }}</p>
+                                        <div class="md:col-span-3 flex flex-col items-center md:items-center justify-center text-center md:text-center">
+                                            <a href="{{ route('itinerary.show', $itinerary->id) }}" class="text-blue-600 hover:underline font-semibold">
+                                                {{ Str::limit($itinerary->title, 30) }}
                                             </a>
                                         </div>
 
                                         {{-- actions --}}
-                                        <div class="md:col-span-1 w-full flex justify-center space-x-4">
+                                        <div class="md:col-span-1 flex justify-center items-center space-x-4">
                                             <a href="{{ route('itinerary.edit', $itinerary->id) }}" title="Edit">
-                                                <i class="fa-solid fa-pen text-yellow-300"></i>
+                                                <i class="fa-solid fa-pen text-yellow-300 text-lg"></i>
                                             </a>
-                                            @include('itineraries.modals.delete', ['itinerary' => $itinerary])
+                                            <span class="text-red-500">
+                                                @include('itineraries.modals.delete', ['itinerary' => $itinerary])
+                                            </span>
                                         </div>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <p class="text-center text-gray-500 py-4">No itineraries found.</p>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -206,6 +221,13 @@
             </div>
         </div>
     </div>
+    {{-- Scroll to Top Button --}}
+    <button id="scrollToTopBtn"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-60 pointer-events-none"
+        aria-label="Scroll to top">
+        <i class="fa-solid fa-arrow-up"></i> Go to Top
+    </button>
+
 
     @push('scripts')
         <script src="{{ asset('js/itineraries/index.js') }}"></script>
@@ -220,5 +242,30 @@
         .animate-fadeIn {
             animation: fadeIn 0.6s ease-out forwards;
         }
+
+        .sort-icon {
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        [data-sort]:hover .sort-icon {
+            color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        [data-sort] {
+            transition: background-color 0.2s;
+            border-radius: 0.375rem;
+        }
+
+        [data-sort]:hover {
+            background-color: #e5e7eb;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-sort]:hover {
+                background-color: #374151;
+            }
+        }
     </style>
+
 </x-app-layout>
