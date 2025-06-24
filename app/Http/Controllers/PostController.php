@@ -59,10 +59,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'title' => 'required|min:1|max:50',
             'description' => 'required|min:1|max:500',
-            'image' => 'required|mimes:jpeg,jpg,png,gif|max:1048',
+            'image' => 'required|mimes:jpeg,jpg,png,gif|max:5120',
         ]);
 
         $this->post->user_id = Auth::User()->id;
@@ -119,7 +120,7 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|min:1|max:50',
             'description' => 'required|min:1|max:500',
-            'image' => 'mimes:jpeg,jpg,png,gif|max:1048',
+            'image' => 'mimes:jpeg,jpg,png,gif|max:5120',
             'category_name' => 'required'
         ]);
 
@@ -150,12 +151,12 @@ class PostController extends Controller
         $post = $this->post->findOrFail($post_id);
         $post->delete();
         $all_categories = $this->category->all();
-
         $all_posts = $this->post->latest()->get();
         return route('post.list')
             ->with('all_posts', $all_posts)
             ->with('all_categories', $all_categories);
     }
+
 
     public function like($post_id) {
         $post = $this->post->findOrFail($post_id);

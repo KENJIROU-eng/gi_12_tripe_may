@@ -19,10 +19,8 @@
                         <i class="fa-solid fa-e"></i>
                     </h1>
                 </div>
-
                 <form id="itineraryForm" action="{{ route('itinerary.store') }}" method="POST" class="space-y-8">
                     @csrf
-
                     {{-- ヘッダー入力 --}}
                     <div class="grid grid-cols-1 md:grid-cols-10 gap-6">
                         {{-- タイトル --}}
@@ -36,7 +34,6 @@
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
                         {{-- 日付 --}}
                         <div class="md:col-span-5">
                             <div class="grid grid-cols-9 gap-2">
@@ -57,7 +54,6 @@
                                 </div>
                             </div>
                         </div>
-
                         {{-- Createボタン --}}
                         <div class="md:col-span-1 flex items-end justify-end">
                             <button type="submit" class="w-full md:w-auto px-5 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow transition-all duration-200 ease-in-out">
@@ -65,7 +61,6 @@
                             </button>
                         </div>
                     </div>
-
                     {{-- メインエリア（左：目的地入力欄, 右：マップ） --}}
                     <div class="flex flex-col md:flex-row gap-4">
                         {{-- 左カラム --}}
@@ -76,35 +71,28 @@
                             <input type="hidden" name="total_distance" id="total_distance" />
                             <input type="hidden" name="total_duration" id="total_duration" />
                             <input type="hidden" name="initial_place" id="initial_place" />
-
                             {{-- 日付別フォーム --}}
                             <div id="dateFieldsContainer" class="flex-1 overflow-y-auto max-h-[560px] space-y-4">
                                 {{-- 動的にJavaScriptで追加される --}}
                             </div>
-
                             {{-- 合計表示 --}}
                             <div id="totalSummary" class="mt-4 text-right text-sm text-gray-600 dark:text-gray-300 hidden"></div>
                         </div>
-
                         {{-- 右カラム（地図） --}}
                         <div class="md:w-1/2 w-full bg-white dark:bg-gray-700 rounded-lg p-2 shadow relative">
                             <div id="map" class="h-64 md:h-[600px] w-full rounded-md border"></div>
                         </div>
                     </div>
                 </form>
-
                 {{-- スクリプト --}}
                 @push('scripts')
                     <script src="{{ asset('js/itineraries/map.js') }}"></script>
                     <script src="{{ asset('js/itineraries/create.js') }}"></script>
-                    {{-- <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places&callback=initMap&loading=async" async defer></script> --}}
                     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap" async defer></script>
-
                 @endpush
             </div>
         </div>
     </div>
-
     {{-- 簡易アニメーションクラス --}}
     <style>
         @keyframes fadeIn {
@@ -116,3 +104,4 @@
         }
     </style>
 </x-app-layout>
+

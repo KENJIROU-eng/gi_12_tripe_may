@@ -226,7 +226,6 @@
                             const weatherApiKey = @json(config('services.weatherapi.key'));
                         </script>
                         <script src="{{ asset('js/itineraries/show.js') }}"></script>
-                        {{-- <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places&callback=initShowMap&loading=async" async defer></script> --}}
                         <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initShowMap" async defer></script>
                     @endpush
                 </div>

@@ -12,7 +12,7 @@
                         <hr class="border-4 border-orange-200 shadow">
                         {{-- contents --}}
                         <div class="mx-auto overflow-y-auto max-h-[650px] mt-8 flex-1">
-                            @if (!($groups->exists()))
+                            @if (!($groups->isNotEmpty()))
                                 <div class="text-center text-lg my-60">
                                     <h2 class="mb-4 text-gray-500">No group created yet.</h2>
                                     <div class="text-blue-500">

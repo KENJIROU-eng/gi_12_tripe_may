@@ -27,16 +27,16 @@
                                 </div>
                             </form>
 
-                            <div id="scroll-container" class="max-h-[660px] overflow-auto pb-12">
+                            <div id="scroll-container" class="max-h-[660px] overflow-auto pb-4">
                                 <div id="post-container" class="flex flex-wrap -mx-2" data-masonry='{"itemSelector": ".post-item", "columnWidth": ".post-sizer", "percentPosition": true }'>
                                     <div class="post-sizer w-full sm:w-1/2 lg:w-1/3"></div>
 
                                     @foreach ($all_posts as $post)
-                                        <div class="post-item w-full sm:w-1/2 lg:w-1/3 px-4 mb-6 transition duration-300 ease-in-out transform hover:scale-[1.03] hover:-translate-y-1 ">
+                                        <div class="post-item w-full sm:w-1/2 lg:w-1/3 px-4 mb-6 transition duration-300 ease-in-out transform hover:scale-[1.03] hover:-translate-y-1">
                                             <div class="bg-white dark:bg-gray-700 shadow-xl  overflow-hidden">
                                                 <a href="{{ route('post.show', $post->id) }}">
                                                     <img src="{{ $post->image }}" alt="{{ $post->title }}"
-                                                        class="w-full h-auto object-cover transition-transform duration-300 hover:scale-100">
+                                                        class="w-full h-auto object-cover transition-transform duration-300 hover:scale-100 max-h-[480px]">
                                                 </a>
                                                 <p class="text-gray-500 font-extralight text-xs text-center mt-1">{{ $post->user->name }}</p>
                                                 <div class="flex items-center px-3 pb-3">

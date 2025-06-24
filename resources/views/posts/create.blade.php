@@ -46,7 +46,7 @@
                                         <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)">
                                         <div class="form-text text-gray-500 mt-1" id="image-info">
                                             The acceptable formats are jpeg, jpg, png, and gif only. <br>
-                                            Max file size is 1048kb.
+                                            Max file size is 2096kb.
                                         </div>
                                     </div>
                                 </div>

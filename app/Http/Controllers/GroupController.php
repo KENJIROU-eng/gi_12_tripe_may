@@ -104,7 +104,7 @@ class GroupController extends Controller
         $this->authorize('delete', $message);
         $message->delete();
 
-        return back()->with('success', 'メッセージを削除しました');
+        return response()->json(['success'=> true]);
     }
 
     public function updateMessage(Request $request, Message $message){
@@ -119,7 +119,8 @@ class GroupController extends Controller
         'message' => $request->input('message'),
     ]);
 
-    return redirect()->route('groups.show', $message->group_id)->with('success', 'メッセージを編集しました');
+    return response()->json([ 'status' => 'updated', 'message' => $message->message,]);
+
 }
 
     /**
