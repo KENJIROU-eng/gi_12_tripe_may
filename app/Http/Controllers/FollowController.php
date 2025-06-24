@@ -55,6 +55,30 @@ class FollowController extends Controller
             ->with('group', $group);
     }
 
+    public function create_usersPage($following_id)
+    {
+        $this->follow->following_id = $following_id;
+        $this->follow->follower_id = Auth::User()->id;
+        $this->follow->save();
+
+        $user = $this->user->findOrFail($following_id);
+        $group = $this->group->where('user_id', $following_id)->where('name', Auth::User()->name)->first();
+            if (!$group) {
+                $group = new Group();
+                $group->user_id = Auth::User()->id;
+                $group->name = $user->name;
+                $group->save();
+                $group->members()->create([
+                    'user_id' => Auth::User()->id,
+                ]);
+                $group->members()->create([
+                    'user_id' => $user->id
+                ]);
+            };
+
+        return redirect()->back();
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -104,6 +128,22 @@ class FollowController extends Controller
         //     ->with('user', $user)
         //     ->with('all_posts', $all_posts);
         return redirect()->route('profile.show', $following_id);
+    }
+
+    public function destroy_usersPage($following_id)
+    {
+        $follow = $this->follow->where('following_id', $following_id)->where('follower_id', Auth::User()->id);
+        $follow->delete();
+
+        $user = $this->user->findOrFail($following_id);
+        $group = $this->group->where('user_id', Auth::User()->id)->where('name', $user->name)->delete();
+
+        // $user = $this->user->findOrFail($following_id);
+        // $all_posts = $user->post()->paginate(6)->onEachSide(2);
+        // return view('profile.show')
+        //     ->with('user', $user)
+        //     ->with('all_posts', $all_posts);
+        return redirect()->back();
     }
 
     public function follower_show(User $user) {

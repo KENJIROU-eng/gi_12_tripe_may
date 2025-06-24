@@ -8,13 +8,19 @@
         @if ($group->users->count() > 2)
             <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}} ({{ $group->users->count()}})</p>
         @elseif ($group->users->count() == 2)
-            @foreach ($group->users as $user)
-                @if ($user->id != Auth::User()->id)
-                    <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $user->name}}</p>
-                @endif
-            @endforeach
+            @if (($group->name == Auth::User()->name) || ($group->user_id == Auth::User()->id))
+                @foreach ($group->users as $user)
+                    @if (($group->name == $user->name) || ($group->user_id == $user->id))
+                        @if ($user->id != Auth::User()->id)
+                            <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $user->name}}</p>
+                        @endif
+                    @endif
+                @endforeach
+            @else
+                <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name }}</p>
+            @endif
         @else
-            <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $Auth::User()->name}}</p>
+            <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}}</p>
         @endif
         <div x-data="{ open: false }" class="flex ">
             <button @click="open = !open" class="flex -space-x-4">
@@ -35,12 +41,16 @@
                             <li class="flex items-center space-x-3">
                                 @if(isset($groupKey[$user->id]))
                                     <a href="{{ route('message.show', $groupKey[$user->id]) }}">
-                                        <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
-                                        <span class="text-sm">{{ $user->name }}</span>
+                                        <div class="flex">
+                                            <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
+                                            <span class="text-sm ml-2">{{ $user->name }}</span>
+                                        </div>
                                     </a>
                                 @else
-                                    <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
-                                    <span class="text-sm">{{ $user->name }}</span>
+                                    <div class="flex">
+                                        <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full" alt="{{ $user->name }}">
+                                        <span class="text-sm ml-2">{{ $user->name }}</span>
+                                    </div>
                                 @endif
                             </li>
                         @endforeach
@@ -51,27 +61,38 @@
     </div>
 
     <!--chat-->
+    <div id="alpine-test" x-data="{ hello: 'world' }">
+        <p x-text="hello"></p>
+    </div>
     <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll h-[calc(100vh-8rem)] px-4 pb-28 space-y-2">
         @foreach ($messages as $message)
             @php $isMine = $message->user_id === auth()->id();@endphp
-
-                @if ($isMine)
-                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
-
-
-                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">
-                            {{ $message->created_at->format('Y-m-d H:i') }}
-                        </div>
-                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow ">
-                            @if ($message->message)
-                                <div style="word-break: break-word; overflow-wrap: break-word;">{{$message->message }}</div>
-                            @endif
-                        </div>
-                        @if ($message->image_url)
-                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
-                        @endif
+            @if ($isMine)
+                <div x-data='@json(["editing" => false, "content" => $message->message])' id="message-{{ $message->id }}" class="flex justify-end items-end" >
+                    <div class="text-xs text-right mt-1 text-gray-400 mr-2">
+                        {{ $message->created_at->format('Y-m-d H:i') }}
                     </div>
-                @else
+                    <div class="bg-green-300 rounded-2xl p-2 max-w-[70%] shadow space-y-2" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+                        <template x-if="editing">
+                            <div>
+                                <textarea x-model="content" class="w-full p-1 rounded"></textarea>
+                                <div class="flex justify-end space-x-2 mt-1">
+                                    <button @click="window.saveEdit({{ $message->id }}); editing = false" class="text-blue-500 text-sm">保存</button>
+                                    <button @click="editing = false" class="text-gray-500 text-sm">キャンセル</button>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="!editing">
+                            <div>
+                                <div x-text="content" style="word-break: break-word; overflow-wrap: break-word;"></div>
+                            </div>
+                        </template>
+                    </div>
+                    @if ($message->image_url)
+                        <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                    @endif
+                </div>
+            @else
                 <div>
                     <div class="flex items-start">
                         <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
@@ -93,21 +114,23 @@
                         </div>
                     </div>
                 </div>
-                @endif
+            @endif
         @endforeach
     </div>
 
     <ul id="custom-menu"
     class="absolute hidden bg-gray-100  rounded shadow z-50">
-    <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
-        Edit
-    </li>
-    <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
-        Delete
-    </li>
-</ul>
+        <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
+            Edit
+        </li>
+        <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
+            Delete
+        </li>
+    </ul>
 
 <script>
+    console.log(document.getElementById('alpine-test').__x?.$data)
+    
     let currentMessageId = null;
 
     function openCustomMenu(event, messageId) {
@@ -121,11 +144,44 @@
         menu.classList.remove('hidden');
     }
 
-    document.getElementById('edit-item').addEventListener('click', () => {
-        if (currentMessageId) {
-            window.location.href = `/chat/${currentMessageId}/edit`;
-        }
+    document.getElementById('edit-item')?.addEventListener('click', () => {
+        if (!currentMessageId) return;
+
+        const messageEl = document.getElementById(`message-${currentMessageId}`);
+        if (!messageEl) return;
+
+        // 明示的に初期化（Alpine v3 以上が前提）
+        console.log(window.Alpine)
+        console.log(Alpine?.version)
+        window.Alpine.initTree(messageEl);
+
+        // 初期化を待ってから確認（次フレームで確実に __x が付く）
+        requestAnimationFrame(() => {
+            if (messageEl.__x?.$data) {
+                messageEl.__x.$data.editing = true;
+            } else {
+                console.warn(`message-${currentMessageId} に Alpine x-data が見つかりません`);
+            }
+        });
     });
+
+    window.saveEdit = function(messageId) {
+        const messageEl = document.getElementById(`message-${messageId}`);
+        if (!messageEl || !messageEl.__x) return;
+        const newContent = messageEl.__x.$data.content;
+        fetch(`/chat/${messageId}/update`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': window.csrfToken
+            },
+            body: JSON.stringify({ message: newContent })
+        }).then(response => {
+            if (response.ok) {
+                messageEl.__x.$data.editing = false;
+            }
+        });
+    }
 
     document.getElementById('delete-item').addEventListener('click', () => {
         if (currentMessageId && confirm('本当に削除しますか？')) {
@@ -159,4 +215,3 @@
     </form>
 </x-app-layout>
 
-Y-m-d

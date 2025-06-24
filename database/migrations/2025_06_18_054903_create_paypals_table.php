@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('paypals', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('itinerary_id');
             $table->string('Price');
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('itinerary_id')->references('id')->on('itineraries');

@@ -35,6 +35,29 @@ class ProfileController extends Controller
             ->with('user', $user);
     }
 
+    public function users_index()
+    {
+        $all_users = $this->user->all();
+
+
+        return view('profile.users_list')
+            ->with('all_users', $all_users);
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'user_name' => 'required|max:50',
+        ]);
+
+        $search = $request->user_name;
+        $all_users = $this->user->where('name', 'like', '%'. $request->user_name . '%')->get();
+
+        return view('profile.users_list_search')
+            ->with('search', $search)
+            ->with('all_users', $all_users);
+    }
+
     public function create(Request $request) {
 
         $request->validate([
@@ -54,7 +77,7 @@ class ProfileController extends Controller
         }
         $user->save();
 
-        return redirect()->route('dashboard');
+        return redirect()->route('profile.users.list');
     }
 
     /**

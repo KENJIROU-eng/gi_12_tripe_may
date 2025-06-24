@@ -134,10 +134,53 @@ window.Echo = new Echo({
 
 // for notification
 //notificationの設定
+
+function unlockAudio() {
+    const dummy = new Audio('/sounds/maou_se_onepoint23.mp3');
+    dummy.volume = 0;
+    dummy.play().then(() => {
+        localStorage.setItem(`audioUnlocked_user_${myUserId}`, '1');
+        console.log('✅ ユーザー操作で再生許可を取得 & 保存');
+        hideModal();
+    }).catch(err => {
+        console.warn('❌ 音声再生許可取得失敗:', err);
+    });
+}
+
+function hideModal() {
+    document.getElementById('audio-permission-modal').classList.add('hidden');
+}
+
+function showModal() {
+    document.getElementById('audio-permission-modal').classList.remove('hidden');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const unlocked = localStorage.getItem(`audioUnlocked_user_${myUserId}`);
+    if (Number(localStorage.getItem(`notificationsEnabled_user_${myUserId}`)) === 1) {
+        if (unlocked === '1' || unlocked === '0') {
+            hideModal();
+
+        } else {
+            showModal();
+
+            document.getElementById('enable-sound-btn').addEventListener('click', () => {
+            unlockAudio();
+            }, { once: true });
+
+            document.getElementById('cancel-sound-btn').addEventListener('click', () => {
+            console.log('ユーザーが通知音の許可をキャンセルしました');
+            localStorage.setItem(`audioUnlocked_user_${myUserId}`, '0');
+            }, { once: true });
+        }
+    }
+});
 // グローバル関数として明示
+
 window.enableNotification = function () {
     document.getElementById('notify-box').style.display = 'none';
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '1');
+    location.reload();
 }
 
 window.dismissNotification = function () {
@@ -174,12 +217,16 @@ for (let i = 0; i < length; i++) {
 
                     // DOMに追加
                     container.appendChild(notification);
+                    //sound
+                    const audio = new Audio('/sounds/maou_se_onepoint23.mp3');
+                    audio.volume = 0.5;
+                    audio.play().catch(e => console.error("Audio play error:", e));
 
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
                         location.reload(); //notification count 用
-                    }, 7000);
+                    }, 4000);
                 };
             };
         } else {

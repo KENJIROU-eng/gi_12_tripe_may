@@ -63,7 +63,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit">
-                                                        <i class="fa-solid fa-heart text-red-500 text-2xl mr-2"></i>
+                                                        <i class="fa-solid fa-heart text-red-500 hover:text-gray-600 text-2xl mr-2"></i>
                                                     </button>
                                                 </form>
                                             @else
@@ -79,37 +79,31 @@
                                             </button>
                                             @include('posts.modals.likeUser', ['post' => $post])
                                         </div>
-<<<<<<< HEAD
-                                        <div class="col-auto ">
+                                        <div class="col-auto">
                                             {{-- trigger --}}
                                             <div x-data="{ open: false }">
-                                                <button @click="open = true">
-                                                    {{ $post->likes()->count() }}
-                                                </button>
+                                                <div class="flex items-center space-x-1">
+                                                    <button @click="open = true" class="text-blue-500 hover:text-blue-600 text-2xl">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </button>
+                                                    <p class="text-black">{{ $post->comments->count() }}</p>
+                                                </div>
                                                 {{-- modal content --}}
                                                 @include('posts.modals.comments', ['post' => $post])
                                             </div>
                                         </div>
-                                        <div class="col text-end text-blue-400 font-light ml-auto mr-4">
-=======
-
                                         <div class="ml-auto text-blue-400 mr-3">
->>>>>>> a3d85c4d6ca99ddd8d2645c222d55ec1af33d323
                                             @foreach ($post->categoryPost as $categoryPost)
                                             #{{ $categoryPost->category->name }}
                                             @endforeach
                                         </div>
                                     </div>
-
                                     <div class="text-xs text-gray-500 ml-3 mt-1">
                                         {{ $post->created_at->format('M d, Y') }}
                                     </div>
-
-
                                     @php
                                         $isLong = mb_strlen($post->description) > 350;
                                     @endphp
-
                                     @if ($isLong)
                                         <div x-data="{ open: false }" class="px-4 mb-2">
                                             <div

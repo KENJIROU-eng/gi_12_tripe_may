@@ -1,6 +1,6 @@
 <div class="relative flex justify-center items-center mb-4">
     <h2 class="text-xl font-bold">Bill</h2>
-    <a href="{{ route('goDutch.index', $itinerary->id) }}" class="absolute right-6 text-2xl" title="Bill">
+    <a href="{{  ($itinerary->finalize_bill_at != NULL) ? route('goDutch.finalize', $itinerary->id) : route('goDutch.index', $itinerary->id)}}" class="absolute right-6 text-2xl" title="Bill">
         <i class="fa-solid fa-money-bill text-blue-500"></i>
     </a>
 </div>

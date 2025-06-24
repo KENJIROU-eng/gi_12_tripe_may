@@ -77,6 +77,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Follow::class, 'follower_id');
     }
 
+    public function private_group(){
+        return $this->hasMany(Group::class, 'user_id');
+    }
+
     # Returns TRUE if the Auth user is already following the user
     public function isFollowed()
     {

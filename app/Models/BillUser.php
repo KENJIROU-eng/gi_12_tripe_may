@@ -13,4 +13,9 @@ class BillUser extends Model
         'bill_id',
         'eachPay',
     ];
+
+    public function userPaid()
+    {
+        return $this->belongsTo(User::class, 'user_paid_id');
+    }
 }

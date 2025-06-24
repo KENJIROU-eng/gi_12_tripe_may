@@ -7,6 +7,20 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
+// document.addEventListener('DOMContentLoaded', () => {
+//     Alpine.start();
+
+//     const check = setInterval(() => {
+//         const testEl = document.getElementById('alpine-test');
+//         if (testEl?.__x?.$data) {
+//             console.log('🎉 Alpine x-data detected:', testEl.__x.$data);
+//             clearInterval(check); // 監視終了
+//         } else {
+//             console.log('⏳ Waiting for Alpine...');
+//         }
+//     }, 100); // 100msごとにチェック
+// });
+
 // main.js
 // import { login } from './auth.js';
 // import { initEcho } from './realtime.js';

@@ -33,15 +33,28 @@ class PostController extends Controller
     }
 
     public function search(Request $request) {
-        $category = $this->category->findOrFail($request->search);
-        $all_posts_id = $category->categoryPost->pluck('post_id')->toArray();
-        $all_posts = $this->post->whereIn('id', $all_posts_id)->paginate(6)->onEachSide(2);
-        // $all_posts = $this->post->where('title', 'like', '%'. $request->search . '%')->paginate(6)->onEachSide(2)->appends(['search' => $request->search]);
-        $all_categories = $this->category->all();
-        return view('posts.list_search')
+        $request->validate([
+            'search' => 'required',
+        ]);
+        if ($request->search == '#') {
+            $all_categories = $this->category->all();
+            $all_posts = $this->post->all();
+
+            return view('posts.list_search')
             ->with('all_posts', $all_posts)
-            ->with('all_categories', $all_categories)
-            ->with('search', $request->search);
+            ->with('all_categories', $all_categories);
+
+        }else {
+            $category_search = $this->category->findOrFail($request->search);
+            $all_posts_id = $category_search->categoryPost->pluck('post_id')->toArray();
+            $all_posts = $this->post->whereIn('id', $all_posts_id)->latest()->get();
+            // $all_posts = $this->post->where('title', 'like', '%'. $request->search . '%')->paginate(6)->onEachSide(2)->appends(['search' => $request->search]);
+            $all_categories = $this->category->all();
+            return view('posts.list_search')
+                ->with('all_posts', $all_posts)
+                ->with('all_categories', $all_categories)
+                ->with('category_search', $category_search);
+        };
     }
 
     /**
@@ -151,8 +164,8 @@ class PostController extends Controller
         $post->delete();
         $all_categories = $this->category->all();
 
-        $all_posts = $this->post->paginate(6)->onEachSide(2);
-        return view('posts.list')
+        $all_posts = $this->post->latest()->get();
+        return redirect()->route('post.list')
             ->with('all_posts', $all_posts)
             ->with('all_categories', $all_categories);
     }

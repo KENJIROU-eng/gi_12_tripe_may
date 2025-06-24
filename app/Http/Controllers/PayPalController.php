@@ -101,9 +101,9 @@ class PayPalController extends Controller
             $this->pay->itinerary_id = $itinerary_id;
             $this->pay->Price = $value;
             $this->pay->save();
-            return redirect()->route('goDutch.index', $itinerary_id);
+            return redirect()->route('goDutch.finalize', $itinerary_id);
         } else {
-            return redirect()->route('goDutch.index', $itinerary_id);
+            return redirect()->route('goDutch.finalize', $itinerary_id);
         }
     }
 

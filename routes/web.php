@@ -25,6 +25,8 @@ Route::get('/dashboard', [ProfileController::class, 'index'])->middleware(['auth
 Route::middleware('auth')->group(function () {
     #profile
     Route::get('/profile/set', [ProfileController::class, 'set'])->name('profile.set');
+    Route::get('/profile/users/list', [ProfileController::class, 'users_index'])->name('profile.users.list');
+    Route::get('/profile/users/search', [ProfileController::class, 'search'])->name('profile.users.search');
     Route::patch('/profile/create', [ProfileController::class, 'create'])->name('profile.create');
     Route::get('/profile/{user_id}/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -33,7 +35,9 @@ Route::middleware('auth')->group(function () {
 
     #follow
     Route::post('/follow/{following_id}/create', [FollowController::class, 'create'])->name('follow.create');
+    Route::post('/profile/follow/{following_id}/create', [FollowController::class, 'create_usersPage'])->name('profile.follow.create');
     Route::delete('/follow/{following_id}/delete', [FollowController::class, 'destroy'])->name('follow.delete');
+    Route::delete('/profile/follow/{following_id}/delete', [FollowController::class, 'destroy_usersPage'])->name('profile.follow.delete');
     Route::get('/follower/{user}/show', [FollowController::class, 'follower_show'])->name('follower.show');
     Route::get('/following/{user}/show', [FollowController::class, 'following_show'])->name('following.show');
 
@@ -98,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/goDutch/{itinerary_id}/create', [BillController::class, 'store'])->name('goDutch.create');
     Route::delete('/goDutch/delete/{bill_id}/{itinerary_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
     Route::patch('/goDutch/update/{bill_id}/{itinerary_id}', [BillController::class, 'update'])->name('goDutch.update');
+    Route::get('/goDutch/{itinerary_id}/finalize', [BillController::class, 'finalize'])->name('goDutch.finalize');
 
     #paypal
     Route::get('/paypal/{itinerary_id}/{total}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');

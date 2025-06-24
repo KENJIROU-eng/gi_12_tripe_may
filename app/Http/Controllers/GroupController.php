@@ -104,7 +104,7 @@ class GroupController extends Controller
         $this->authorize('delete', $message);
         $message->delete();
 
-        return back()->with('success', 'メッセージを削除しました');
+        return response()->json(['success' => true]);
     }
 
     public function updateMessage(Request $request, Message $message){
@@ -142,12 +142,16 @@ class GroupController extends Controller
             ->values(); // インデックス整理
 
         // 各メッセージに紐づくグループを取り出す（順番はメッセージ準拠）
-        $groups = $latestMessages->pluck('group');
+        $groups = $latestMessages->map(fn($message) => $message->group);
 
         //ログインユーザーが所属しているグループを取得
         $groups_ini = Group::whereHas('members',function($quely) use ($user){
             $quely->where('user_id',$user->id);
         })->withCount('members')->get();
+
+        $groups_filtered = $groups_ini->filter(function($group) use ($groups) {
+            return !$groups->contains('id', $group->id);
+        });
 
         $users = User::all();
 
@@ -158,7 +162,7 @@ class GroupController extends Controller
             $nonReadCount[$group->id] = $readMessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
         }
 
-        return view('groups.list', compact('groups','users', 'nonReadCount', 'latestMessages', 'groups_ini'));
+        return view('groups.list', compact('groups','users', 'nonReadCount', 'latestMessages', 'groups_filtered'));
     }
 
     /**

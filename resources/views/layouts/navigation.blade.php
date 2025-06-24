@@ -7,7 +7,7 @@
                     <a href="{{ route('dashboard') }}" class="block h-12 w-12">
                         <img src="{{ asset('images/tripeas_logo_20250617.png') }}" alt="application logo" class="w-full h-full object-cover">
                     </a>
-                    <span class="ms-3 text-sm 2xl:text-xl font-semibold title-lg">Tripe@s</span>
+                    <span class="ms-3 text-sm 2xl:text-xl font-semibold title-sm">Tripe@s</span>
                 </div>
             </div>
             <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
@@ -36,16 +36,23 @@
                 <div class="flex items-center space-x-2 my-auto">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button aria-label="User Menu" class="w-8 h-8 rounded-full overflow-hidden focus:outline-none focus:ring">
-                                @if (Auth::user()->avatar)
-                                    <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 object-cover rounded-full" />
-                                @else
-                                    <i class="fa-solid fa-circle-user text-blue-600 text-base lg:text-lg"></i>
-                                @endif
-                                {{-- <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
-                                    {{ $nonReadCount_total }}
-                                </span> --}}
-                            </button>
+                            @if ($nonReadCount_total > 0)
+                                <button aria-label="User Menu" class="w-8 h-8 rounded-full overflow-hidden focus:outline-none focus:ring border-2 border-red-500">
+                                    @if (Auth::user()->avatar)
+                                        <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 object-cover rounded-full" />
+                                    @else
+                                        <img src="{{ asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="default avatar" class="w-8 h-8 object-cover rounded-full">
+                                    @endif
+                                </button>
+                            @else
+                                <button aria-label="User Menu" class="w-8 h-8 rounded-full overflow-hidden focus:outline-none focus:ring">
+                                    @if (Auth::user()->avatar)
+                                        <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 object-cover rounded-full" />
+                                    @else
+                                        <img src="{{ asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="default avatar" class="w-8 h-8 object-cover rounded-full">
+                                    @endif
+                                </button>
+                            @endif
                         </x-slot>
 
                         <x-slot name="content">
@@ -57,39 +64,50 @@
                             <x-dropdown-link :href="route('profile.show', Auth::user()->id)">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
+                            <x-dropdown-link :href="route('profile.users.list')">
+                                {{ __('Search Users') }}
+                            </x-dropdown-link>
                             <!--  Messages -->
                             @if ($groupIds)
-                                <div x-data="{ open: false }" class="relative">
+                                <div x-data="{ open: false }" class="relative inline-block">
                                     <button @click.stop="open = !open"
-                                        class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <span>
-                                            {{ __('New Messages') }}
+                                            class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <span>
+                                        {{ __('New Messages') }}
+                                        @if ($nonReadCount_total > 0)
                                             <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
-                                                {{ $nonReadCount_total }}
+                                            {{ $nonReadCount_total }}
                                             </span>
-                                        </span>
-                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                        </svg>
+                                        @endif
+                                    </span>
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
                                     </button>
-                                    <!-- sub menu -->
+
+                                    <!-- サブメニュー本体：右側に展開 -->
                                     <div x-show="open" @click.outside="open = false"
-                                        class="absolute left-full top-0 mt-0 ml-1 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                                        @foreach ($groups as $group)
-                                            @if ($nonReadCount[$group->id] > 0)
-                                                <a href="{{ route('message.show', $group->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $group->name }}</a>
-                                                <span class="ml-1 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
-                                                    {{ $nonReadCount[$group->id] }}
-                                                </span>
-                                            @endif
-                                        @endforeach
+                                        class="absolute top-0 right-0 ml-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50
+                                                transform translate-x-full"
+                                        x-cloak>
+                                    @foreach ($groups as $group)
+                                        @if ($nonReadCount[$group->id] > 0)
+                                        <a href="{{ route('message.show', $group->id) }}"
+                                            class="flex justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <span>{{ $group->name }}</span>
+                                            <span class="inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                            {{ $nonReadCount[$group->id] }}
+                                            </span>
+                                        </a>
+                                        @endif
+                                    @endforeach
                                     </div>
                                 </div>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); clearAudioSettings(); this.closest('form').submit();">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
@@ -110,6 +128,15 @@
             @endif
         </div>
     </div>
+    <script>
+        function clearAudioSettings() {
+            const userId = document.body.dataset.userId;
+            if (userId) {
+                localStorage.removeItem(`audioUnlocked_user_${userId}`);
+                localStorage.removeItem(`notificationsEnabled_user_${userId}`);
+            }
+        }
+    </script>
 
     {{-- @if (Auth::check())
         <!-- Responsive Navigation Menu -->

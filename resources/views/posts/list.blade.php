@@ -22,11 +22,12 @@
                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                                     </select>
-
                                     <button type="submit" class="block text-white px-4 bg-green-500 py-2 font-semi-bold hover: border-green-500 hover:bg-green-600 transition duration-300 rounded-md">Search</button>
                                 </div>
                             </form>
-
+                            {{-- @error('search')
+                                <div class="text-danger small text-center">{{ $message }}</div>
+                            @enderror --}}
                             <div id="scroll-container" class="max-h-[660px] overflow-auto pb-12">
                                 <div id="post-container" class="flex flex-wrap -mx-2" data-masonry='{"itemSelector": ".post-item", "columnWidth": ".post-sizer", "percentPosition": true }'>
                                     <div class="post-sizer w-full sm:w-1/2 lg:w-1/3"></div>
@@ -70,7 +71,7 @@
                                                             <button @click="open = true">
                                                                 {{ $post->likes()->count() }}
                                                             </button>
-                                                            @include('posts.modals.likeUser', ['post' => $post])
+                                                            @include('posts.modals.likeUser_list', ['post' => $post])
                                                         </div>
                                                     </div>
                                                 </div>

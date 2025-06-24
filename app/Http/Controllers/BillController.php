@@ -61,6 +61,8 @@ class BillController extends Controller
             $price = $price + $pay->Price;
         }
 
+        $details = $costCalculator->detailPayment($itinerary, $this->billUser);
+
         return view('goDutch.show')
             ->with('all_bills', $all_bills)
             ->with('itinerary', $itinerary)
@@ -68,6 +70,54 @@ class BillController extends Controller
             ->with('total_getPay', $total_getPay)
             ->with('total_Pay_alone', $total_Pay_alone)
             ->with('total_Pay', $total_Pay)
+            ->with('details', $details)
+            ->with('price', $price);
+    }
+
+    public function finalize($itinerary_id, CostCalculator $costCalculator)
+    {
+        // ItineraryのIDの付与
+        $itinerary = $this->itinerary->findOrFail($itinerary_id);
+
+        $itinerary->finalize_bill_at = now();
+        $itinerary->save();
+        $all_bills = $itinerary->bills()->latest()->get();
+
+        // groupIDの付与ー＞のちに行う
+        $group = $this->group->findOrFail($itinerary->group_id);
+        $groupMembers = [];
+        foreach ($group->members as $groupMember) {
+            $groupMembers[] = $groupMember->user;
+        }
+
+        //calculation
+        $total_getPay = [];
+        $total_Pay = [];
+        foreach ($groupMembers as $member) {
+            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
+        }
+        $total_Pay_alone = 0;
+        foreach ($all_bills as $bill) {
+            $total_Pay_alone = $total_Pay_alone + $bill->cost;
+        }
+
+        $pays = $this->pay->where('user_id', Auth::User()->id)->where('itinerary_id', $itinerary_id)->get();
+        $price = 0;
+        foreach ($pays as $pay) {
+            $price = $price + $pay->Price;
+        }
+
+        $details = $costCalculator->detailPayment($itinerary, $this->billUser);
+
+        return view('goDutch.show_final')
+            ->with('all_bills', $all_bills)
+            ->with('itinerary', $itinerary)
+            ->with('groupMembers', $groupMembers)
+            ->with('total_getPay', $total_getPay)
+            ->with('total_Pay_alone', $total_Pay_alone)
+            ->with('total_Pay', $total_Pay)
+            ->with('details', $details)
             ->with('price', $price);
     }
 
