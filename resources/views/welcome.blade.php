@@ -22,25 +22,24 @@
     <body class="min-h-screen flex items-center justify-center p-4 lg:p-8 text-[#1b1b18]" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
         <main class="flex flex-col-reverse lg:flex-row w-full max-w-[335px] lg:max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden lg:h-[600px]">
             <div class="text-[13px] flex-1">
-            <div class="grid grid-rows-2 h-full">
-                <!-- Sign In -->
-                <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
-                <h1 class="text-3xl lg:text-4xl">Sign in</h1>
-                <p class="mt-4 text-blue-500">If you have an account, please press the button</p>
-                <a href="{{ route('login') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
-                    Sign in
-                </a>
+                <div class="grid grid-rows-2 h-full">
+                    <!-- Sign In -->
+                    <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
+                        <h1 class="text-3xl lg:text-4xl">Sign in</h1>
+                        <p class="mt-4 text-blue-500">If you have an account, please press the button</p>
+                        <a href="{{ route('login') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                            Sign in
+                        </a>
+                    </div>
+                    <!-- Sign Up -->
+                    <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
+                        <h1 class="text-3xl lg:text-4xl">Sign up</h1>
+                        <p class="mt-4 text-blue-500">If you don't have an account, please press the button</p>
+                        <a href="{{ route('register') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                            Sign up
+                        </a>
+                    </div>
                 </div>
-
-                <!-- Sign Up -->
-                <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
-                <h1 class="text-3xl lg:text-4xl">Sign up</h1>
-                <p class="mt-4 text-blue-500">If you don't have an account, please press the button</p>
-                <a href="{{ route('register') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
-                    Sign up
-                </a>
-                </div>
-            </div>
             </div>
 
             <!-- Animation Box -->

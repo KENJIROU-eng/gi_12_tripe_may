@@ -5,7 +5,7 @@
                 <div class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                     <div class="pt-2 text-black dark:text-gray-100 h-full">
                         <div class="relative flex justify-center items-center flex-col h-full">
-                            <a href="{{ route('post.list') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm flex items-center mb-2 md:mb-0 md:absolute md:left-0 md:top-0 md:pl-4">
+                            <a href="{{ route('post.list') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-xl flex items-center mb-2 md:mb-0 md:absolute md:left-0 md:top-0 md:pl-4">
                                 <i class="fa-solid fa-arrow-left mr-2"></i> Post List
                             </a>
                             <div class="hidden md:block w-[100px]"></div>
@@ -79,6 +79,7 @@
                                             </button>
                                             @include('posts.modals.likeUser', ['post' => $post])
                                         </div>
+
                                         <div class="col-auto">
                                             {{-- trigger --}}
                                             <div x-data="{ open: false }">
@@ -88,6 +89,7 @@
                                                     </button>
                                                     <p class="text-black">{{ $post->comments->count() }}</p>
                                                 </div>
+
                                                 {{-- modal content --}}
                                                 @include('posts.modals.comments', ['post' => $post])
                                             </div>

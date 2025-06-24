@@ -119,7 +119,8 @@ class GroupController extends Controller
         'message' => $request->input('message'),
     ]);
 
-    return redirect()->route('groups.show', $message->group_id)->with('success', 'メッセージを編集しました');
+    return response()->json([ 'status' => 'updated', 'message' => $message->message,]);
+
 }
 
     /**
