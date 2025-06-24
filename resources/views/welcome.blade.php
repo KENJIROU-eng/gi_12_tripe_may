@@ -56,14 +56,14 @@
                         <div class="row-span-1 text-center max-h-[300px] w-full">
                             <h1 class="text-4xl mt-8">Sign in</h1>
                             <p class="text-md mt-8 text-blue-500">If you have an account, please press the button and sign in</p>
-                            <a href="{{ route('login') }}" class="mx-auto mt-8 block w-1/2 bg-green-500 font-semi-bold text-white py-2 px-2 rounded text-xl hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
+                            <a href="{{ route('login') }}?view=login" class="mx-auto mt-8 block w-1/2 bg-green-500 font-semi-bold text-white py-2 px-2 rounded text-xl hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
                                 Sign in
                             </a>
                         </div>
                         <div class="row-span-1 text-center max-h-[300px] w-full">
                             <h1 class="text-4xl mt-8">Sign up</h1>
                             <p class="text-md mt-8 text-blue-500">If you don't have an account, please press the button and sign up</p>
-                            <a href="{{ route('register') }}" class="mx-auto mt-8 block w-1/2 bg-green-500 font-semi-bold text-white py-2 rounded text-xl hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
+                            <a href="{{ route('register') }}?view=register" class="mx-auto mt-8 block w-1/2 bg-green-500 font-semi-bold text-white py-2 rounded text-xl hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
                                 Sign up
                             </a>
                         </div>

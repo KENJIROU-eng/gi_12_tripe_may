@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{group}', [GroupController::class, 'showMessage'])->name('message.show');
     Route::get('/chat/{message}/edit', [GroupController::class, 'editMessage'])->name('message.edit');
     Route::delete('/chat/{message}/delete', [GroupController::class, 'destroyMessage'])->name('message.destroy');
-    Route::patch('/chat/{message}', [GroupController::class, 'updateMessage'])->name('message.update');
+    Route::patch('/chat/{message}/update', [GroupController::class, 'updateMessage'])->name('message.update');
 
     #group
     Route::get('/group', [GroupController::class, 'index'])->name('groups.index');

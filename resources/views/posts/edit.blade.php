@@ -38,10 +38,10 @@
                                 @enderror
 
                                 {{--image--}}
-                                <div class="flex gap-4 mb-4">
+                                {{-- <div class="flex gap-4 mb-4">
                                     <div class="mt-2">
                                         <label for="image" class="block text-sm font-semibold mb-2">Image</label>
-                                        <img id="image-preview" class="rounded-md" src="{{ $post->image }}" alt="Image Preview" style="min-width: 100px; max-width: 200px; width: auto;">
+                                        <img id="image-preview" class="rounded-md" src="{{ $post->image }}" alt="Image Preview" style="min-width: 100px; max-width: 200px; width: auto; max-height: 250px;">
                                     </div>
                                     <div class="flex flex-col justify-end items-end">
                                         <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info" onchange="previewImage(event)">
@@ -50,7 +50,22 @@
                                             Max file size is 1048kb.
                                         </div>
                                     </div>
+                                </div> --}}
+                                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div class="mt-2">
+                                        <label for="image" class="block text-sm font-semibold mb-2">Image</label>
+                                        <img id="image-preview" class="rounded-md w-24 sm:w-48 h-auto max-h-[200px] sm:max-h-[250px] object-cover" src="{{ $post->image }}" alt="Image Preview">
+                                    </div>
+                                    <div class="flex flex-col justify-start sm:justify-end items-start sm:items-end w-full sm:w-auto">
+                                        <input type="file" name="image" id="image" class="form-control w-full sm:w-auto"
+                                            aria-describedby="image-info" onchange="previewImage(event)">
+                                        <div class="form-text text-gray-500 mt-1 text-sm break-words" id="image-info">
+                                            The acceptable formats are jpeg, jpg, png, and gif only. <br>
+                                            Max file size is 2096kb.
+                                        </div>
+                                    </div>
                                 </div>
+
                                 @error('image')
                                     <div class="text-danger small">{{ $message }}</div>
                                 @enderror

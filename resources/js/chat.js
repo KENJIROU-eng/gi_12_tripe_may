@@ -206,8 +206,11 @@ if (groupId && myUserId) {
             const messagesDiv = document.getElementById('messages'); //チャットメッセージの親要素を取得
             const isMine = parseInt(myUserId) === e.user_id; //メッセージの送信者が自分かどうかを判定
 
+            const wrapper = document.createElement('div');
+            wrapper.id = `message-${e.message_id}`;
+            wrapper.className = isMine ? 'flex justify-end items-end' : '';
             //7.メッセージ内容をHTMLに組み立て
-            const messageElement = document.createElement('div');//新しいメッセージを追加するための div を用意
+            //const messageElement = document.createElement('div');//新しいメッセージを追加するための div を用意
             let messageContent = '';
 
             //テキスト組み込み
@@ -221,11 +224,9 @@ if (groupId && myUserId) {
             }
 
             if (isMine) {
-                messageElement.innerHTML = `
-                    <div class="flex justify-end items-end">
-                        <div class="text-xs text-left mt-1 text-gray-400 mr-2">
-                            ${e.time}
-                        </div>
+                wrapper.innerHTML = `
+                    <div class="flex items-end">
+                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
                         <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
                             <div style="word-break: break-word; overflow-wrap: break-word;">
                                 ${messageContent}
@@ -233,36 +234,72 @@ if (groupId && myUserId) {
                         </div>
                     </div>
                 `;
+                wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
+                wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
+
             } else {
-                messageElement.innerHTML = `
-                    <div>
-                        <div class="flex items-start">
-                            <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
-                            <div class="flex space-x-2 items-end">
-                                <div class="max-w-[70%]">
-                                    <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
-                                    <div class="bg-white rounded-2xl p-3 shadow">
-                                        <div style="word-break: break-word; overflow-wrap: break-word;">
-                                            ${e.message?.text ?? ''}
-                                        </div>
-                                        ${e.image_url ? `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">` : ''}
+                wrapper.innerHTML = `
+                    <div class="flex items-start">
+                        <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
+                        <div class="flex space-x-2 items-end">
+                            <div class="max-w-[70%]">
+                                <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                <div class="bg-white rounded-2xl p-3 shadow">
+                                    <div style="word-break: break-word; overflow-wrap: break-word;">
+                                        ${messageContent}
                                     </div>
                                 </div>
-                                <div class="text-xs text-gray-400 items-end">
-                                    ${e.time}
-
-                                    </div>
                             </div>
+                            <div class="text-xs text-gray-400 items-end">${e.time}</div>
                         </div>
                     </div>
-`;
+                `;
+
+//             if (isMine) {
+//                 messageElement.innerHTML = `
+//                     <div class="flex justify-end items-end">
+//                         <div class="text-xs text-left mt-1 text-gray-400 mr-2">
+//                             ${e.time}
+//                         </div>
+//                         <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
+//                             <div style="word-break: break-word; overflow-wrap: break-word;">
+//                                 ${messageContent}
+//                             </div>
+//                         </div>
+//                     </div>
+//                 `;
+//             } else {
+//                 messageElement.innerHTML = `
+//                     <div>
+//                         <div class="flex items-start">
+//                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
+//                             <div class="flex space-x-2 items-end">
+//                                 <div class="max-w-[70%]">
+//                                     <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+//                                     <div class="bg-white rounded-2xl p-3 shadow">
+//                                         <div style="word-break: break-word; overflow-wrap: break-word;">
+//                                             ${e.message?.text ?? ''}
+//                                         </div>
+//                                         ${e.image_url ? `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">` : ''}
+//                                     </div>
+//                                 </div>
+//                                 <div class="text-xs text-gray-400 items-end">
+//                                     ${e.time}
+
+//                                     </div>
+//                             </div>
+//                         </div>
+//                     </div>
+// `;
 
             }
 
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
-            messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
+            //messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
+            Alpine.initTree(wrapper);
+            messagesDiv.appendChild(wrapper);
             messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
