@@ -25,7 +25,7 @@
 
                 {{-- 右：チェックトグルボタン --}}
                 <button id="toggleCheckedBtn" class="me-2 text-gray-700 dark:text-gray-300 whitespace-nowrap text-xl">
-                    <i class="fas fa-eye"></i>
+                    <i class="fas fa-eye text-blue-500"></i>
                 </button>
             </div>
 

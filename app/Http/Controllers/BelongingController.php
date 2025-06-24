@@ -126,8 +126,9 @@ public function update(Request $request, $id)
 
 
 
-    public function destroy(Belonging $belonging)
+    public function destroy($belonging_id)
     {
+        $belonging = $this->belonging->findOrFail($belonging_id);
         $belonging->delete();
 
         return response()->json(['message' => 'Deleted successfully']);

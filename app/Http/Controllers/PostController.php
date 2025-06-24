@@ -165,7 +165,7 @@ class PostController extends Controller
         $post->delete();
         $all_categories = $this->category->all();
         $all_posts = $this->post->latest()->get();
-        return redirect()->route('post.list')
+        return route('post.list')
             ->with('all_posts', $all_posts)
             ->with('all_categories', $all_categories);
     }

@@ -88,7 +88,6 @@
                 @push('scripts')
                     <script src="{{ asset('js/itineraries/map.js') }}"></script>
                     <script src="{{ asset('js/itineraries/create.js') }}"></script>
-                    {{-- <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places&callback=initMap&loading=async" async defer></script> --}}
                     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap" async defer></script>
                 @endpush
             </div>

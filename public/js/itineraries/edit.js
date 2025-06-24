@@ -8,12 +8,8 @@ let draggedTravelMode = null; // 並び替え中に使用する現在ドラッ�
 let draggedTravelModeValue = null; // 並び替え中に使用する現在選択中の移動手段の値（例: 'DRIVING'）
 let radioCheckedStateBackup = {}; // 並び替え開始前に保存しておくラジオボタンのチェック状態（placeId をキーに保持）
 
-
-
 // 目的地入力フィールドを1件分HTMLで生成
 function createInputField(dateKey, index, address = '', lat = '', lng = '', placeId = '', placeName = '', travelMode = 'DRIVING') {
-
-    // indexが未定義/nullのとき、自動的に現在の件数を取得して補完
     if (index === undefined || index === null) {
         const container = document.querySelector(`[data-date="${dateKey}"] .destinations`);
         index = container ? container.querySelectorAll('.destination-item').length : 0;
@@ -47,8 +43,16 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                 <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
                     <i class="fa-solid fa-grip-lines"></i>
                 </span>
-                <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
-                    class="p-1 border rounded destination-input w-4/5" placeholder="Please enter a destination" />
+
+                <div class="w-4/5">
+                    <!-- ラベルを input の上に出す -->
+                    <span class="departure-label text-xs text-blue-600 font-bold mb-1 hidden block">
+                        <i class="fa-solid fa-flag-checkered text-blue-500"></i> Departure Point
+                    </span>
+                    <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
+                        class="p-1 border rounded destination-input w-full" placeholder="Please enter a destination" />
+                </div>
+
                 <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -67,6 +71,8 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         </div>
     `;
 }
+
+
 
 // ラジオボタンのTRANSIT警告表示制御
 function handleTransitWarnings() {
@@ -290,6 +296,7 @@ function attachRemoveButtons() {
             updateAllDistanceTimes();
             updateMapByCurrentInputs();
             updateFirstDestinationDisplay();
+            clearSummariesIfNoDestinations();
         };
     });
 }
@@ -359,6 +366,7 @@ function initSortable() {
         updateAllDistanceTimes();
         updateMapByCurrentInputs();
         updateFirstDestinationDisplay();
+        clearSummariesIfNoDestinations();
 
         draggedTravelModeValue = null;
         radioCheckedStateBackup = {};
@@ -588,8 +596,25 @@ function updateAllDistanceTimes() {
         Promise.all(promises).then(() => {
             for (const key in perDayStats) {
                 const day = perDayStats[key];
+                const dateDiv = document.querySelector(`[data-date="${key}"]`);
+                const items = dateDiv ? dateDiv.querySelectorAll('.destination-item') : [];
+                const destinationCount = items.length;
+
                 const dKm = (day.distance / 1000).toFixed(2);
-                day.summaryEl.textContent = `Total: ${dKm} km / ${formatDuration(day.duration)}`;
+                const dDuration = formatDuration(day.duration);
+
+                // 表示条件:
+                // - 目的地が2つ以上ある
+                // - または1つでも距離と時間が0でない
+                if (
+                    destinationCount >= 2 ||
+                    (destinationCount === 1 && day.distance > 0 && day.duration > 0)
+                ) {
+                    day.summaryEl.textContent = `Total: ${dKm} km / ${dDuration}`;
+                } else {
+                    day.summaryEl.textContent = '';
+                }
+
                 dailyDistances[key] = day.distance;
                 dailyDurations[key] = day.duration;
             }
@@ -615,6 +640,18 @@ function updateAllDistanceTimes() {
         });
     });
 }
+
+function clearSummariesIfNoDestinations() {
+    const dateDivs = document.querySelectorAll('#dateFieldsContainer > [data-date]');
+    dateDivs.forEach(dateDiv => {
+        const destinations = dateDiv.querySelectorAll('.destination-item');
+        const summary = dateDiv.querySelector('.summary');
+        if (destinations.length === 0 && summary) {
+            summary.textContent = '';
+        }
+    });
+}
+
 
 // フォーム送信時、距離更新を待ってから送信する（submit防止＋再送信）
 const form = document.querySelector('form'); // ここは正しいformセレクタに変更してください
@@ -645,33 +682,62 @@ function updateFirstDestinationDisplay() {
     const allDateDivs = [...document.querySelectorAll('#dateFieldsContainer > div[data-date]')];
     let firstItem = null;
 
+    // 最初の1件目を見つける（全体で）
     for (const dateDiv of allDateDivs) {
         const items = [...dateDiv.querySelectorAll('.destination-item')];
-        for (const item of items) {
-            if (!firstItem) {
-                firstItem = item;
-                break;
-            }
+        if (items.length > 0) {
+            firstItem = items[0];
+            break;
         }
     }
 
-    // すべての目的地を初期状態（表示）に戻す
+    // 全てをリセット（通常目的地に戻す）
     document.querySelectorAll('.destination-item').forEach(item => {
-        item.querySelectorAll('.travel-mode-radio').forEach(radio => radio.disabled = false);
-        item.querySelector('.travel-mode-container').style.display = '';
+        // travel mode UI 表示・有効化
+        item.querySelectorAll('.travel-mode-radio').forEach(radio => {
+            radio.disabled = false;
+            if (radio.dataset.originalName) {
+                radio.name = radio.dataset.originalName;
+            }
+        });
+
+        const container = item.querySelector('.travel-mode-container');
+        if (container) container.style.display = '';
+
         const routeInfo = item.querySelector('.route-info');
         if (routeInfo) routeInfo.style.display = '';
+
+        // プレースホルダーと出発ラベルをリセット
+        const input = item.querySelector('.destination-input');
+        if (input) input.placeholder = 'Please enter your destination';
+
+        const label = item.querySelector('.departure-label');
+        if (label) label.classList.add('hidden');
     });
 
-    // 一番先頭の目的地を非表示にする
+    // 最初の1件目を出発地点として処理
     if (firstItem) {
-        firstItem.querySelectorAll('.travel-mode-radio').forEach(radio => radio.disabled = true);
+        firstItem.querySelectorAll('.travel-mode-radio').forEach(radio => {
+            if (!radio.dataset.originalName) {
+                radio.dataset.originalName = radio.name;
+            }
+            radio.disabled = true;
+        });
+
         const container = firstItem.querySelector('.travel-mode-container');
         if (container) container.style.display = 'none';
+
         const routeInfo = firstItem.querySelector('.route-info');
         if (routeInfo) routeInfo.style.display = 'none';
+
+        const input = firstItem.querySelector('.destination-input');
+        if (input) input.placeholder = 'Please enter your departure point';
+
+        const label = firstItem.querySelector('.departure-label');
+        if (label) label.classList.remove('hidden');
     }
 }
+
 
 // === 移動手段ラジオの変更時に距離・地図を再計算 ===
 document.addEventListener('change', function (e) {
