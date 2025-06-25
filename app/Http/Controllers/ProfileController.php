@@ -186,4 +186,8 @@ class ProfileController extends Controller
         ->with('top3', $top3);
     }
 
+    public function settings(){
+        return view('Settings');
+    }
+
 }

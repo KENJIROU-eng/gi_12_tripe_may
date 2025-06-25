@@ -13,6 +13,12 @@
                             </a>
                         </div>
 
+                        @foreach ($itinerary->bills as $bill)
+                            @foreach($bill->billUser as $user)
+                                <p>{{ $user->id }}</p>
+                            @endforeach
+                        @endforeach
+
                         {{-- タイトル（中央固定） --}}
                         <div class="order-0 w-full text-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
                             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">

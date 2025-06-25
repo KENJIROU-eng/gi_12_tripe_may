@@ -10,6 +10,7 @@ use App\Models\Itinerary;
 use App\Models\Message;
 use App\Models\Group;
 use App\Models\ReadMessage;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,8 +52,12 @@ class AppServiceProvider extends ServiceProvider
                 $nonReadCount[$groupId] = $readmessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
                 $nonReadCount_total = $nonReadCount_total + $readmessages->where('user_id', Auth::User()->id)->whereNull('read_at')->count();
             }
+            $today = Carbon::today()->toDateString();
+
             $view->with('groupIds', $groupIds)
                 ->with('groups', $groups)
+                ->with('itineraries', $itineraries)
+                ->with('today', $today)
                 ->with('nonReadCount', $nonReadCount)
                 ->with('nonReadCount_total', $nonReadCount_total)
                 ->with('tripSchedule', $tripSchedule)

@@ -118,7 +118,7 @@
 </ul>
 
 <script>
-    console.log(document.getElementById('alpine-test').__x?.$data)
+    // console.log(document.getElementById('alpine-test').__x?.$data)
 
     let currentMessageId = null;
 

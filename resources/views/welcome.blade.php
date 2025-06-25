@@ -19,33 +19,41 @@
             </style>
         @endif
     </head>
-    <body class="min-h-screen flex items-center justify-center p-4 lg:p-8 text-[#1b1b18]" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
-        <main class="flex flex-col-reverse lg:flex-row w-full max-w-[335px] lg:max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden lg:h-[600px]">
-            <div class="text-[13px] flex-1">
-                <div class="grid grid-rows-2 h-full">
-                    <!-- Sign In -->
-                    <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
-                        <h1 class="text-3xl lg:text-4xl">Sign in</h1>
-                        <p class="mt-4 text-blue-500">If you have an account, please press the button</p>
-                        <a href="{{ route('login') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
-                            Sign in
-                        </a>
-                    </div>
-                    <!-- Sign Up -->
-                    <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
-                        <h1 class="text-3xl lg:text-4xl">Sign up</h1>
-                        <p class="mt-4 text-blue-500">If you don't have an account, please press the button</p>
-                        <a href="{{ route('register') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
-                            Sign up
-                        </a>
-                    </div>
+<body class="min-h-screen flex items-center justify-center p-4 lg:p-8 text-[#1b1b18]"
+    style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover; background-position: center;">
+
+    <main class="flex flex-col-reverse lg:flex-row w-full max-w-[335px] lg:max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden lg:h-[600px]">
+        <!-- 左側（ログイン・登録） -->
+        <div class="text-[13px] flex-1">
+            <div class="grid grid-rows-2 h-full">
+                <!-- Sign In -->
+                <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
+                    <h1 class="text-3xl lg:text-4xl">Sign in</h1>
+                    <p class="mt-4 text-blue-500">If you have an account, please press the button</p>
+                    <a href="{{ route('login') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                        Sign in
+                    </a>
+                </div>
+                <!-- Sign Up -->
+                <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
+                    <h1 class="text-3xl lg:text-4xl">Sign up</h1>
+                    <p class="mt-4 text-blue-500">If you don't have an account, please press the button</p>
+                    <a href="{{ route('register') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                        Sign up
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <!-- Animation Box -->
-            <div class="hidden lg:block w-[438px] h-full" id="animated-text">
+        <!-- 右側（背景画像に重ねたアニメーションテキスト） -->
+        <div class="hidden lg:flex w-[438px] h-full items-center justify-center bg-cover bg-center relative"
+            style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg');">
+            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            <div class="relative text-white text-center px-6" id="animated-text">
             </div>
-        </main>
-    </body>
-        <script src="{{ asset('js/animation.js') }}"></script>
+        </div>
+    </main>
+    {{-- animation.js があるなら下に読み込み --}}
+    <script src="{{ asset('js/animation.js') }}"></script>
+</body>
 </html>

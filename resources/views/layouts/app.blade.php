@@ -33,13 +33,10 @@
         </style>
     </head>
     <body data-user-id="{{ Auth::user()->id }}">
-        {{-- <div id="alpine-test" x-data="{ hello: 'world' }">
-            <p x-text="hello"></p>
-        </div> --}}
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Content -->
-            <main class="main-background" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
+            <main class="pt-10" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
                 {{ $slot }}
             </main>
         </div>

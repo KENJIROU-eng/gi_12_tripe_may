@@ -65,11 +65,9 @@
                                                             @endif
                                                         </div>
 
-                                                        <div x-data="{open:false}" class="mr-4">
-                                                            <button @click="open = true">
+                                                        <div class="mr-4">
                                                                 {{ $post->likes()->count() }}
-                                                            </button>
-                                                            @include('posts.modals.likeUser_list', ['post' => $post])
+                                                            {{-- @include('posts.modals.likeUser_list', ['post' => $post]) --}}
                                                         </div>
                                                     </div>
                                                 </div>

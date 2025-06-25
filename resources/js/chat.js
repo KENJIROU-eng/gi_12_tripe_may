@@ -171,6 +171,7 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('cancel-sound-btn').addEventListener('click', () => {
             console.log('ユーザーが通知音の許可をキャンセルしました');
             localStorage.setItem(`audioUnlocked_user_${myUserId}`, '0');
+            hideModal();
             }, { once: true });
         }
     }
