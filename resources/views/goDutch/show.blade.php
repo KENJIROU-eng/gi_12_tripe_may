@@ -4,11 +4,15 @@
             <div class="min-h-screen bg-gray-100 dark:bg-gray-800 py-6 px-4 sm:px-6 lg:px-8">
                 <div class="max-w-7xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                     {{-- タイトル --}}
-                    <div class="text-center mb-8 border-b border-gray-300 pb-4">
+                    <div class="relative text-center mb-8 border-b border-gray-300 pb-4">
                         <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex justify-center items-center gap-2">
                             <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
                             Trip Payment Summary
                         </h1>
+                        <a href="{{ route('dashboard') }}" class="absolute right-40 inline-flex items-center px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold rounded-lg shadow">
+                            <i class="fa-solid fa-house mr-2"></i>
+                            Add Bill
+                        </a>
                         <p class="text-sm text-gray-500 mt-1">Invoice Overview</p>
                     </div>
 

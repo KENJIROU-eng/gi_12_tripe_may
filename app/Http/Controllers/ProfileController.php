@@ -114,7 +114,7 @@ class ProfileController extends Controller
         }
         $user->save();
 
-        return redirect()->route('profile.show');
+        return redirect()->route('profile.show', $user->id);
     }
     // public function update(ProfileUpdateRequest $request): RedirectResponse
     // {
