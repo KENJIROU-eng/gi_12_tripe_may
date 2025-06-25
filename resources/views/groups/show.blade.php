@@ -148,11 +148,11 @@
     //     }
     // });
 
-    document.getElementById('edit-item').addEventListener('click', () => {
-        if (currentMessageId) {
-            window.location.href = `/chat/${currentMessageId}/edit`;
-        }
-    });
+    // document.getElementById('edit-item').addEventListener('click', () => {
+    //     if (currentMessageId) {
+    //         window.location.href = `/chat/${currentMessageId}/edit`;
+    //     }
+    // });
 
     document.getElementById('delete-item').addEventListener('click', () => {
         if (currentMessageId && confirm('本当に削除しますか？')) {
@@ -185,5 +185,3 @@
         </button>
     </form>
 </x-app-layout>
-
-Y-m-d

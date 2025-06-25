@@ -9,11 +9,26 @@
                             <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
                             Trip Payment Summary
                         </h1>
-                        <a href="{{ route('dashboard') }}" class="absolute right-40 inline-flex items-center px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold rounded-lg shadow">
-                            <i class="fa-solid fa-house mr-2"></i>
-                            Add Bill
-                        </a>
-                        <p class="text-sm text-gray-500 mt-1">Invoice Overview</p>
+
+                        @php
+                            $hasCreateError = $errors->has('user_pay_id') || $errors->has('bill_name') || $errors->has('cost') || $errors->has('user_paid_id');
+                        @endphp
+
+                        <div x-data="{ open: {{ $hasCreateError ? 'true' : 'false' }} }" class="mt-4 sm:mt-0">
+                            {{-- trigger --}}
+                            <div class="flex justify-center sm:justify-end mt-4 sm:mt-0">
+                                <button @click="open = true"
+                                    class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-lg shadow transition-all duration-200">
+                                    <i class="fa-solid fa-circle-plus mr-2"></i>
+                                    Add Bills
+                                </button>
+                            </div>
+
+                            {{-- modal content --}}
+                            @include('goDutch.modals.create', ['all_bills' => $all_bills, 'groupMembers' => $groupMembers, 'itinerary' => $itinerary])
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-2">Invoice Overview</p>
                     </div>
 
                     {{-- 支払い履歴 --}}

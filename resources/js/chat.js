@@ -107,6 +107,7 @@ const groupId = document.getElementById('messages')?.dataset.groupId;
 const myUserId = document.body.dataset.userId;
 const groupIds = window.appData.groupIds;
 const length = groupIds.length;
+console.log(length);
 
 const messagesDiv = document.getElementById('messages');
 if (messagesDiv) {
@@ -346,9 +347,9 @@ if (groupId && myUserId) {
 
             //DOMに追加してスクロール
             //messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
-            Alpine.initTree(wrapper);
-            messagesDiv.appendChild(wrapper);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
+            // Alpine.initTree(wrapper);
+            // messagesDiv.appendChild(wrapper);
+            // messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
 
