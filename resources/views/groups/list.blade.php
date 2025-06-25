@@ -87,7 +87,7 @@
                                                 @if ($group->image)
                                                     <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">
                                                 @else
-                                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                                <div class="w-14 h-14 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
                                                     {{ strtoupper(substr($group->name, 0, 1)) }}
                                                 </div>
                                                 @endif

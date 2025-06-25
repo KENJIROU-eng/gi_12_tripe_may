@@ -3,19 +3,19 @@
         <!-- 背景の左右ボックス -->
         <div class="absolute w-full h-full flex flex-col sm:flex-row">
             <!-- 左ボックス -->
-            <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-400 text-white z-0">
+            <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-amber-100 text-yellow-700 z-0">
                 <h2 class="text-3xl font-semibold tracking-widest mb-2">BLOOM &amp; BOUQUET</h2>
-                <p class="text-sm mb-4">Pick your perfect <span class="text-pink-200">bouquet</span></p>
+                <p class="text-sm mb-4">Pick your perfect <span class="text-yellow-600">bouquet</span></p>
                 <p class="text-xs mb-2">Have an account?</p>
-                <button id="switchToLogin" class="bg-white text-pink-600 px-4 py-2 rounded hover:bg-pink-100 transition">Login</button>
+                <button id="switchToLogin" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Login</button>
             </div>
 
             <!-- 右ボックス -->
-            <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-200 text-pink-700 z-0">
+            <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-100 text-green-700 z-0">
                 <h2 class="text-3xl font-semibold tracking-widest mb-2">BLOOM &amp; BOUQUET</h2>
-                <p class="text-sm mb-4">Pick your perfect <span class="text-pink-400">bouquet</span></p>
+                <p class="text-sm mb-4">Pick your perfect <span class="text-yellow-600">bouquet</span></p>
                 <p class="text-xs mb-2">Don't have an account?</p>
-                <button id="switchToRegister" class="bg-white text-pink-600 px-4 py-2 rounded hover:bg-pink-100 transition">Sign up</button>
+                <button id="switchToRegister" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign up</button>
             </div>
         </div>
 
@@ -30,7 +30,7 @@
 
             <!-- ログイン -->
             <div id="loginForm" class=" transition-all duration-500 ease-in-out opacity-100 translate-y-0 px-4 w-full">
-                <h1 class="text-2xl font-bold text-center text-pink-600 uppercase tracking-widest mb-12">Login</h1>
+                <h1 class="text-2xl font-bold text-center text-yellow-700 uppercase tracking-widest mb-12">Login</h1>
                 <form method="POST" action="{{ route('login') }}" class="space-y-4 mt-6">
                     @csrf
                     <div>
@@ -69,7 +69,7 @@
 
             <!-- 登録 -->
             <div id="registerForm" class=" transition-all duration-500 ease-in-out opacity-0 -translate-y-4 hidden w-full px-4">
-                <h1 class="text-2xl font-bold text-center text-pink-600 uppercase tracking-widest">Register</h1>
+                <h1 class="text-2xl font-bold text-center text-green-700 uppercase tracking-widest">Register</h1>
                 <form method="POST" action="{{ route('register') }}" class="space-y-4 mt-6">
                     @csrf
                     <div>
