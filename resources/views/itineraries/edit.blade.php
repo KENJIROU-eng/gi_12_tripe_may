@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
                 {{-- タイトル --}}

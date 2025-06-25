@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="py-4 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="flex flex-col lg:flex-row gap-4 max-w-screen-xl mx-auto px-4">
             {{-- 左：旅程表 --}}
             <div class="w-full lg:w-3/4 flex flex-col gap-4 order-2 lg:order-none">
@@ -238,9 +238,9 @@
             </div>
 
             {{-- 右：ルート表示 --}}
-            <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit">
+            <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
                 <h2 class="text-lg font-semibold text-blue-600 mb-2">Route Steps</h2>
-                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[600px]">
+                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[878px]">
                     {{-- JavaScriptでステップ追加 --}}
                 </ul>
             </div>

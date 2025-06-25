@@ -253,12 +253,17 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollContainer.dispatchEvent(new Event('scroll')); // 最初の読み込みトリガー
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
+        const isMobile = window.innerWidth < 768;
+        const isAtTop = window.scrollY === 0;
+
+        if (isMobile && !isAtTop) {
             scrollToTopBtn?.classList.remove('opacity-0', 'pointer-events-none');
         } else {
             scrollToTopBtn?.classList.add('opacity-0', 'pointer-events-none');
         }
     });
+
+
 
     scrollToTopBtn?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });

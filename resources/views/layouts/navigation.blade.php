@@ -1,3 +1,4 @@
+
 {{-- <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 overflow-x-hidden">
     <div class="mx-auto sm:px-4 lg:px-6">
         <div class="flex justify-between h-16">
