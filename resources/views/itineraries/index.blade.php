@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="py-4 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
                 <div class="text-black dark:text-gray-100">
@@ -223,10 +223,11 @@
     </div>
     {{-- Scroll to Top Button --}}
     <button id="scrollToTopBtn"
-        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-60 pointer-events-none"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
         aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
+
 
 
     @push('scripts')
