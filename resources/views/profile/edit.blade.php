@@ -64,8 +64,8 @@
                                 <input type="file" name="image" id="image" accept="image/*"
                                     onchange="previewImage(event)"
                                     class="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4
-                                           file:rounded-md file:border-0 file:text-sm file:font-semibold
-                                           file:bg-green-500 file:text-white hover:file:bg-green-600">
+                                        file:rounded-md file:border-0 file:text-sm file:font-semibold
+                                        file:bg-green-500 file:text-white hover:file:bg-green-600">
                                 @error('image')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -99,7 +99,6 @@
                             reader.readAsDataURL(event.target.files[0]);
                         }
                     </script>
-
                 </div>
             </div>
         </div>
