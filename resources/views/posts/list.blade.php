@@ -6,7 +6,7 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                     <div class="p-6 text-black dark:text-gray-100 h-full">
                         {{-- title --}}
-                        <div class="relative flex items-center justify-center h-12 my-4">
+                        <div class="relative flex items-center justify-center h-12 my-2">
                             <h1 class="text-3xl sm:text-3xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Post List</h1>
                             <a href="{{ route('post.create') }}" class="ml-auto mr-3 right-40 no-underline text-end ">
                                 <i class="fa-solid fa-plus ml-auto"></i> add Post

@@ -6,8 +6,9 @@
                 <div class="p-6 text-black dark:text-gray-100">
                     {{-- title --}}
                     <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">New Group</h1>
+                        <h1 class=" sm:text-3xl md:text-4xl  font-bold absolute left-1/2 transform -translate-x-1/2">New Group</h1>
                     </div>
+                    <div class="h-[2px] w-full bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 my-4"></div>
                     {{-- contents --}}
                     <div class="mx-auto h-full mt-8">
                         <form action="/group/store" method="post" enctype="multipart/form-data">
@@ -51,8 +52,11 @@
                                 </div>
                             </div>
                             <div class="flex justify-center mt-6">
-                                <button type="submit" class="bg-green-500 text-black px-6 py-3 rounded hover:bg-green-600 max-w-md text-lg">
-                                    Create New Group
+                                <div class=" px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-300 duration-300 mr-3">
+                                    <a href="{{ route('groups.index') }}" class="block text-center" >Cancel</a>
+                                </div>
+                                <button type="submit" class="bg-yellow-300 text-black px-4 py-2 rounded hover:bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 hover:text-white hover:shadow-lg duration-300 max-w-md text-lg">
+                                    Create
                                 </button>
                             </div>
                         </form>
