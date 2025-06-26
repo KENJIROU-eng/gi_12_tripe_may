@@ -1,3 +1,4 @@
+
 //textareaの設定
 document.addEventListener("DOMContentLoaded", () => {
     const textarea = document.getElementById('message-input');
@@ -82,11 +83,6 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
 
 
-
-
-
-
-
 //受信者のためのリアルタイム表示（Echo）
 //リアルタイム受信処理（メッセージ受信時の表示）を担当
 //サーバーからpusher経由でリアルタイムに送信されたメッセージをブラウザで即座に受け取って、チャット画面に動的に表示する処理
@@ -107,7 +103,6 @@ const groupId = document.getElementById('messages')?.dataset.groupId;
 const myUserId = document.body.dataset.userId;
 const groupIds = window.appData.groupIds;
 const length = groupIds.length;
-console.log(length);
 
 const messagesDiv = document.getElementById('messages');
 if (messagesDiv) {
@@ -126,12 +121,12 @@ window.Echo = new Echo({
 });
 
 //pusherへの接続状態を確認（デバック用）
-// window.Echo.connector.pusher.connection.bind('connected', () => {
-//         console.log(':チェックマーク_緑: Pusher に接続されました');
-//     });
-//     window.Echo.connector.pusher.connection.bind('connected', () => {
-//         console.log(':チェックマーク_緑: Echo connected to Pusher!');
-//     });
+window.Echo.connector.pusher.connection.bind('connected', () => {
+        console.log(':チェックマーク_緑: Pusher に接続されました');
+    });
+    window.Echo.connector.pusher.connection.bind('connected', () => {
+        console.log(':チェックマーク_緑: Echo connected to Pusher!');
+    });
 
 // for notification
 //notificationの設定
@@ -219,10 +214,12 @@ for (let i = 0; i < length; i++) {
 
                     // DOMに追加
                     container.appendChild(notification);
+                    if (Number(localStorage.getItem(`audioUnlocked_user_${myUserId}`)) === 1) {
                     //sound
                     const audio = new Audio('/sounds/maou_se_onepoint23.mp3');
                     audio.volume = 0.5;
                     audio.play().catch(e => console.error("Audio play error:", e));
+                    };
 
                     // 10秒後に自動削除
                     setTimeout(() => {
@@ -240,6 +237,10 @@ for (let i = 0; i < length; i++) {
         };
     });
 }
+
+
+
+
 
 //3.IDが取れたらWebSocketを開始
 if (groupId && myUserId) {

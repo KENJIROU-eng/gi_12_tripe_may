@@ -6,6 +6,25 @@
                     {{-- title --}}
                     <div class="relative bg-gradient-to-r from-green-600 to-green-300 text-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between overflow-hidden my-8 mx-4 sm:mx-auto max-w-6xl">
                         {{-- テキスト --}}
+                        <div class="flex-row">
+                            <p class="bg-green-500">text</p>
+                            <p class="bg-red-500">text</p>
+                            <p class="bg-orange-500">text</p>
+                            <p class="bg-amber-500">text</p>
+                            <p class="bg-yellow-500">text</p>
+                            <p class="bg-lime-500">text</p>
+                            <p class="bg-emerald-500">text</p>
+                            <p class="bg-teal-500">text</p>
+                            <p class="bg-cyan-500">text</p>
+                            <p class="bg-sky-500">text</p>
+                            <p class="bg-blue-500">text</p>
+                            <p class="bg-indigo-500">text</p>
+                            <p class="bg-violet-500">text</p>
+                            <p class="bg-purple-500">text</p>
+                            <p class="bg-fuchsia-500">text</p>
+                            <p class="bg-pink-500">text</p>
+                            <p class="bg-rose-500">text</p>
+                        </div>
                         <div class="sm:w-2/3 text-center sm:text-left">
                             <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
                                 Welcome to Tripe@s
@@ -188,8 +207,8 @@
                                                                 @click="expandedMembers[{{ $itineraryId }}] = !expandedMembers[{{ $itineraryId }}]"
                                                                 class="text-sm text-gray-700 hover:underline"
                                                             >
-                                                                <span x-show="!expandedMembers[{{ $itineraryId }}]">...他{{ $members->count() - 3 }}人</span>
-                                                                <span x-show="expandedMembers[{{ $itineraryId }}]">▲ 閉じる</span>
+                                                                <span x-show="!expandedMembers[{{ $itineraryId }}]">...+more{{ $members->count() - 3 }}members</span>
+                                                                <span x-show="expandedMembers[{{ $itineraryId }}]">▲ close</span>
                                                             </button>
                                                         @endif
                                                     </div>

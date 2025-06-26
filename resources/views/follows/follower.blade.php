@@ -4,9 +4,16 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
                     {{-- title --}}
-                    <div class="relative flex items-center justify-center h-16 my-5">
-                        <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Follower List</h1>
+                    <div class="absolute left-4 sm:left-6">
+                        <a href="{{ route('profile.show', $user->id) }}" class="inline-flex items-center text-sm sm:text-base text-blue-500 hover:underline">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back to profile page
+                        </a>
                     </div>
+
+                    <!-- 見出し（中央） -->
+                    <h1 class="text-md sm:text-2xl lg:text-3xl 2xl:text-5xl font-bold text-center">
+                        Follower List
+                    </h1>
                     {{-- contents --}}
                     <div class="mx-auto h-full mt-8">
                         @foreach ($followers as $follower)

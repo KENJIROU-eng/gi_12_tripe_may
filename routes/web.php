@@ -104,10 +104,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/goDutch/delete/{bill_id}/{itinerary_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
     Route::patch('/goDutch/update/{bill_id}/{itinerary_id}', [BillController::class, 'update'])->name('goDutch.update');
     Route::get('/goDutch/{itinerary_id}/finalize', [BillController::class, 'finalize'])->name('goDutch.finalize');
+    Route::post('/goDutch/{itinerary_id}/{user_id}/{detail}/cashPay', [BillController::class, 'cashPay'])->name('goDutch.cashPay');
 
     #paypal
-    Route::get('/paypal/{itinerary_id}/{total}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');
-    Route::get('/paypal/{itinerary_id}/success', [PayPalController::class, 'captureTransaction'])->name('paypal.success');
+    Route::get('/paypal/{itinerary_id}/{total}/{user_id}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');
+    Route::get('/paypal/{itinerary_id}/{user_id}/success', [PayPalController::class, 'captureTransaction'])->name('paypal.success');
 
     #ADMIN Routes
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){

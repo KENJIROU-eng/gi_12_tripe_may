@@ -40,6 +40,27 @@
                                                             class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
                                                             Delete
                                                         </button>
+                                                    @else
+                                                        @if ($post->user->isFollowed())
+                                                            <form action="{{ route('profile.follow.delete', $post->user->id) }}" method="post">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button
+                                                                    type="submit"
+                                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+                                                                    Following
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ route('profile.follow.create', $post->user->id) }}" method="post">
+                                                            @csrf
+                                                                <button
+                                                                    type="submit"
+                                                                    class="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-100">
+                                                                    Follow
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </x-slot>
                                             </x-dropdown>

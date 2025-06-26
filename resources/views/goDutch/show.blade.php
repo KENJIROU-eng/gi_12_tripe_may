@@ -56,9 +56,12 @@
                                         <td class="px-4 py-3">{{ $bill->name }}</td>
                                         <td class="px-4 py-3 text-red-500 font-semibold">${{ number_format($bill->cost, 0) }}</td>
                                         <td class="px-4 py-3">
-                                            <div class="flex flex-wrap gap-2">
+                                            <div class="flex gap-1 overflow-x-auto max-w-full">
                                                 @foreach ($bill->billUser as $user)
-                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="avatar" class="w-6 h-6 rounded-full object-cover">
+                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}"
+                                                        alt="avatar"
+                                                        title="{{ $user->userPaid->name }}"
+                                                        class="w-7 h-7 rounded-full object-cover border border-gray-300 shadow-sm flex-shrink-0">
                                                 @endforeach
                                             </div>
                                         </td>

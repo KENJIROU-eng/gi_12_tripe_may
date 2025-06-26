@@ -102,13 +102,9 @@ class BillController extends Controller
             $total_Pay_alone = $total_Pay_alone + $bill->cost;
         }
 
-        $pays = $this->pay->where('user_id', Auth::User()->id)->where('itinerary_id', $itinerary_id)->get();
-        $price = 0;
-        foreach ($pays as $pay) {
-            $price = $price + $pay->Price;
-        }
-
         $details = $costCalculator->detailPayment($itinerary, $this->billUser);
+        $pays = $this->pay->where('itinerary_id', $itinerary->id)->get()->groupBy('user_id')
+            ->map(fn($user) => $user->groupBy('user_get_id'));
 
         return view('goDutch.show_final')
             ->with('all_bills', $all_bills)
@@ -118,7 +114,7 @@ class BillController extends Controller
             ->with('total_Pay_alone', $total_Pay_alone)
             ->with('total_Pay', $total_Pay)
             ->with('details', $details)
-            ->with('price', $price);
+            ->with('pays', $pays);
     }
 
     /**
@@ -215,5 +211,20 @@ class BillController extends Controller
         $bill = $this->bill->findOrFail($bill_id);
         $bill->delete();
         return redirect()->route('goDutch.index', $itinerary_id);
+    }
+
+    public function cashPay(Request $request, $itinerary_id, $user_id, $detail){
+
+        $request->validate([
+        'amount' => 'required|numeric|min:1|max:' . $detail,
+        ]);
+
+        $this->pay->user_id = Auth::User()->id;
+        $this->pay->itinerary_id = $itinerary_id;
+        $this->pay->Price = $request->amount;
+        $this->pay->user_get_id = $user_id;
+        $this->pay->save();
+
+        return redirect()->route('goDutch.finalize', $itinerary_id);
     }
 }
