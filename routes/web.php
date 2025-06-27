@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ItinerariesController;
 use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\WeatherController;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,15 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+#weather
+Route::post('/set-weather-country', function () {
+    session(['weather_country_id' => request('country_id')]);
+    return back();
+})->name('weather.setCountry');
+Route::get('/api/weather', [WeatherController::class, 'fetch'])->name('api.weather');
+Route::post('/countries/store', [\App\Http\Controllers\CountryController::class, 'store'])->name('countries.store');
+
 
 Route::middleware('auth')->group(function () {
     #profile
@@ -84,10 +94,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/itinerary/{id}/delete', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
     Route::get('/itinerary/share', [ItineraryController::class, 'shareSelect'])->name('itinerary.share');
     Route::get('/itinerary/prefill', [ItineraryController::class, 'prefill'])->name('itinerary.prefill');
-    Route::get('/itineraries/{id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
+    Route::get('/itineraries/{itinerary_id}/show', [ItineraryController::class, 'show'])->name('itinerary.show');
     Route::get('/itineraries/{id}/edit', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::put('/itineraries/{id}/update', [ItineraryController::class, 'update'])->name('itinerary.update');
     Route::get('/itinerary/load', [ItineraryController::class, 'loadMore'])->name('itinerary.load');
+    Route::post('/itinerary/{itinerary}/toggle-finish', [ItineraryController::class, 'toggleFinish'])->middleware('auth')->name('itinerary.toggleFinish');
 
     #belonging
     Route::get('/belonging/check-duplicate', [BelongingController::class, 'checkDuplicate'])->name('belonging.checkDuplicate');
@@ -97,7 +108,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/belonging/{belonging_id}/update', [BelongingController::class, 'update'])->name('belonging.update');
     Route::delete('/belonging/{belonging_id}/destroy', [BelongingController::class, 'destroy'])->name('belonging.destroy');
     Route::get('/belonging/{belonging_id}', [BelongingController::class, 'index'])->name('belonging.index');
-
 
     #goDutch
     Route::get('/{itinerary_id}/goDutch', [BillController::class, 'index'])->name('goDutch.index');

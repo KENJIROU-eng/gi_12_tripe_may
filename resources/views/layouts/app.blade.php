@@ -19,12 +19,11 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
         @livewireStyles
-
-        {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        
+
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
@@ -35,13 +34,14 @@
         </style>
 
     </head>
-    <body data-user-id="{{ Auth::user()->id }}">
+    <body data-user-id="{{ Auth::user()->id }}" class="page-transition">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Content -->
-            <main class="pt-10" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
+            <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
                 {{ $slot }}
             </main>
+            @include('layouts.footer')
         </div>
         @stack('scripts')
         <script>
@@ -54,7 +54,7 @@
             const routeUrls = @json($routeUrls ?? []);
         </script>
 
-        
+
         @livewireScripts
     </body>
 </html>

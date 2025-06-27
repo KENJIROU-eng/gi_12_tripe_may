@@ -1,8 +1,12 @@
 @props(['itinerary'])
 
 <div x-data="{ open: false }">
-    <button @click="open = true" title="Delete"">
-        <i class="fa-solid fa-trash-can text-lg text-red-500 flex"></i>
+    <button @click="open = true" title="Delete" class="inline-flex items-center text-red-500 hover:text-red-700">
+        <i class="fa-solid fa-trash-can text-lg"></i>
+        @if ($showText)
+            <span class="ml-1">Delete</span>
+
+        @endif
     </button>
 
     <div x-show="open" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

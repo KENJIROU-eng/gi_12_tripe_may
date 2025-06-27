@@ -126,7 +126,6 @@ class ItineraryController extends Controller
             $groupId = $personalGroup->id;
         }
 
-
         // 行程作成
         $itinerary = Itinerary::create([
             'created_by'         => $user->id,
@@ -151,81 +150,7 @@ class ItineraryController extends Controller
             ]);
             $dateIds[$date->toDateString()] = $dateRecord->id;
         }
-
-        // // 各地点の保存
-        // $prevPlace = null;
-
-        // foreach ($destinations as $date => $places) {
-        //     $dateId = $dateIds[$date] ?? null;
-        //     if (!$dateId || empty($places)) continue;
-
-        //     $placeCount = count($places);
-        //     for ($i = 0; $i < $placeCount; $i++) {
-        //         $destination = $places[$i];
-        //         if (empty($destination)) continue;
-
-        //         $lat     = $destinationsLat[$date][$i]      ?? null;
-        //         $lng     = $destinationsLng[$date][$i]      ?? null;
-        //         $placeId = $destinationsPlaceIds[$date][$i] ?? null;
-        //         $travelMode = $travelModes[$date][$i] ?? 'DRIVING';
-
-        //         // バイクは API 上 driving として扱う
-        //         $modeForApi = $travelMode === 'MOTORCYCLE' ? 'driving' : strtolower($travelMode);
-
-        //         $placeName = $destination;
-
-        //         if ($placeId) {
-        //             $placeDetailResponse = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
-        //                 'place_id' => $placeId,
-        //                 'fields'   => 'name',
-        //                 'key'      => env('GOOGLE_MAPS_API_KEY'),
-        //             ]);
-
-        //             if ($placeDetailResponse->successful()) {
-        //                 $placeDetail = $placeDetailResponse->json();
-        //                 if (isset($placeDetail['result']['name'])) {
-        //                     $placeName = $placeDetail['result']['name'];
-        //                 }
-        //             }
-        //         }
-
-        //         $distance = null;
-        //         $duration = null;
-
-        //         if ($prevPlace) {
-        //             $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-        //                 'origins'      => $prevPlace,
-        //                 'destinations' => $destination,
-        //                 'mode'         => $modeForApi,
-        //                 'key'          => env('GOOGLE_MAPS_API_KEY'),
-        //             ]);
-
-        //             if ($response->successful()) {
-        //                 $data = $response->json();
-        //                 $element = $data['rows'][0]['elements'][0] ?? null;
-        //                 if ($element && $element['status'] === 'OK') {
-        //                     $distance = $element['distance']['value'] / 1000;
-        //                     $duration = $element['duration']['text'] ?? null;
-        //                 }
-        //             }
-        //         }
-
-        //         MapItinerary::create([
-        //             'date_id'       => $dateId,
-        //             'destination'   => $destination,
-        //             'place_name'    => $placeName,
-        //             'latitude'      => $lat,
-        //             'longitude'     => $lng,
-        //             'distance_km'   => $distance,
-        //             'duration_text' => $duration,
-        //             'place_id'      => $placeId,
-        //             'travel_mode'   => $travelMode,
-        //         ]);
-
-        //         $prevPlace = $destination;
-        //     }
-        // }
-
+        
         $prevLat = null;
         $prevLng = null;
         $prevPlaceName = null;
@@ -352,53 +277,79 @@ class ItineraryController extends Controller
     /**
      * Display the specified resource.
      */
-public function show($itinerary_id, CostCalculator $costCalculator)
+    public function show($itinerary_id, CostCalculator $costCalculator)
     {
+        $user = Auth::user();
+
         $itinerary = $this->itinerary
-            ->with(['dateItineraries.mapItineraries', 'group.users'])
+            ->with(['dateItineraries.mapItineraries', 'group.users', 'bills.billUser'])
             ->findOrFail($itinerary_id);
 
-            $all_belongings = $itinerary->belongings;
+        // 所属グループID取得（nullを除外）
+        $userGroupIds = $user->groups->pluck('id')->filter()->all();
 
-            $itineraryData = [];
+        // 次の旅程（IDが大きい）
+        $next = Itinerary::where(function ($query) use ($user, $userGroupIds) {
+                $query->where('created_by', $user->id)
+                    ->orWhereIn('group_id', $userGroupIds);
+            })
+            ->where('id', '>', $itinerary->id)
+            ->orderBy('id')
+            ->first();
 
-            foreach ($itinerary->dateItineraries as $dateItinerary) {
-                $date = $dateItinerary->date instanceof \Carbon\Carbon
-                    ? $dateItinerary->date->format('Y-m-d')
-                    : (string) $dateItinerary->date;
+        // 前の旅程（IDが小さい）
+        $previous = Itinerary::where(function ($query) use ($user, $userGroupIds) {
+                $query->where('created_by', $user->id)
+                    ->orWhereIn('group_id', $userGroupIds);
+            })
+            ->where('id', '<', $itinerary->id)
+            ->orderBy('id', 'desc')
+            ->first();
 
-                $itineraryData['destinations'][$date] = [];
+        // belongings
+        $all_belongings = $itinerary->belongings;
 
-                foreach ($dateItinerary->mapItineraries as $map) {
-                    $itineraryData['destinations'][$date][] = [
-                        'place_name'    => $map->place_name ?? $map->destination ?? '',
-                        'latitude'      => $map->latitude,
-                        'longitude'     => $map->longitude,
-                        'place_id'      => $map->place_id ?? null,
-                        'address'       => $map->destination ?? null,
-                        'distance_km'   => $map->distance_km ?? null,
-                        'duration_text' => $map->duration_text ?? null,
-                        'travel_mode'   => $map->travel_mode ?? 'DRIVING',
-                    ];
-                }
+        // map data
+        $itineraryData = [];
+        foreach ($itinerary->dateItineraries as $dateItinerary) {
+            $date = $dateItinerary->date instanceof \Carbon\Carbon
+                ? $dateItinerary->date->format('Y-m-d')
+                : (string) $dateItinerary->date;
+
+            $itineraryData['destinations'][$date] = [];
+
+            foreach ($dateItinerary->mapItineraries as $map) {
+                $itineraryData['destinations'][$date][] = [
+                    'place_name'    => $map->place_name ?? $map->destination ?? '',
+                    'latitude'      => $map->latitude,
+                    'longitude'     => $map->longitude,
+                    'place_id'      => $map->place_id ?? null,
+                    'address'       => $map->destination ?? null,
+                    'distance_km'   => $map->distance_km ?? null,
+                    'duration_text' => $map->duration_text ?? null,
+                    'travel_mode'   => $map->travel_mode ?? 'DRIVING',
+                ];
             }
+        }
 
         $startDate = \Carbon\Carbon::parse($itinerary->start_date);
         $endDate = \Carbon\Carbon::parse($itinerary->end_date);
         $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
 
-        //bill calculation
+        // bill計算
         $total_getPay = [];
         $total_Pay = [];
         if ($itinerary->group_id != null) {
-            foreach ($itinerary->group->users as $user) {
-                $total_getPay[$user->id] = $costCalculator->total_getPay($itinerary, $user);
-                $total_Pay[$user->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $user);
+            foreach ($itinerary->group->users as $member) {
+                $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+                $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
             }
         }
 
         return view('itineraries.show', [
             'itinerary' => $itinerary,
+            'previous' => $previous,
+            'next' => $next,
             'period' => $period,
             'itineraryData' => $itineraryData,
             'all_belongings' => $all_belongings,
@@ -406,6 +357,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
             'total_Pay' => $total_Pay,
         ]);
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -463,8 +415,6 @@ public function show($itinerary_id, CostCalculator $costCalculator)
         ]);
     }
 
-
-
     /**
      * Update the specified resource in storage.
      */
@@ -476,6 +426,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
             'end_date'   => 'required|date|after_or_equal:start_date',
             'group_id'   => 'nullable|exists:groups,id',
         ]);
+        \Log::debug('Validated data:', $validated);
 
         DB::beginTransaction();
 
@@ -630,7 +581,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
             }
 
             DB::commit();
-            return redirect()->route('itinerary.show', ['id' => $itinerary->id])->with('success', 'Itinerary updated successfully.');
+            return redirect()->route('itinerary.show', ['itinerary_id' => $itinerary->id])->with('success', 'Itinerary updated successfully.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -638,8 +589,6 @@ public function show($itinerary_id, CostCalculator $costCalculator)
             return back()->withErrors(['update_failed' => 'An error occurred while updating the itinerary.']);
         }
     }
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -670,6 +619,22 @@ public function show($itinerary_id, CostCalculator $costCalculator)
         return redirect()->route('itinerary.create');
 
     }
+
+    public function toggleFinish(Itinerary $itinerary)
+    {
+        if (auth()->id() !== $itinerary->created_by) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 完了→未完了（nullに）、未完了→完了（今の日時に）
+        $itinerary->finish_at = $itinerary->finish_at ? null : now();
+        $itinerary->save();
+
+        return back()->with('success', 'Itinerary status updated.');
+    }
+
+
+
 
     // public function loadMore(Request $request)
     // {

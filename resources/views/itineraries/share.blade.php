@@ -1,10 +1,18 @@
-<x-app-layout>
-    <div class="py-4 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<x-app-layout class="overflow-hidden">
+    <div class="py-10 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8">
                 {{-- タイトル --}}
-                <div class="text-center mb-10">
-                    <h1 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100">
+                <div class="relative flex items-center justify-center text-center mb-10 h-12">
+                    {{-- Back ボタン（左固定） --}}
+                    <div class="absolute left-0">
+                        <a href="{{ route('itinerary.index') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                        </a>
+                    </div>
+
+                    {{-- タイトル（中央揃え） --}}
+                    <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
                         <i class="fa-solid fa-s"></i>
                         <i class="fa-solid fa-h"></i>
                         <i class="fa-solid fa-a"></i>

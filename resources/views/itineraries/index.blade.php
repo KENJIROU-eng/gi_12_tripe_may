@@ -1,7 +1,7 @@
-<x-app-layout>
-    <div class="py-4 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
-            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
+<x-app-layout class="h-screen flex flex-col overflow-hidden">
+    <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto">
                 <div class="text-black dark:text-gray-100">
                     {{-- title --}}
                     <div class="flex flex-col md:flex-row items-center justify-between text-center mb-10 gap-2 md:gap-0 relative">
@@ -52,7 +52,10 @@
                                 <div class="md:col-span-3 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="title">
                                     Title <i class="fa-solid fa-sort sort-icon" data-key="title"></i>
                                 </div>
-                            <div class="md:col-span-1 text-center"></div>
+                                <div class="md:col-span-1 cursor-pointer flex items-center gap-1 hover:bg-gray-200 dark:hover:bg-gray-700 px-2 py-1 rounded" data-sort="finished">
+                                    Status <i class="fa-solid fa-sort sort-icon" data-key="finished"></i>
+                                </div>
+
                         </div>
 
                         {{-- filter row --}}
@@ -99,6 +102,7 @@
                                     <option value="group">Group</option>
                                     <option value="date">Date</option>
                                     <option value="title">Title</option>
+                                    <option value="finished">Done</option>
                                 </select>
                             </div>
 
@@ -146,26 +150,27 @@
                             </div>
                         </div>
 
-
                         {{-- body --}}
-                        <div id="scrollContainer" class="w-full overflow-x-hidden overflow-y-auto border rounded mb-3 max-h-none md:max-h-[600px]">
+                        <div id="scrollContainer" class="w-full overflow-x-hidden overflow-y-auto border rounded mb-2 max-h-none md:max-h-[580px]">
 
                             <div id="itineraryContainer" class="max-w-6xl mx-auto">
                                 @forelse ($all_itineraries as $itinerary)
-                                    <div class="itinerary-row w-full flex flex-col md:grid md:grid-cols-12 gap-2 py-4 border-b text-sm md:text-base"
+                                    <div class="itinerary-row w-full flex flex-col md:grid md:grid-cols-12 gap-2 py-2 border-b text-sm md:text-base {{ $itinerary->finish_at ? 'opacity-50' : '' }}"
                                         data-user="{{ strtolower($itinerary->user->name) }}"
                                         data-group="{{ strtolower($itinerary->group->name ?? 'no-group') }}"
-                                        data-title="{{ strtolower($itinerary->title) }}"
                                         data-date="{{ $itinerary->start_date }}"
-                                        data-created="{{ $itinerary->created_at }}">
+                                        data-title="{{ strtolower($itinerary->title) }}"
+                                        data-created="{{ $itinerary->created_at }}"
+                                        data-finished="{{ $itinerary->finish_at ? '1' : '0' }}">
 
                                         {{-- user avatar --}}
                                         <div class="md:col-span-1 flex flex-col items-center md:items-start justify-start ms-0 md:ms-6">
                                             <a href="{{ route('profile.show', $itinerary->created_by) }}">
                                                 @if ($itinerary->user->avatar)
-                                                    <img src="{{ $itinerary->user->avatar }}" alt="{{ $itinerary->user->name }}" class="w-12 h-12 rounded-full object-cover">
+                                                    <img src="{{ $itinerary->user->avatar }}" alt="{{ $itinerary->user->name }}"
+                                                        class="w-12 h-12 rounded-full object-cover" />
                                                 @else
-                                                    <i class="fa-solid fa-circle-user text-3xl text-gray-400"></i>
+                                                    <i class="fa-solid fa-circle-user text-gray-400 w-12 h-12 text-[48px] leading-[48px] rounded-full"></i>
                                                 @endif
                                             </a>
                                         </div>
@@ -203,12 +208,18 @@
 
                                         {{-- actions --}}
                                         <div class="md:col-span-1 flex justify-center items-center space-x-4">
-                                            <a href="{{ route('itinerary.edit', $itinerary->id) }}" title="Edit">
-                                                <i class="fa-solid fa-pen text-yellow-300 text-lg"></i>
-                                            </a>
-                                            <span class="text-red-500">
-                                                @include('itineraries.modals.delete', ['itinerary' => $itinerary])
-                                            </span>
+                                            @if (!$itinerary->finish_at)
+                                                <a href="{{ route('itinerary.edit', $itinerary->id) }}" title="Edit">
+                                                    <i class="fa-solid fa-pen text-yellow-300 text-lg hover:text-yellow-700"></i>
+                                                </a>
+                                                <span class="text-red-500">
+                                                    @include('itineraries.modals.delete', ['itinerary' => $itinerary, 'showText' => false])
+                                                </span>
+                                            @else
+                                                <span class="text-xs bg-green-500 text-white px-2 py-1 rounded">
+                                                    <i class="fa-solid fa-check mr-1"></i> Finished
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 @empty
@@ -223,12 +234,10 @@
     </div>
     {{-- Scroll to Top Button --}}
     <button id="scrollToTopBtn"
-        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
+        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
         aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
-
-
 
     @push('scripts')
         <script src="{{ asset('js/itineraries/index.js') }}"></script>

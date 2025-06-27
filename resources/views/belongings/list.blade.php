@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="py-10 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
             {{-- タイトル・戻る・トグルを横並び --}}
@@ -36,7 +36,9 @@
 
                     <div class="flex flex-col md:flex-row gap-2">
                         <div class="md:w-1/2">
-                            <x-input-label for="item" class="text-gray-700" value="Item Name" />
+                            <x-input-label for="item">
+                                <span class="text-red-500 ml-1">*</span>Item Name
+                            </x-input-label>
                             <x-text-input id="item" name="item" required maxlength="50" class="w-full" placeholder="e.g. Passport, Wallet, Charger" />
                             <div id="itemCharCount" class="right-2 top-2 text-sm text-gray-400">
                                 0 / 50
@@ -48,7 +50,7 @@
 
                         <div class="md:w-1/2">
                             <x-input-label for="description" class="text-gray-700" value="Description" />
-                            <textarea id="description" name="description" rows="1" required maxlength="500" class="w-full rounded-md border-gray-300" placeholder="Details about the item..."></textarea>
+                            <textarea id="description" name="description" rows="1" maxlength="500" class="w-full rounded-md border-gray-300" placeholder="Details about the item..."></textarea>
                             <div id="descriptionCharCount" class="right-2 top-2 text-sm text-gray-400">
                                 0 / 500
                             </div>
@@ -170,7 +172,7 @@
                 </div>
                 <div>
                     <label class="block mb-1 font-medium text-sm">Description</label>
-                    <textarea id="editDescription" class="w-full rounded-md border-gray-300" rows="2" required maxlength="500"></textarea>
+                    <textarea id="editDescription" class="w-full rounded-md border-gray-300" rows="2" maxlength="500"></textarea>
                     <div id="editDescriptionCharCount" class="right-2 top-2 text-sm text-gray-400">
                         0 / 500
                     </div>
