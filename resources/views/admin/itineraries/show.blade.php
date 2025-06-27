@@ -8,20 +8,7 @@
                         <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold">Admin Page</h1>
                     </div>
 
-                    {{-- 入力フォーム --}}
-                    <div class="mb-6">
-                        <form action="{{ route('admin.categories.store') }}" method="POST" class="flex flex-col md:flex-row items-center gap-4 w-full">
-                            @csrf
-                            <input type="text" name="category_name" placeholder="New Category Name" required
-                                class="w-full md:w-2/3 px-4 py-2 border rounded-md focus:outline-green-500">
-                            <button type="submit"
-                                    class="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-md">
-                                Save
-                            </button>
-                        </form>
-                    </div>
-
-                    {{-- コンテンツレイアウト --}}
+                    {{-- コンテンツ --}}
                     <div class="flex flex-col lg:flex-row gap-6">
                         {{-- サイドメニュー --}}
                         <div class="w-full lg:w-1/4">
@@ -41,23 +28,37 @@
                             </div>
                         </div>
 
-                        {{-- テーブル --}}
+                        {{-- メインコンテンツ（ユーザーテーブル） --}}
                         <div class="w-full lg:w-3/4 overflow-x-auto">
                             <table class="min-w-full table-auto border border-gray-300 text-center">
-                                <thead class="bg-green-500 text-white">
-                                    <tr class="text-sm sm:text-base h-12">
-                                        <th class="px-2">#</th>
-                                        <th class="px-2">Category Name</th>
-                                        <th class="px-2">Action</th>
+                                <thead class="bg-green-500 text-white text-sm sm:text-base">
+                                    <tr>
+                                        <th class="py-3 px-2">#</th>
+                                        <th class="py-3 px-2">Group Name</th>
+                                        <th class="py-3 px-2">Title</th>
+                                        <th class="py-3 px-2">Finalize_bill_at</th>
+                                        <th class="py-3 px-2">Finish_at</th>
+                                        <th class="py-3 px-2">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($all_categories as $category)
+                                    @foreach ($all_itineraries as $itinerary)
                                         <tr class="{{ $loop->odd ? 'bg-green-100' : 'bg-green-50' }} text-sm sm:text-base">
-                                            <td class="py-2">{{ $category->id }}</td>
-                                            <td class="py-2">{{ $category->name }}</td>
+                                            <td class="py-2">{{ $itinerary->id }}</td>
                                             <td class="py-2">
-                                                <form action="{{ route('admin.categories.delete', $category->id) }}" method="POST" onsubmit="return confirm('Delete this category?')">
+                                                {{ $itinerary->group->name }}
+                                            </td>
+                                            <td class="py-2">
+                                                {{ $itinerary->title }}
+                                            </td>
+                                            <td class="py-2">
+                                                {{ $itinerary->finalize_bill_at }}
+                                            </td>
+                                            <td class="py-2">
+                                                {{ $itinerary->finish_at }}
+                                            </td>
+                                            <td class="py-2">
+                                                <form action="{{ route('admin.itineraries.delete', $itinerary->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this itinerary?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-500 hover:text-red-700">
@@ -74,7 +75,7 @@
 
                     {{-- ページネーション --}}
                     <div class="flex justify-center mt-6">
-                        {{ $all_categories->links('vendor.pagination.custom') }}
+                        {{ $all_itineraries->links('vendor.pagination.custom') }}
                     </div>
                 </div>
             </div>

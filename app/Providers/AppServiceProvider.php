@@ -33,15 +33,17 @@ class AppServiceProvider extends ServiceProvider
             $groupMembers = GroupMember::where('user_id', Auth::User()->id);
             $groupIds = $groupMembers->pluck('group_id')->toArray();
             $groups = Group::whereIn('id', $groupIds)->get();
-            $itineraries = Itinerary::whereIn('group_id', $groupIds)->get();
+            $itineraries = Itinerary::whereIn('group_id', $groupIds)->orderBy('start_date')->get();
             $tripSchedule = [];
             $tripName = [];
+            $tripId = [];
             $routeUrls = [];
             foreach ($itineraries as $itinerary) {
                 $start_date = new \DateTime($itinerary->start_date);
                 $end_date = new \DateTime($itinerary->end_date);
                 $tripSchedule[] = [$start_date->format('Y-m-d'), $end_date->format('Y-m-d')];
                 $tripName[] = $itinerary->title;
+                $tripId[] = $itinerary->id;
                 $routeUrls[] = route('itinerary.show', $itinerary->id);
             }
             $nonReadCount = [];
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
                 ->with('nonReadCount_total', $nonReadCount_total)
                 ->with('tripSchedule', $tripSchedule)
                 ->with('tripName', $tripName)
+                ->with('tripId', $tripId)
                 ->with('routeUrls', $routeUrls);
         }
     });

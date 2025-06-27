@@ -46,6 +46,7 @@
                 groupIds: @json($groupIds ?? []),
                 tripSchedule: @json($tripSchedule ?? []),
                 tripName: @json($tripName ?? []),
+                tripId: @json($tripId ?? []),
             };
             const routeUrls = @json($routeUrls ?? []);
         </script>

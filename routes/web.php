@@ -12,6 +12,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\ItinerariesController;
 use App\Http\Controllers\PayPalController;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Route;
@@ -115,6 +116,10 @@ Route::middleware('auth')->group(function () {
         # Users
         Route::get('/users/show', [UsersController::class, 'index'])->name('users.show');
         Route::delete('/users/{user_id}/delete', [UsersController::class, 'destroy'])->name('users.delete');
+
+        # Itineraries
+        Route::get('/itineraries/show', [ItinerariesController::class, 'index'])->name('itineraries.show');
+        Route::delete('/itineraries/{itinerary_id}/delete', [ItinerariesController::class, 'destroy'])->name('itineraries.delete');
 
         # Posts
         Route::get('/posts/show', [PostsController::class, 'index'])->name('posts.show');
