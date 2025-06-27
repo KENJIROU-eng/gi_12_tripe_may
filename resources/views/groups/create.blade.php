@@ -18,7 +18,7 @@
                                 <input type="text" name="name" id="name" class="w-3/4 mt-1 p-2 block  rounded-md focus:ring focus:border-blue-300 ml-2" required>
                             </div>
                             <div class="flex justify-center">
-                                <div class="container mb-4 w-1/3">
+                                <div class="container mb-4 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3  md:mx-0">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
                                     <div class="space-y-2 mt-2 max-h-[500px] overflow-y-auto border p-2 rounded">
                                         @forelse (Auth::User()->following as $user)
@@ -49,6 +49,10 @@
                                     <img id="image-preview" class="w-25 aspect-square rounded-full object-cover border border-gray-300 hidden mx-auto" alt="Preview">
                                     <input type="file" name="image" id="image" accept="image/*"
                                     class="mt-1 block w-full text-sm text-gray-500 text-center">
+                                    <div class="form-text text-gray-500 mt-1" id="image-info">
+                                        The acceptable formats are jpeg, jpg, png, and gif only. <br>
+                                        Max file size is 1048kb.
+                                    </div>
                                 </div>
                             </div>
                             <div class="flex justify-center mt-6">

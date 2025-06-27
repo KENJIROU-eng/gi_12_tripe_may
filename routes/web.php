@@ -49,8 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::post('/post/{post_id}/edit', [PostController::class, 'edit'])->name('post.edit');
-    Route::get('/post/{post_id}/like', [PostController::class, 'like'])->name('post.like');
-    Route::delete('/post/{post_id}/like/delete', [PostController::class, 'like_delete'])->name('post.like.delete');
+    // Route::get('/post/{post_id}/like', [PostController::class, 'like'])->name('post.like');
+    // Route::delete('/post/{post_id}/like/delete', [PostController::class, 'like_delete'])->name('post.like.delete');
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');

@@ -19,10 +19,12 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
+
         {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+        
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
@@ -31,6 +33,7 @@
                 display: none !important;
             }
         </style>
+
     </head>
     <body data-user-id="{{ Auth::user()->id }}">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -50,7 +53,7 @@
             const routeUrls = @json($routeUrls ?? []);
         </script>
 
-        @livewireStyles 
+        
         @livewireScripts
     </body>
 </html>

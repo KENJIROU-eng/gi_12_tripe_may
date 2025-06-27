@@ -1,8 +1,8 @@
 <x-app-layout>
-    <div class="bg-white/85">
+    <div class="bg-white/85 pt-6">
         <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
         
-        <div class="relative flex bg-yellow-100 w-full h-16 items-center justify-between">
+        <div class="relative flex bg-yellow-100 w-full h-16 items-center justify-between top-0 left-0 right-0 z-50">
             <a href="{{ route('groups.index') }}"><i class="fa-regular fa-less-than text-black hover:text-gray-500 ml-4 text-xl"></i></a>
             @if ($group->users->count() > 2)
                 <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}} ({{ $group->users->count()}})</p>
@@ -60,18 +60,18 @@
         </div>
         
         <!--chat-->
-        <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll h-[calc(100vh-8rem)] px-4 pb-28 space-y-2">
+        <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
             @foreach ($messages as $message)
             @php $isMine = $message->user_id === auth()->id();@endphp
             
-            @if ($isMine)
-            <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+            {{-- @if ($isMine)
+            <div cid="message-{{ $message->id }}" class="flex justify-end items-end" >
                 
                 
                 <div class="text-xs text-right mt-1 text-gray-400 mr-2">
                     {{ $message->created_at->format('Y-m-d H:i') }}
                 </div>
-                <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow ">
+                <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
                     @if ($message->message)
                     <div style="word-break: break-word; overflow-wrap: break-word;">{{$message->message }}</div>
                     @endif
@@ -102,6 +102,69 @@
                     </div>
                 </div>
             </div>
+            @endif --}}
+            @if ($isMine)
+                @if ($message->message)
+                    <div id="message-{{ $message->id }}" class="flex justify-end items-end">
+                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">
+                            {{ $message->created_at->format('Y-m-d H:i') }}
+                        </div>
+                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+                            <div style="word-break: break-word; overflow-wrap: break-word;">
+                                {{ $message->message }}
+                            </div>
+                            @if ($message->image_url)
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                            @endif
+                        </div>
+                    </div>
+                @elseif ($message->image_url)
+                    <div id="message-{{ $message->id }}" class="flex items-end justify-end">
+                        <div class="text-xs text-gray-400 mr-2">
+                            {{ $message->created_at->format('Y-m-d H:i') }}
+                        </div>
+                        <div class="max-w-[70%]">
+                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                        </div>
+                    </div>
+                @endif
+            @else
+                @if ($message->message)
+                    <div>
+                        <div class="flex items-start">
+                            <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
+                            <div class="flex space-x-2 items-end">
+                                <div class="max-w-[70%]">
+                                    <div class="text-sm text-gray-600 font-medium">{{ $message->user->name }}</div>
+                                    <div class="bg-white rounded-2xl p-3 shadow">
+                                        <div style="word-break: break-word; overflow-wrap: break-word;">
+                                            {{ $message->message }}
+                                        </div>
+                                        @if ($message->image_url)
+                                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-400 items-end">
+                                    {{ $message->created_at->format(' H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @elseif ($message->image_url)
+                    <div>
+                        <div class="flex items-start">
+                            <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
+                            <div class="flex space-x-2 items-end">
+                                
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                                <div class="text-xs text-gray-400 items-end">
+                                    {{ $message->created_at->format(' H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             @endif
             @endforeach
         </div>
@@ -180,9 +243,10 @@
         <label for="image-upload" class="cursor-pointer">
             <i class="fa-solid fa-image text-xl text-gray-500 hover:text-blue-500"></i>
         </label>
-        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send
+        <button type="submit" id="send-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50" disabled>Send
         </button>
     </form>
+        
 </x-app-layout>
 
-Y-m-d
+

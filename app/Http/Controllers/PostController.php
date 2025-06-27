@@ -171,25 +171,7 @@ class PostController extends Controller
     }
 
 
-    public function like($post_id) {
-        $post = $this->post->findOrFail($post_id);
-        $post->likes()->create([
-            'user_id' => Auth::User()->id,
-        ]);
-
-        return redirect()->back();
-        // return view('posts.show')
-        //     ->with('post', $post);
-    }
-    public function like_delete($post_id) {
-        $post = $this->post->findOrFail($post_id);
-        $like = $post->likes()->where('user_id', Auth::User()->id);
-        $like->delete();
-
-        return redirect()->back();
-        // return view('posts.show')
-        //     ->with('post', $post);
-    }
+    
 
     // 以降不要
     public function broadcastEvent(Request $request)
