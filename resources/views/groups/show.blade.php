@@ -66,7 +66,7 @@
             @php $isMine = $message->user_id === auth()->id();@endphp
 
                 @if ($isMine)
-                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)">
 
 
                         <div class="text-xs text-right mt-1 text-gray-400 mr-2">
@@ -117,59 +117,128 @@
     </li>
 </ul>
 
+<!-- 編集用フォーム -->
+<div id="edit-form" class="hidden mt-4">
+    <textarea id="edit-textarea" class="w-full p-2 border rounded"></textarea>
+    <button id="submit-edit" class="mt-2 px-4 py-1 bg-blue-500 text-white rounded">送信</button>
+</div>
+
 <script>
-    // console.log(document.getElementById('alpine-test').__x?.$data)
-
     let currentMessageId = null;
+    let targetMessageElement = null;
 
-    // function openCustomMenu(event, messageId) {
-    //     event.preventDefault();
+// カスタムメニューを開く関数（右クリック時に呼び出す）
+window.openCustomMenu = function(event, messageId, element) {
+    event.preventDefault();
 
-    //     currentMessageId = messageId;
+    currentMessageId = messageId;
+    targetMessageElement = element;
+    console.log(targetMessageElement);
 
-    //     const menu = document.getElementById('custom-menu');
-    //     menu.style.top = event.clientY + 'px';
-    //     menu.style.left = event.clientX + 'px';
-    //     menu.classList.remove('hidden');
-    // }
-    window.openCustomMenu = function(event, messageId) {
-        event.preventDefault();
-        currentMessageId = messageId;
+    const menu = document.getElementById('custom-menu');
+    menu.style.top = `${event.clientY}px`;
+    menu.style.left = `${event.clientX}px`;
+    menu.classList.remove('hidden');
+};
+
+// DOM読み込み後にイベントを設定
+document.addEventListener("DOMContentLoaded", () => {
+    const customMenu = document.getElementById("custom-menu");
+    const editItem = document.getElementById("edit-item");
+    const editForm = document.getElementById("edit-form");
+    const editTextarea = document.getElementById("edit-textarea");
+    const submitEdit = document.getElementById("submit-edit");
+
+    // 編集クリック時
+    editItem.addEventListener("click", () => {
+        console.log('Editクリック時のelement:', targetMessageElement);
+        if (!targetMessageElement) return;
+
+        const currentText = targetMessageElement.innerText.trim();
+        editTextarea.value = currentText;
+        editForm.classList.remove("hidden");
+        customMenu.classList.add("hidden");
+    });
+
+    // 編集送信時
+    submitEdit.addEventListener("click", () => {
+        if (!targetMessageElement || !currentMessageId) return;
+
+        const newText = editTextarea.value.trim();
+
+        // 表示を即時反映（必要ならサーバーにもPOST/PUT送信可能）
+        targetMessageElement.innerText = newText;
+
+        // オプション：fetchでサーバーに送信したい場合は以下を使う
+
+        // fetch(`/chat/${currentMessageId}/update`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //     },
+        //     body: JSON.stringify({ message: newText })
+        // }).then(response => {
+        //     if (response.ok) {
+        //         location.reload();
+        //     }
+        // });
+
+        editForm.classList.add("hidden");
+        targetMessageElement = null;
+        currentMessageId = null;
+    });
+
+    // メニュー外クリックで閉じる
+    document.addEventListener("click", (e) => {
         const menu = document.getElementById('custom-menu');
-        menu.style.top = `${event.clientY}px`;
-        menu.style.left = `${event.clientX}px`;
-        menu.classList.remove('hidden');
-}
+        if (!menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
 
-
-    // document.getElementById('edit-item').addEventListener('click', () => {
-    //     if (currentMessageId) {
-    //         window.location.href = `/chat/${currentMessageId}/edit`;
-    //     }
-    // });
-
-    // document.getElementById('edit-item').addEventListener('click', () => {
-    //     if (currentMessageId) {
-    //         window.location.href = `/chat/${currentMessageId}/edit`;
-    //     }
-    // });
-
+    // 削除処理
     document.getElementById('delete-item').addEventListener('click', () => {
         if (currentMessageId && confirm('本当に削除しますか？')) {
             fetch(`/chat/${currentMessageId}/delete`, {
                 method:'DELETE',
                 headers:{'X-CSRF-TOKEN': '{{ csrf_token() }}'}
-            }).then(response=>{
+            }).then(response => {
                 if (response.ok) {
                     location.reload();
                 }
             });
         }
     });
+});
 
-    document.addEventListener('click', () => {
-        document.getElementById('custom-menu').classList.add('hidden');
-    });
+    // let currentMessageId = null;
+
+    // window.openCustomMenu = function(event, messageId) {
+    //     event.preventDefault();
+    //     currentMessageId = messageId;
+    //     const menu = document.getElementById('custom-menu');
+    //     menu.style.top = `${event.clientY}px`;
+    //     menu.style.left = `${event.clientX}px`;
+    //     menu.classList.remove('hidden');
+    // }
+
+    // document.getElementById('delete-item').addEventListener('click', () => {
+    //     if (currentMessageId && confirm('本当に削除しますか？')) {
+    //         fetch(`/chat/${currentMessageId}/delete`, {
+    //             method:'DELETE',
+    //             headers:{'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+    //         }).then(response=>{
+    //             if (response.ok) {
+    //                 location.reload();
+    //             }
+    //         });
+    //     }
+    // });
+
+    // document.addEventListener('click', () => {
+    //     document.getElementById('custom-menu').classList.add('hidden');
+    // });
 </script>
 
 
