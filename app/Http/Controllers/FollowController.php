@@ -158,6 +158,7 @@ class FollowController extends Controller
         $followings = $user->following;
 
         return view('follows.following')
+            ->with('user', $user)
             ->with('followings', $followings);
     }
 }

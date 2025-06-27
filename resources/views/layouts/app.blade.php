@@ -15,11 +15,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Slabo+27px&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Playfair+Display:ital,wght@1,400..900&family=Playwrite+IN&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
+        <link rel="icon" href="{{ asset('images/tripeas_logo_20250617.png') }}" type="image/x-icon">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+        @livewireStyles
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -31,6 +32,7 @@
                 display: none !important;
             }
         </style>
+
     </head>
     <body data-user-id="{{ Auth::user()->id }}" class="page-transition">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -47,8 +49,12 @@
                 groupIds: @json($groupIds ?? []),
                 tripSchedule: @json($tripSchedule ?? []),
                 tripName: @json($tripName ?? []),
+                tripId: @json($tripId ?? []),
             };
             const routeUrls = @json($routeUrls ?? []);
         </script>
+
+
+        @livewireScripts
     </body>
 </html>

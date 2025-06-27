@@ -17,6 +17,7 @@
                                     'admin.users.show' => 'Users',
                                     'admin.posts.show' => 'Posts',
                                     'admin.categories.show' => 'Categories',
+                                    'admin.itineraries.show' => 'Itineraries',
                                 ] as $route => $label)
                                     <a href="{{ route($route) }}"
                                     class="block text-center py-2 rounded-md font-semibold transition

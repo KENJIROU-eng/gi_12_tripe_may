@@ -4,12 +4,31 @@
             <div class="min-h-screen bg-gray-100 dark:bg-gray-800 py-6 px-4 sm:px-6 lg:px-8">
                 <div class="max-w-7xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                     {{-- タイトル --}}
-                    <div class="text-center mb-8 border-b border-gray-300 pb-4">
+                    <div class="relative text-center mb-8 border-b border-gray-300 pb-4">
                         <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex justify-center items-center gap-2">
                             <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
                             Trip Payment Summary
                         </h1>
-                        <p class="text-sm text-gray-500 mt-1">Invoice Overview</p>
+
+                        @php
+                            $hasCreateError = $errors->has('user_pay_id') || $errors->has('bill_name') || $errors->has('cost') || $errors->has('user_paid_id');
+                        @endphp
+
+                        <div x-data="{ open: {{ $hasCreateError ? 'true' : 'false' }} }" class="mt-4 sm:mt-0">
+                            {{-- trigger --}}
+                            <div class="flex justify-center sm:justify-end mt-4 sm:mt-0">
+                                <button @click="open = true"
+                                    class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-lg shadow transition-all duration-200">
+                                    <i class="fa-solid fa-circle-plus mr-2"></i>
+                                    Add Bills
+                                </button>
+                            </div>
+
+                            {{-- modal content --}}
+                            @include('goDutch.modals.create', ['all_bills' => $all_bills, 'groupMembers' => $groupMembers, 'itinerary' => $itinerary])
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-2">Invoice Overview</p>
                     </div>
 
                     {{-- 支払い履歴 --}}
@@ -37,9 +56,12 @@
                                         <td class="px-4 py-3">{{ $bill->name }}</td>
                                         <td class="px-4 py-3 text-red-500 font-semibold">${{ number_format($bill->cost, 0) }}</td>
                                         <td class="px-4 py-3">
-                                            <div class="flex flex-wrap gap-2">
+                                            <div class="flex gap-1 overflow-x-auto max-w-full">
                                                 @foreach ($bill->billUser as $user)
-                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="avatar" class="w-6 h-6 rounded-full object-cover">
+                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}"
+                                                        alt="avatar"
+                                                        title="{{ $user->userPaid->name }}"
+                                                        class="w-7 h-7 rounded-full object-cover border border-gray-300 shadow-sm flex-shrink-0">
                                                 @endforeach
                                             </div>
                                         </td>

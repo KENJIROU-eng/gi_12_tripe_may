@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div style="background-image: url('/images/pexels-quintingellar-844167.jpg'); background-size: cover; background-position: center">
+    {{-- <div style="background-image: url('/images/pexels-quintingellar-844167.jpg'); background-size: cover; background-position: center"> --}}
         <div class= "mt-5 h-[880px]">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
                 <div class="bg-white/95 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
@@ -175,5 +175,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    {{-- </div> --}}
 </x-app-layout>

@@ -1,3 +1,4 @@
+
 //textareaの設定
 document.addEventListener("DOMContentLoaded", () => {
     const textarea = document.getElementById('message-input');
@@ -21,8 +22,25 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
     //2.フォームと入力要素の取得
     const form = document.getElementById('chat-form');
+    //06−27追加
+    const imageInput = document.getElementById('image-upload');
+    const textarea = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn'); 
     // const messageInput = form.querySelector('input[name="message"]');
     // const imageInput = form.querySelector('input[name="image"]');
+
+    //send-btn 無効化
+    function updateSendButton() {
+        const hasText = textarea.value.trim().length > 0;
+        const hasImage = imageInput.files.length > 0;
+        sendBtn.disabled = !(hasText || hasImage);
+    }
+
+    textarea.addEventListener('input', updateSendButton);
+    imageInput.addEventListener('change', updateSendButton);
+
+
+    
 
     //3.フォーム送信イベントをキャッチ
     form.addEventListener('submit', async (e) => {
@@ -52,10 +70,15 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
             // alert('送信成功！');
             // 例えばフォームをリセットしたい場合
             document.getElementById('chat-form').reset();
+            //今日追加したやつ27/06
+
+            const messagesDiv = document.getElementById('messages');
+            if (messagesDiv) {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
         } else {
             alert('送信に失敗しました。');
         }
-
 
     }
         catch (err) {
@@ -63,6 +86,14 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
             alert('通信error');
         }
     });
+
+    if (imageInput) {
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files.length > 0) {
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        });
+    }
 });
 
 //window: jsのすべてのオブジェクトの親を指すオブジェクト。（Echoやpusherをグローバルで使えるようにするため）
@@ -78,11 +109,6 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 //catch: try ブロックで発生したエラーを キャッチして処理 する部分。（通信エラーやJSON変換の失敗などをハンドリングして、画面にエラー表示やログを出せるようにする）
 //let: 再代入が可能な変数を定義するためのキーワード（varより安全、constより柔軟）。(メッセージ内容のHTML組み立てに使われる変数や、一時的な値の格納)
 //DOM: Document Object Model の略で、HTMLページをツリー状のJavaScriptオブジェクトとして扱える仕組み。（HTMLの各要素（フォーム、div、inputなど）を JavaScriptで取得・変更・追加 できるようにする）
-
-
-
-
-
 
 
 
@@ -125,12 +151,12 @@ window.Echo = new Echo({
 });
 
 //pusherへの接続状態を確認（デバック用）
-// window.Echo.connector.pusher.connection.bind('connected', () => {
-//         console.log(':チェックマーク_緑: Pusher に接続されました');
-//     });
-//     window.Echo.connector.pusher.connection.bind('connected', () => {
-//         console.log(':チェックマーク_緑: Echo connected to Pusher!');
-//     });
+window.Echo.connector.pusher.connection.bind('connected', () => {
+        console.log(':チェックマーク_緑: Pusher に接続されました');
+    });
+    window.Echo.connector.pusher.connection.bind('connected', () => {
+        console.log(':チェックマーク_緑: Echo connected to Pusher!');
+    });
 
 // for notification
 //notificationの設定
@@ -218,10 +244,12 @@ for (let i = 0; i < length; i++) {
 
                     // DOMに追加
                     container.appendChild(notification);
+                    if (Number(localStorage.getItem(`audioUnlocked_user_${myUserId}`)) === 1) {
                     //sound
                     const audio = new Audio('/sounds/maou_se_onepoint23.mp3');
                     audio.volume = 0.5;
                     audio.play().catch(e => console.error("Audio play error:", e));
+                    };
 
                     // 10秒後に自動削除
                     setTimeout(() => {
@@ -239,6 +267,10 @@ for (let i = 0; i < length; i++) {
         };
     });
 }
+
+
+
+
 
 //3.IDが取れたらWebSocketを開始
 if (groupId && myUserId) {
@@ -270,85 +302,76 @@ if (groupId && myUserId) {
             if (e.image_url) {
                 messageContent += `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">`;
             }
-
+            
             if (isMine) {
-                wrapper.innerHTML = `
-                    <div class="flex items-end">
-                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
-                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
-                            <div style="word-break: break-word; overflow-wrap: break-word;">
-                                ${messageContent}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
-                wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
-
-            } else {
-                wrapper.innerHTML = `
-                    <div class="flex items-start">
-                        <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
-                        <div class="flex space-x-2 items-end">
-                            <div class="max-w-[70%]">
-                                <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
-                                <div class="bg-white rounded-2xl p-3 shadow">
-                                    <div style="word-break: break-word; overflow-wrap: break-word;">
-                                        ${messageContent}
-                                    </div>
+                // テキストがある場合は枠付き
+                if (e.message && e.message.text) {
+                    wrapper.innerHTML = `
+                        <div class="flex items-end">
+                            <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
+                            <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
+                                <div style="word-break: break-word; overflow-wrap: break-word;">
+                                    ${messageContent}
                                 </div>
                             </div>
-                            <div class="text-xs text-gray-400 items-end">${e.time}</div>
                         </div>
-                    </div>
-                `;
-
-//             if (isMine) {
-//                 messageElement.innerHTML = `
-//                     <div class="flex justify-end items-end">
-//                         <div class="text-xs text-left mt-1 text-gray-400 mr-2">
-//                             ${e.time}
-//                         </div>
-//                         <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
-//                             <div style="word-break: break-word; overflow-wrap: break-word;">
-//                                 ${messageContent}
-//                             </div>
-//                         </div>
-//                     </div>
-//                 `;
-//             } else {
-//                 messageElement.innerHTML = `
-//                     <div>
-//                         <div class="flex items-start">
-//                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
-//                             <div class="flex space-x-2 items-end">
-//                                 <div class="max-w-[70%]">
-//                                     <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
-//                                     <div class="bg-white rounded-2xl p-3 shadow">
-//                                         <div style="word-break: break-word; overflow-wrap: break-word;">
-//                                             ${e.message?.text ?? ''}
-//                                         </div>
-//                                         ${e.image_url ? `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">` : ''}
-//                                     </div>
-//                                 </div>
-//                                 <div class="text-xs text-gray-400 items-end">
-//                                     ${e.time}
-
-//                                     </div>
-//                             </div>
-//                         </div>
-//                     </div>
-// `;
-
+                    `;
+                } else {
+                    // 画像だけの場合
+                    wrapper.innerHTML = `
+                        <div class="flex items-end justify-end">
+                            <div class="max-w-[70%]">
+                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>                            
+                                <div class="mt-2">${messageContent}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
+                wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
+            
+            } else {
+                if (e.message && e.message.text) {
+                    wrapper.innerHTML = `
+                        <div class="flex items-start">
+                            <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
+                            <div class="flex space-x-2 items-end">
+                                <div class="max-w-[70%]">
+                                    <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                    <div class="bg-white rounded-2xl p-3 shadow">
+                                        <div style="word-break: break-word; overflow-wrap: break-word;">
+                                            ${messageContent}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-400 items-end">${e.time}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // 画像だけの場合
+                    wrapper.innerHTML = `
+                        <div class="flex items-start">
+                            <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
+                            <div class="max-w-[70%]">
+                                <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                <div class="flex items-end space-y-1">
+                                    <div>${messageContent}</div>
+                                    <div class="text-xs text-gray-400 ml-2">${e.time}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
-
+            
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
             //messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
-            Alpine.initTree(wrapper);
-            messagesDiv.appendChild(wrapper);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
+            // Alpine.initTree(wrapper);
+            // messagesDiv.appendChild(wrapper);
+            // messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
 

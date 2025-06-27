@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;">
+    {{-- <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;"> --}}
         <div class= "mt-5 h-[880px]">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
                 <div class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
@@ -40,6 +40,27 @@
                                                             class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
                                                             Delete
                                                         </button>
+                                                    @else
+                                                        @if ($post->user->isFollowed())
+                                                            <form action="{{ route('profile.follow.delete', $post->user->id) }}" method="post">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button
+                                                                    type="submit"
+                                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+                                                                    Following
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ route('profile.follow.create', $post->user->id) }}" method="post">
+                                                            @csrf
+                                                                <button
+                                                                    type="submit"
+                                                                    class="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-100">
+                                                                    Follow
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </x-slot>
                                             </x-dropdown>
@@ -57,7 +78,7 @@
 
                                     <!-- Likes, Categories -->
                                     <div class="flex items-center">
-                                        <div class="ml-4">
+                                        {{-- <div class="ml-4">
                                             @if (in_array(Auth::User()->id, $post->likes->pluck('user_id')->toArray()) )
                                                 <form action="{{ route('post.like.delete',$post->id) }}" method="POST">
                                                     @csrf
@@ -71,7 +92,8 @@
                                                     <i class="fa-regular fa-heart text-gray-400 hover:text-red-500 text-2xl mr-2"></i>
                                                 </a>
                                             @endif
-                                        </div>
+                                        </div> --}}
+                                        @livewire('post-like', ['post' => $post], key($post->id))
 
                                         <div x-data="{open:false}" class="mr-4">
                                             <button @click="open = true">
@@ -84,8 +106,8 @@
                                             {{-- trigger --}}
                                             <div x-data="{ open: false }">
                                                 <div class="flex items-center space-x-1">
-                                                    <button @click="open = true" class="text-blue-500 hover:text-blue-600 text-2xl">
-                                                        <i class="fa-solid fa-comment"></i>
+                                                    <button @click="open = true" class="text-gray-400 hover:text-gray-600 text-2xl">
+                                                        <i class="fa-regular fa-comments"></i>
                                                     </button>
                                                     <p class="text-black">{{ $post->comments->count() }}</p>
                                                 </div>
@@ -137,6 +159,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    {{-- </div> --}}
 </x-app-layout>
 

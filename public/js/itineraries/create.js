@@ -507,6 +507,17 @@ function updateAllDistanceTimes() {
 
                     totalSummary.textContent = `Total Distance: ${(totalDistance / 1000).toFixed(2)} km, Total Duration: ${formatDuration(totalDuration)}`;
                     totalSummary.classList.remove('hidden');
+
+                    document.getElementById('total_distance').value = (totalDistance / 1000).toFixed(2); // km 単位
+                    document.getElementById('total_duration').value = totalDuration; // 秒単位
+                    document.getElementById('daily_distances').value = JSON.stringify(dailyDistances);
+                    document.getElementById('daily_durations').value = JSON.stringify(dailyDurations);
+
+リアクションする
+
+返信
+
+
                 }
 
             });

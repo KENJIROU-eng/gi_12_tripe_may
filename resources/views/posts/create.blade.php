@@ -78,7 +78,7 @@
                                     <textarea name="description" id="description" rows="5" cols="200"  maxlength="500" x-model="$el.value" @input="count = $event.target.value.length"
                                     class="w-full border border-gray-300 rounded focus:outline-none focus:ring focus:ring-orange-400 focus:border-orange-400"></textarea>
                                     <div class="text-right text-sm mt-1" :class="{ 'text-red-500': count >= max, 'text-gray-500': count < max }">
-                                            <span x-text="count"></span>/<span x-text="max"></span> 文字
+                                            <span x-text="count"></span>/<span x-text="max"></span>
                                     </div>
                                     @error('description')
                                         <div class="text-danger small">{{ $message }}</div>

@@ -16,7 +16,7 @@ class PayPalController extends Controller
         $this->pay = $pay;
     }
 
-    public function createTransaction($itinerary_id, $total)
+    public function createTransaction($itinerary_id, $total, $user_id)
     {
         $total = number_format((float)$total, 2, '.', '');
         $provider = resolve(PayPal::class);
@@ -57,7 +57,7 @@ class PayPalController extends Controller
             ],
             "application_context" => [
                 "cancel_url" => route('goDutch.index', $itinerary_id),
-                "return_url" => route('paypal.success', $itinerary_id)
+                "return_url" => route('paypal.success', ['itinerary_id'=> $itinerary_id, 'user_id' => $user_id])
             ]
         ]);
 
@@ -65,7 +65,7 @@ class PayPalController extends Controller
         return Redirect::away(collect($order['links'])->firstWhere('rel', 'approve')['href']);
     }
 
-    public function captureTransaction(Request $request, $itinerary_id)
+    public function captureTransaction(Request $request, $itinerary_id, $user_id)
     {
         $provider = resolve(PayPal::class);
         // API資格情報の設定
@@ -100,6 +100,7 @@ class PayPalController extends Controller
             $this->pay->user_id = Auth::User()->id;
             $this->pay->itinerary_id = $itinerary_id;
             $this->pay->Price = $value;
+            $this->pay->user_get_id = $user_id;
             $this->pay->save();
             return redirect()->route('goDutch.finalize', $itinerary_id);
         } else {

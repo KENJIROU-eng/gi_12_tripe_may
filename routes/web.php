@@ -12,6 +12,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\ItinerariesController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\WeatherController;
 use App\Events\MessageSent;
@@ -59,8 +60,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::post('/post/{post_id}/edit', [PostController::class, 'edit'])->name('post.edit');
-    Route::get('/post/{post_id}/like', [PostController::class, 'like'])->name('post.like');
-    Route::delete('/post/{post_id}/like/delete', [PostController::class, 'like_delete'])->name('post.like.delete');
+    // Route::get('/post/{post_id}/like', [PostController::class, 'like'])->name('post.like');
+    // Route::delete('/post/{post_id}/like/delete', [PostController::class, 'like_delete'])->name('post.like.delete');
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
@@ -114,16 +115,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/goDutch/delete/{bill_id}/{itinerary_id}', [BillController::class, 'destroy'])->name('goDutch.delete');
     Route::patch('/goDutch/update/{bill_id}/{itinerary_id}', [BillController::class, 'update'])->name('goDutch.update');
     Route::get('/goDutch/{itinerary_id}/finalize', [BillController::class, 'finalize'])->name('goDutch.finalize');
+    Route::post('/goDutch/{itinerary_id}/{user_id}/{detail}/cashPay', [BillController::class, 'cashPay'])->name('goDutch.cashPay');
 
     #paypal
-    Route::get('/paypal/{itinerary_id}/{total}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');
-    Route::get('/paypal/{itinerary_id}/success', [PayPalController::class, 'captureTransaction'])->name('paypal.success');
+    Route::get('/paypal/{itinerary_id}/{total}/{user_id}/pay', [PayPalController::class, 'createTransaction'])->name('paypal.pay');
+    Route::get('/paypal/{itinerary_id}/{user_id}/success', [PayPalController::class, 'captureTransaction'])->name('paypal.success');
 
     #ADMIN Routes
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function(){
         # Users
         Route::get('/users/show', [UsersController::class, 'index'])->name('users.show');
         Route::delete('/users/{user_id}/delete', [UsersController::class, 'destroy'])->name('users.delete');
+
+        # Itineraries
+        Route::get('/itineraries/show', [ItinerariesController::class, 'index'])->name('itineraries.show');
+        Route::delete('/itineraries/{itinerary_id}/delete', [ItinerariesController::class, 'destroy'])->name('itineraries.delete');
 
         # Posts
         Route::get('/posts/show', [PostsController::class, 'index'])->name('posts.show');

@@ -30,7 +30,7 @@
                 <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
                     <h1 class="text-3xl lg:text-4xl">Sign in</h1>
                     <p class="mt-4 text-blue-500">If you have an account, please press the button</p>
-                    <a href="{{ route('login') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                    <a href="{{ route('login',['view' => 'login']) }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
                         Sign in
                     </a>
                 </div>
@@ -38,7 +38,7 @@
                 <div class="row-span-1 flex flex-col justify-center items-center text-center p-4">
                     <h1 class="text-3xl lg:text-4xl">Sign up</h1>
                     <p class="mt-4 text-blue-500">If you don't have an account, please press the button</p>
-                    <a href="{{ route('register') }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
+                    <a href="{{ route('register',['view' => 'register']) }}" class="mt-6 w-2/3 sm:w-1/2 bg-green-500 text-white py-2 rounded text-lg hover:bg-green-600">
                         Sign up
                     </a>
                 </div>

@@ -36,9 +36,12 @@
                                         <td class="px-4 py-3">{{ $bill->name }}</td>
                                         <td class="px-4 py-3 text-red-500 font-semibold">${{ number_format($bill->cost, 0) }}</td>
                                         <td class="px-4 py-3">
-                                            <div class="flex flex-wrap gap-2">
+                                            <div class="flex gap-1 overflow-x-auto max-w-full">
                                                 @foreach ($bill->billUser as $user)
-                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}" alt="avatar" class="w-6 h-6 rounded-full object-cover">
+                                                    <img src="{{ $user->userPaid->avatar ?? asset('images/ben-sweet-2LowviVHZ-E-unsplash.jpg') }}"
+                                                        alt="avatar"
+                                                        title="{{ $user->userPaid->name }}"
+                                                        class="w-7 h-7 rounded-full object-cover border border-gray-300 shadow-sm flex-shrink-0">
                                                 @endforeach
                                             </div>
                                         </td>
@@ -57,7 +60,9 @@
                                 <i class="fa-solid fa-calculator text-green-500 mr-2"></i>
                                 Calculation Result for Payment
                             </h2>
-
+                            @error('amount')
+                                <div class="text-red-500 small text-center font-bold">{{ $message }}</div>
+                            @enderror
                             {{-- ヘッダー（PCのみ表示） --}}
                             <div class="hidden sm:grid grid-cols-4 items-center text-center text-sm font-semibold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 py-3 rounded-t">
                                 <div>Pay → Receive</div>
@@ -95,29 +100,166 @@
                                         </div>
 
                                         {{-- 金額 --}}
-                                        <div class="text-center text-red-500 font-semibold text-md">
-                                            ${{ number_format($detail[2] - $price, 0) }}
-                                        </div>
-
-                                        {{-- 状態 --}}
-                                        @if (number_format($detail[2] - $price, 0) > 0)
-                                            <div class="text-center text-red-600">
-                                                <i class="fa-solid fa-circle-xmark"></i> Unpaid
-                                            </div>
-                                        @else
-                                            <div class="text-center text-red-600">
-                                                <i class="fa-solid fa-circle-check text-green-500"></i> paid
-                                            </div>
-                                        @endif
-
-                                        {{-- Pay now（説明風バッジ） --}}
-                                        <div class="text-center text-sm text-blue-600">
-                                            @if (Auth::User()->id == $detail[0]->id)
-                                                <a href="{{ route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2]]) }}">
-                                                    <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
-                                                </a>
+                                        @if (!empty($pays[$detail[0]->id][$detail[1]->id]))
+                                            {{-- 状態 --}}
+                                            @if (number_format($detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 0) > 0)
+                                                <div class="text-center text-red-500 font-semibold text-md">
+                                                    ${{ number_format($detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 0) }}
+                                                </div>
+                                                <div class="text-center text-red-600">
+                                                    <i class="fa-solid fa-circle-xmark"></i> Unpaid
+                                                </div>
+                                                {{-- Pay now（説明風バッジ） --}}
+                                                <div class="text-center text-sm text-blue-600">
+                                                    @if (Auth::User()->id == $detail[0]->id)
+                                                        <a href="{{ route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2], 'user_id' => $detail[1]->id]) }}">
+                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
+                                                        </a>
+                                                        <!-- 現金 -->
+                                                        <div x-data="{ open: false, amount: '' }" class="relative">
+                                                            <!-- 起動ボタン -->
+                                                            <button @click="open = true"
+                                                                    class="flex flex-col items-center justify-center">
+                                                                <i class="fa-solid fa-money-bill text-yellow-500 text-3xl"></i>
+                                                                <span class="text-xs text-yellow-500">Cash</span>
+                                                            </button>
+                                                            <!-- モーダル -->
+                                                            <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak>
+                                                                <div class="bg-white rounded-xl p-6 w-80" @click.away="open = false">
+                                                                    <!-- ヘッダー -->
+                                                                    <div class="flex justify-between items-center mb-4">
+                                                                        <h2 class="text-lg font-bold text-center">Enter the amount you pay</h2>
+                                                                        <button @click="open = false" class="text-gray-500 hover:text-red-500 text-lg">&times;</button>
+                                                                    </div>
+                                                                    <!-- 入力表示 -->
+                                                                    <div class="bg-gray-100 rounded-lg p-3 mb-4 text-2xl text-right font-mono tracking-wide">
+                                                                        $ <span x-text="amount || 0"></span>
+                                                                    </div>
+                                                                    <!-- 電卓ボタン -->
+                                                                    <div class="grid grid-cols-3 gap-3 mb-4">
+                                                                        <template x-for="row in [[1,2,3],[4,5,6],[7,8,9]]" :key="row.toString()">
+                                                                            <template x-for="n in row" :key="n">
+                                                                                <button @click="amount += n"
+                                                                                        class="bg-gray-200 hover:bg-gray-300 rounded-lg text-xl py-3">
+                                                                                    <span x-text="n"></span>
+                                                                                </button>
+                                                                            </template>
+                                                                        </template>
+                                                                        <!-- C / 0 / ← -->
+                                                                        <button @click="amount = ''" class="bg-red-200 hover:bg-red-300 rounded-lg text-xl py-3">C</button>
+                                                                        <button @click="amount += '0'" class="bg-gray-200 hover:bg-gray-300 rounded-lg text-xl py-3">0</button>
+                                                                        <button @click="amount = amount.slice(0, -1)" class="bg-yellow-200 hover:bg-yellow-300 rounded-lg text-xl py-3">←</button>
+                                                                    </div>
+                                                                    <!-- 送信 -->
+                                                                    @php
+                                                                        $maxAmount = number_format($detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 0);
+                                                                    @endphp
+                                                                    <form method="post" action="{{ route('goDutch.cashPay', ['itinerary_id' => $itinerary->id, 'user_id' => $detail[1]->id, 'detail' => $maxAmount]) }}">
+                                                                        @csrf
+                                                                        <input type="hidden" name="amount" :value="amount">
+                                                                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                                                                :disabled="!amount">
+                                                                            Pay（$<span x-text="amount || 0"></span>）
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <div class="text-center text-gray-500 font-semibold text-md">
+                                                    ${{ number_format($detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 0) }}
+                                                </div>
+                                                <div class="text-center text-green-600">
+                                                    <i class="fa-solid fa-circle-check text-green-500"></i> paid
+                                                </div>
+                                                {{-- Pay now（説明風バッジ） --}}
+                                                <div class="text-center text-sm text-green-500">
+                                                    @if (Auth::User()->id == $detail[0]->id)
+                                                        <p>You already complete the payment</p>
+                                                    @endif
+                                                </div>
                                             @endif
-                                        </div>
+                                        @else
+                                            <div class="text-center text-red-500 font-semibold text-md">
+                                                ${{ number_format($detail[2], 0) }}
+                                            </div>
+                                            {{-- 状態 --}}
+                                            @if (number_format($detail[2], 0) > 0)
+                                                <div class="text-center text-red-600">
+                                                    <i class="fa-solid fa-circle-xmark"></i> Unpaid
+                                                </div>
+                                                {{-- Pay now（説明風バッジ） --}}
+                                                <div class="text-center text-sm text-blue-600 flex gap-6 items-center justify-center">
+                                                    @if (Auth::User()->id == $detail[0]->id)
+                                                        <!-- PayPal -->
+                                                        <a href="{{ route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2], 'user_id' => $detail[1]->id]) }}"
+                                                        class="flex flex-col items-center justify-center">
+                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
+                                                            <span class="text-xs text-blue-500">PayPal</span>
+                                                        </a>
+
+                                                        <!-- 現金 -->
+                                                        <div x-data="{ open: false, amount: '' }" class="relative">
+                                                            <!-- 起動ボタン -->
+                                                            <button @click="open = true"
+                                                                    class="flex flex-col items-center justify-center">
+                                                                <i class="fa-solid fa-money-bill text-yellow-500 text-3xl"></i>
+                                                                <span class="text-xs text-yellow-500">Cash</span>
+                                                            </button>
+                                                            <!-- モーダル -->
+                                                            <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak>
+                                                                <div class="bg-white rounded-xl p-6 w-80" @click.away="open = false">
+                                                                    <!-- ヘッダー -->
+                                                                    <div class="flex justify-between items-center mb-4">
+                                                                        <h2 class="text-lg font-bold text-center">Enter the amount you pay</h2>
+                                                                        <button @click="open = false" class="text-gray-500 hover:text-red-500 text-lg">&times;</button>
+                                                                    </div>
+                                                                    <!-- 入力表示 -->
+                                                                    <div class="bg-gray-100 rounded-lg p-3 mb-4 text-2xl text-right font-mono tracking-wide">
+                                                                        $ <span x-text="amount || 0"></span>
+                                                                    </div>
+                                                                    <!-- 電卓ボタン -->
+                                                                    <div class="grid grid-cols-3 gap-3 mb-4">
+                                                                        <template x-for="row in [[1,2,3],[4,5,6],[7,8,9]]" :key="row.toString()">
+                                                                            <template x-for="n in row" :key="n">
+                                                                                <button @click="amount += n"
+                                                                                        class="bg-gray-200 hover:bg-gray-300 rounded-lg text-xl py-3">
+                                                                                    <span x-text="n"></span>
+                                                                                </button>
+                                                                            </template>
+                                                                        </template>
+                                                                        <!-- C / 0 / ← -->
+                                                                        <button @click="amount = ''" class="bg-red-200 hover:bg-red-300 rounded-lg text-xl py-3">C</button>
+                                                                        <button @click="amount += '0'" class="bg-gray-200 hover:bg-gray-300 rounded-lg text-xl py-3">0</button>
+                                                                        <button @click="amount = amount.slice(0, -1)" class="bg-yellow-200 hover:bg-yellow-300 rounded-lg text-xl py-3">←</button>
+                                                                    </div>
+                                                                    <!-- 送信 -->
+                                                                    <form method="post" action="{{ route('goDutch.cashPay', ['itinerary_id' => $itinerary->id, 'user_id' => $detail[1]->id, 'detail' => number_format($detail[2], 0)]) }}">
+                                                                        @csrf
+                                                                        <input type="hidden" name="amount" :value="amount">
+                                                                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                                                                :disabled="!amount">
+                                                                            Pay（$<span x-text="amount || 0"></span>）
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <div class="text-center text-red-600">
+                                                    <i class="fa-solid fa-circle-check text-green-500"></i> paid
+                                                </div>
+                                                <div class="text-center text-sm text-green-500">
+                                                    @if (Auth::User()->id == $detail[0]->id)
+                                                        <p>You already complete the payment</p>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

@@ -66,7 +66,7 @@ class MessageSent implements ShouldBroadcast
             'user_id' => $this->message->user_id,
             'user_name' => $this->message->user->name,
             'user_avatar' => $this->message->user->user_avatar,
-            'image_url' => $this->message->image_url,
+            'image_url' => $this->message->image_url ?? '',
             'groupMember_name' => $groupMember_name,
             'group_name' => $group->name,
             'time' => $this->message->created_at->format('Y-m-d H:i'),//ex12:55
