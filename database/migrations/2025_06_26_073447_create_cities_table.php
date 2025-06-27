@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('itineraries', function (Blueprint $table) {
-            $table->timestamp('finish_at')->nullable();
+        Schema::create('cities', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('country_id')->constrained()->onDelete('cascade'); // 国と関連
+            $table->string('name'); // 都市名（英語）
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('itineraries', function (Blueprint $table) {
-            $table->dropColumn('finish_at');
-        });
+        Schema::dropIfExists('cities');
     }
 };

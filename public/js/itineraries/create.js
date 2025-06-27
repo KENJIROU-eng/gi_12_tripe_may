@@ -44,13 +44,13 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                     </span>
                     <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
                         class="p-1 border rounded destination-input w-4/5"
-                        placeholder="${isFirst ? 'Please enter your departure point' : 'Please enter your destination'}" />
+                        placeholder="${isFirst ? 'Please enter your starting point' : 'Please enter your destination'}" />
                     <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <div class="ml-10 mt-1 grid grid-cols-2 sm:grid-cols-1 md:flex flex-wrap items-center gap-2 travel-mode-container">
+                <div class="ml-10 mt-1 flex flex-wrap md:flex-nowrap gap-2 items-center travel-mode-container">
                     ${radioButtons}
                     ${transitWarning}
                     <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
@@ -305,7 +305,7 @@ function initSortable() {
                 updateAllDistanceTimes();
                 updateMapByCurrentInputs();
                 updateFirstDestinationDisplay();
-                clearSummariesIfNoDestinations(); 
+                clearSummariesIfNoDestinations();
             }
         });
     });
@@ -338,7 +338,6 @@ function updateMapByCurrentInputs() {
         directionsRenderer.set('directions', null);
     }
 }
-
 
 // 指定LatLngリストに基づいてマップ描画（ルート）
 function updateMapRoutesByLatLngs(latLngs) {
@@ -592,13 +591,13 @@ function updateFirstDestinationDisplay() {
         // プレースホルダーを「出発地点」に
         const input = firstItem.querySelector('.destination-input');
         if (input) {
-            input.placeholder = 'Please enter your departure point';
+            input.placeholder = 'Please enter your starting point';
         }
 
         // 出発ラベル追加
         const label = document.createElement('div');
         label.className = 'start-label text-sm text-blue-600 font-semibold mb-1 flex items-center gap-1';
-        label.innerHTML = '<i class="fa-solid fa-flag-checkered text-blue-500"></i> Departure Point';
+        label.innerHTML = '<i class="fa-solid fa-flag-checkered text-blue-500"></i> Starting Point';
         firstItem.prepend(label);
 
         // 装飾追加
@@ -645,4 +644,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     titleInput.addEventListener('input', updateCounter);
     updateCounter();
+});
+
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+// go to top
+let hideTimeout;
+
+window.addEventListener('scroll', () => {
+    const isMobile = window.innerWidth < 768;
+    const isAtTop = window.scrollY === 0;
+    const btn = scrollToTopBtn;
+
+    if (!btn) return;
+
+    if (isMobile && !isAtTop) {
+        btn.classList.remove('opacity-0', 'pointer-events-none');
+
+        // 既存の非表示タイマーがあればリセット
+        clearTimeout(hideTimeout);
+
+        // 一定時間（2秒）後に自動で非表示
+        hideTimeout = setTimeout(() => {
+            btn.classList.add('opacity-0', 'pointer-events-none');
+        }, 2000);
+    } else {
+        btn.classList.add('opacity-0', 'pointer-events-none');
+        clearTimeout(hideTimeout);
+    }
+});
+
+scrollToTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });

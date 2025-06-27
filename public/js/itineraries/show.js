@@ -247,3 +247,35 @@ function getWeatherIcon(condition) {
     if (condition.includes('snow')) return '<i class="fa-solid fa-snowflake text-blue-300"></i>';
     return '<i class="fa-solid fa-question text-gray-400"></i>';
 }
+
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+// go to top
+let hideTimeout;
+
+window.addEventListener('scroll', () => {
+    const isMobile = window.innerWidth < 768;
+    const isAtTop = window.scrollY === 0;
+    const btn = scrollToTopBtn;
+
+    if (!btn) return;
+
+    if (isMobile && !isAtTop) {
+        btn.classList.remove('opacity-0', 'pointer-events-none');
+
+        // 既存の非表示タイマーがあればリセット
+        clearTimeout(hideTimeout);
+
+        // 一定時間（2秒）後に自動で非表示
+        hideTimeout = setTimeout(() => {
+            btn.classList.add('opacity-0', 'pointer-events-none');
+        }, 2000);
+    } else {
+        btn.classList.add('opacity-0', 'pointer-events-none');
+        clearTimeout(hideTimeout);
+    }
+});
+
+scrollToTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});

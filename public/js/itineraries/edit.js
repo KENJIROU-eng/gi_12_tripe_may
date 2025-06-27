@@ -47,7 +47,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                 <div class="w-4/5">
                     <!-- ラベルを input の上に出す -->
                     <span class="departure-label text-xs text-blue-600 font-bold mb-1 hidden block">
-                        <i class="fa-solid fa-flag-checkered text-blue-500"></i> Departure Point
+                        <i class="fa-solid fa-flag-checkered text-blue-500"></i> Starting Point
                     </span>
                     <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
                         class="p-1 border rounded destination-input w-full" placeholder="Please enter a destination" />
@@ -58,7 +58,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                 </button>
             </div>
 
-            <div class="ml-10 mt-1 grid grid-cols-2 sm:grid-cols-1 md:flex flex-wrap items-center gap-2 travel-mode-container">
+            <div class="ml-10 mt-1 flex flex-wrap md:flex-nowrap gap-2 items-center travel-mode-container">
                 ${radioButtons}
                 ${transitWarning}
                 <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
@@ -731,7 +731,7 @@ function updateFirstDestinationDisplay() {
         if (routeInfo) routeInfo.style.display = 'none';
 
         const input = firstItem.querySelector('.destination-input');
-        if (input) input.placeholder = 'Please enter your departure point';
+        if (input) input.placeholder = 'Please enter your starting point';
 
         const label = firstItem.querySelector('.departure-label');
         if (label) label.classList.remove('hidden');
@@ -797,4 +797,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     titleInput.addEventListener('input', updateCounter);
     updateCounter(); // 初期表示
+});
+
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+// go to top
+let hideTimeout;
+
+window.addEventListener('scroll', () => {
+    const isMobile = window.innerWidth < 768;
+    const isAtTop = window.scrollY === 0;
+    const btn = scrollToTopBtn;
+
+    if (!btn) return;
+
+    if (isMobile && !isAtTop) {
+        btn.classList.remove('opacity-0', 'pointer-events-none');
+
+        // 既存の非表示タイマーがあればリセット
+        clearTimeout(hideTimeout);
+
+        // 一定時間（2秒）後に自動で非表示
+        hideTimeout = setTimeout(() => {
+            btn.classList.add('opacity-0', 'pointer-events-none');
+        }, 2000);
+    } else {
+        btn.classList.add('opacity-0', 'pointer-events-none');
+        clearTimeout(hideTimeout);
+    }
+});
+
+scrollToTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });

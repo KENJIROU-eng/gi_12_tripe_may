@@ -1,7 +1,7 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
-    <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
-            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto">
+    <div class="flex-1 flex flex-col bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
+        <div class="flex-1 overflow-y-auto max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
+            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
                 <div class="text-black dark:text-gray-100">
                     {{-- title --}}
                     <div class="flex flex-col md:flex-row items-center justify-between text-center mb-10 gap-2 md:gap-0 relative">
@@ -151,7 +151,7 @@
                         </div>
 
                         {{-- body --}}
-                        <div id="scrollContainer" class="w-full overflow-x-hidden overflow-y-auto border rounded mb-2 max-h-none md:max-h-[580px]">
+                        <div id="scrollContainer" class="w-full overflow-x-hidden overflow-y-auto border rounded mb-2 max-h-none md:max-h-[500px]">
 
                             <div id="itineraryContainer" class="max-w-6xl mx-auto">
                                 @forelse ($all_itineraries as $itinerary)
@@ -234,7 +234,7 @@
     </div>
     {{-- Scroll to Top Button --}}
     <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
         aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>

@@ -112,11 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return currentSort.direction === 'asc'
                     ? new Date(valA) - new Date(valB)
                     : new Date(valB) - new Date(valA);
+            } else if (key === 'finished') {
+                return currentSort.direction === 'asc'
+                    ? Number(valA) - Number(valB)
+                    : Number(valB) - Number(valA);
             } else {
                 return currentSort.direction === 'asc'
                     ? valA.localeCompare(valB)
                     : valB.localeCompare(valA);
             }
+
         });
 
         const filtered = filterRows(getSearchQuery());
@@ -210,63 +215,40 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn?.click();
     });
 
-    // 無限スクロール：下端到達時に次のページを読み込む
-    // scrollContainer.addEventListener('scroll', async () => {
-    //     if (loading || noMoreData) return;
-
-    //     const scrollTop = scrollContainer.scrollTop;
-    //     const scrollHeight = scrollContainer.scrollHeight;
-    //     const clientHeight = scrollContainer.clientHeight;
-    //     const threshold = 100;
-
-    //     if (scrollTop + clientHeight >= scrollHeight - threshold) {
-    //         loading = true;
-    //         currentPage++;
-
-    //         try {
-    //             const response = await fetch(`/itinerary/load?page=${currentPage}`);
-    //             const html = await response.text();
-
-    //             if (html.trim() === '') {
-    //                 noMoreData = true;
-    //                 return;
-    //             }
-
-    //             itineraryContainer.insertAdjacentHTML('beforeend', html);
-    //             const newRows = Array.from(document.querySelectorAll('.itinerary-row'));
-    //             rows.length = 0;
-    //             rows.push(...newRows);
-
-    //             const filtered = filterRows(getSearchQuery());
-    //             render(filtered);
-    //         } catch (error) {
-    //             console.error('Error loading more itineraries:', error);
-    //         } finally {
-    //             loading = false;
-    //         }
-    //     }
-    // });
-
     // 初期表示用
     updateSortIcons();
     render(rows);
     scrollContainer.dispatchEvent(new Event('scroll')); // 最初の読み込みトリガー
 
+    // go to top
+    let hideTimeout;
+
     window.addEventListener('scroll', () => {
         const isMobile = window.innerWidth < 768;
         const isAtTop = window.scrollY === 0;
+        const btn = scrollToTopBtn;
+
+        if (!btn) return;
 
         if (isMobile && !isAtTop) {
-            scrollToTopBtn?.classList.remove('opacity-0', 'pointer-events-none');
+            btn.classList.remove('opacity-0', 'pointer-events-none');
+
+            // 既存の非表示タイマーがあればリセット
+            clearTimeout(hideTimeout);
+
+            // 一定時間（2秒）後に自動で非表示
+            hideTimeout = setTimeout(() => {
+                btn.classList.add('opacity-0', 'pointer-events-none');
+            }, 2000);
         } else {
-            scrollToTopBtn?.classList.add('opacity-0', 'pointer-events-none');
+            btn.classList.add('opacity-0', 'pointer-events-none');
+            clearTimeout(hideTimeout);
         }
     });
-
-
 
     scrollToTopBtn?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
 
 });

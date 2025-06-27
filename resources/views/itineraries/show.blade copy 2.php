@@ -1,6 +1,6 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4">
             {{-- 前／次 フロートボタン --}}
             <div class="block">
                 {{-- 前 --}}
@@ -120,7 +120,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
                         {{-- 左：行程詳細 --}}
                         <div class="lg:col-span-2 flex flex-col border rounded-lg shadow-sm overflow-hidden">
-                            <div class="bg-white dark:bg-gray-900 p-4 h-auto lg:h-[678px] flex flex-col">
+                            <div class="bg-white dark:bg-gray-900 p-4 h-auto lg:h-[600px] flex flex-col">
                                 {{-- Header --}}
                                 <div class="items-center pb-2">
                                     <div class="col-span-4">
@@ -154,7 +154,7 @@
                                     </div>
                                 </div>
                                 {{-- Body --}}
-                                <div class="overflow-y-auto flex-1 my-4 sm:max-h-[550px] scrollable">
+                                <div class="overflow-y-auto flex-1 my-4 sm:max-h-[400px] scrollable">
                                     @php
                                         $grandTotalDistance = 0;
                                         $grandTotalDurationSeconds = 0;
@@ -244,7 +244,7 @@
                             </div>
                         </div>
                         {{-- 右：割り勘／持ち物／マップ --}}
-                        <div class="lg:col-span-3 flex flex-col gap-4 lg:h-[690px]">
+                        <div class="lg:col-span-3 flex flex-col gap-4 lg:h-[600px]">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="border rounded-lg shadow-sm bg-white dark:bg-gray-900 p-4 h-auto md:h-[400px]" id="goDutch-container">
                                     @include('goDutch.index', ['total_Pay' => $total_Pay, 'total_getPay' => $total_getPay])
@@ -253,7 +253,7 @@
                                     @include('belongings.index', ['all_belongings' => $all_belongings])
                                 </div>
                             </div>
-                            <div id="map" class="w-full h-[300px] sm:h-[400px] border rounded-lg shadow-sm bg-white dark:bg-gray-900">
+                            <div id="map" class="w-full max-h-[200px] sm:h-[400px] border rounded-lg shadow-sm bg-white dark:bg-gray-900">
                                 map
                             </div>
                         </div>
@@ -276,7 +276,7 @@
             {{-- 右：ルート表示 --}}
             <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
                 <h2 class="text-lg font-semibold text-blue-600 mb-2">Route Steps</h2>
-                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[736px]">
+                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[648px]">
                     {{-- JavaScriptでステップ追加 --}}
                 </ul>
             </div>
@@ -285,7 +285,7 @@
 
     {{-- Scroll to Top Button --}}
     <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
         aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
