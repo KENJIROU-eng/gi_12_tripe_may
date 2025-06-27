@@ -59,7 +59,7 @@ class GroupController extends Controller
 
         broadcast(new MessageSent($message));
 
-        return response()->json(['success' => true]); //成功したらJSONレスポンスを返す
+        return response()->json(['success' => true, 'image_url' => $message->image_url ?? '',]); //成功したらJSONレスポンスを返す
         //return back();
         //return response()->json(['status' => 'Message sent!']);
     }

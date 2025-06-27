@@ -78,7 +78,7 @@
 
                                     <!-- Likes, Categories -->
                                     <div class="flex items-center">
-                                        <div class="ml-4">
+                                        {{-- <div class="ml-4">
                                             @if (in_array(Auth::User()->id, $post->likes->pluck('user_id')->toArray()) )
                                                 <form action="{{ route('post.like.delete',$post->id) }}" method="POST">
                                                     @csrf
@@ -92,7 +92,8 @@
                                                     <i class="fa-regular fa-heart text-gray-400 hover:text-red-500 text-2xl mr-2"></i>
                                                 </a>
                                             @endif
-                                        </div>
+                                        </div> --}}
+                                        @livewire('post-like', ['post' => $post], key($post->id))
 
                                         <div x-data="{open:false}" class="mr-4">
                                             <button @click="open = true">
