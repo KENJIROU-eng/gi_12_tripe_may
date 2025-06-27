@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;">
+    {{-- <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;"> --}}
         <div class= "mt-5 h-[880px]">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
                 <div class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
@@ -105,8 +105,8 @@
                                             {{-- trigger --}}
                                             <div x-data="{ open: false }">
                                                 <div class="flex items-center space-x-1">
-                                                    <button @click="open = true" class="text-blue-500 hover:text-blue-600 text-2xl">
-                                                        <i class="fa-solid fa-comment"></i>
+                                                    <button @click="open = true" class="text-gray-400 hover:text-gray-600 text-2xl">
+                                                        <i class="fa-regular fa-comments"></i>
                                                     </button>
                                                     <p class="text-black">{{ $post->comments->count() }}</p>
                                                 </div>
@@ -158,6 +158,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    {{-- </div> --}}
 </x-app-layout>
 

@@ -152,35 +152,102 @@ class ItineraryController extends Controller
             $dateIds[$date->toDateString()] = $dateRecord->id;
         }
 
-        // 各地点の保存
-        $prevPlace = null;
+        // // 各地点の保存
+        // $prevPlace = null;
 
+        // foreach ($destinations as $date => $places) {
+        //     $dateId = $dateIds[$date] ?? null;
+        //     if (!$dateId || empty($places)) continue;
+
+        //     $placeCount = count($places);
+        //     for ($i = 0; $i < $placeCount; $i++) {
+        //         $destination = $places[$i];
+        //         if (empty($destination)) continue;
+
+        //         $lat     = $destinationsLat[$date][$i]      ?? null;
+        //         $lng     = $destinationsLng[$date][$i]      ?? null;
+        //         $placeId = $destinationsPlaceIds[$date][$i] ?? null;
+        //         $travelMode = $travelModes[$date][$i] ?? 'DRIVING';
+
+        //         // バイクは API 上 driving として扱う
+        //         $modeForApi = $travelMode === 'MOTORCYCLE' ? 'driving' : strtolower($travelMode);
+
+        //         $placeName = $destination;
+
+        //         if ($placeId) {
+        //             $placeDetailResponse = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
+        //                 'place_id' => $placeId,
+        //                 'fields'   => 'name',
+        //                 'key'      => env('GOOGLE_MAPS_API_KEY'),
+        //             ]);
+
+        //             if ($placeDetailResponse->successful()) {
+        //                 $placeDetail = $placeDetailResponse->json();
+        //                 if (isset($placeDetail['result']['name'])) {
+        //                     $placeName = $placeDetail['result']['name'];
+        //                 }
+        //             }
+        //         }
+
+        //         $distance = null;
+        //         $duration = null;
+
+        //         if ($prevPlace) {
+        //             $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+        //                 'origins'      => $prevPlace,
+        //                 'destinations' => $destination,
+        //                 'mode'         => $modeForApi,
+        //                 'key'          => env('GOOGLE_MAPS_API_KEY'),
+        //             ]);
+
+        //             if ($response->successful()) {
+        //                 $data = $response->json();
+        //                 $element = $data['rows'][0]['elements'][0] ?? null;
+        //                 if ($element && $element['status'] === 'OK') {
+        //                     $distance = $element['distance']['value'] / 1000;
+        //                     $duration = $element['duration']['text'] ?? null;
+        //                 }
+        //             }
+        //         }
+
+        //         MapItinerary::create([
+        //             'date_id'       => $dateId,
+        //             'destination'   => $destination,
+        //             'place_name'    => $placeName,
+        //             'latitude'      => $lat,
+        //             'longitude'     => $lng,
+        //             'distance_km'   => $distance,
+        //             'duration_text' => $duration,
+        //             'place_id'      => $placeId,
+        //             'travel_mode'   => $travelMode,
+        //         ]);
+
+        //         $prevPlace = $destination;
+        //     }
+        // }
+
+        $prevLat = null;
+        $prevLng = null;
+        $prevPlaceName = null;
         foreach ($destinations as $date => $places) {
             $dateId = $dateIds[$date] ?? null;
             if (!$dateId || empty($places)) continue;
-
             $placeCount = count($places);
             for ($i = 0; $i < $placeCount; $i++) {
                 $destination = $places[$i];
                 if (empty($destination)) continue;
-
                 $lat     = $destinationsLat[$date][$i]      ?? null;
                 $lng     = $destinationsLng[$date][$i]      ?? null;
                 $placeId = $destinationsPlaceIds[$date][$i] ?? null;
                 $travelMode = $travelModes[$date][$i] ?? 'DRIVING';
-
-                // バイクは API 上 driving として扱う
                 $modeForApi = $travelMode === 'MOTORCYCLE' ? 'driving' : strtolower($travelMode);
-
                 $placeName = $destination;
-
                 if ($placeId) {
                     $placeDetailResponse = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
                         'place_id' => $placeId,
                         'fields'   => 'name',
                         'key'      => env('GOOGLE_MAPS_API_KEY'),
                     ]);
-
                     if ($placeDetailResponse->successful()) {
                         $placeDetail = $placeDetailResponse->json();
                         if (isset($placeDetail['result']['name'])) {
@@ -188,28 +255,32 @@ class ItineraryController extends Controller
                         }
                     }
                 }
-
                 $distance = null;
                 $duration = null;
-
-                if ($prevPlace) {
+                // 緯度経度ベースでの距離取得
+                if (!is_null($prevLat) && !is_null($prevLng) && !is_null($lat) && !is_null($lng)) {
+                    $origin = "{$prevLat},{$prevLng}";
+                    $destinationCoords = "{$lat},{$lng}";
                     $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-                        'origins'      => $prevPlace,
-                        'destinations' => $destination,
+                        'origins'      => $origin,
+                        'destinations' => $destinationCoords,
                         'mode'         => $modeForApi,
                         'key'          => env('GOOGLE_MAPS_API_KEY'),
                     ]);
-
+                    \Log::debug(":物差し: DistanceMatrix API call:", compact('origin', 'destinationCoords', 'modeForApi'));
                     if ($response->successful()) {
                         $data = $response->json();
                         $element = $data['rows'][0]['elements'][0] ?? null;
                         if ($element && $element['status'] === 'OK') {
                             $distance = $element['distance']['value'] / 1000;
                             $duration = $element['duration']['text'] ?? null;
+                        } else {
+                            \Log::warning("DistanceMatrix element invalid:", ['element' => $element, 'response' => $data]);
                         }
+                    } else {
+                        \Log::error("DistanceMatrix failed:", ['response' => $response->body()]);
                     }
                 }
-
                 MapItinerary::create([
                     'date_id'       => $dateId,
                     'destination'   => $destination,
@@ -221,8 +292,9 @@ class ItineraryController extends Controller
                     'place_id'      => $placeId,
                     'travel_mode'   => $travelMode,
                 ]);
-
-                $prevPlace = $destination;
+                $prevLat = $lat;
+                $prevLng = $lng;
+                $prevPlaceName = $placeName;
             }
         }
 

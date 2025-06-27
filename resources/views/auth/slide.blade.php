@@ -4,16 +4,16 @@
         <div class="absolute w-full h-full flex flex-col sm:flex-row">
             <!-- 左ボックス -->
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-amber-100 text-yellow-700 z-0">
-                <h2 class="text-3xl font-semibold tracking-widest mb-2">BLOOM &amp; BOUQUET</h2>
-                <p class="text-sm mb-4">Pick your perfect <span class="text-yellow-600">bouquet</span></p>
+                <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
+                <p class="text-xl mb-6">Design your <span class="text-yellow-600">tirp</span></p>
                 <p class="text-xs mb-2">Have an account?</p>
-                <button id="switchToLogin" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Login</button>
+                <button id="switchToLogin" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign in</button>
             </div>
 
             <!-- 右ボックス -->
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-100 text-green-700 z-0">
-                <h2 class="text-3xl font-semibold tracking-widest mb-2">BLOOM &amp; BOUQUET</h2>
-                <p class="text-sm mb-4">Pick your perfect <span class="text-yellow-600">bouquet</span></p>
+                <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
+                <p class="text-xl mb-6">Design your <span class="text-yellow-600">trip</span></p>
                 <p class="text-xs mb-2">Don't have an account?</p>
                 <button id="switchToRegister" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign up</button>
             </div>
@@ -21,8 +21,8 @@
 
         <!-- フォーム切り替え用：モバイル表示専用 -->
         <div class="sm:hidden absolute top-2 right-2 z-[9999]">
-            <button id="mobileSwitchToLogin" class="bg-pink-500 text-white text-sm px-3 py-1 rounded mr-2">Login</button>
-            <button id="mobileSwitchToRegister" class="bg-pink-500 text-white text-sm px-3 py-1 rounded">Register</button>
+            <button id="mobileSwitchToLogin" class="bg-pink-500 text-white text-sm px-3 py-1 rounded mr-2">Sign in</button>
+            <button id="mobileSwitchToRegister" class="bg-pink-500 text-white text-sm px-3 py-1 rounded">Sign up</button>
         </div>
 
         <!-- スライドボックス -->
@@ -30,7 +30,7 @@
 
             <!-- ログイン -->
             <div id="loginForm" class=" transition-all duration-500 ease-in-out opacity-100 translate-y-0 px-4 w-full">
-                <h1 class="text-2xl font-bold text-center text-yellow-700 uppercase tracking-widest mb-12">Login</h1>
+                <h1 class="text-2xl font-bold text-center text-yellow-700 uppercase tracking-widest mb-12">Sign in</h1>
                 <form method="POST" action="{{ route('login') }}" class="space-y-4 mt-6">
                     @csrf
                     <div>
@@ -69,7 +69,7 @@
 
             <!-- 登録 -->
             <div id="registerForm" class=" transition-all duration-500 ease-in-out opacity-0 -translate-y-4 hidden w-full px-4">
-                <h1 class="text-2xl font-bold text-center text-green-700 uppercase tracking-widest">Register</h1>
+                <h1 class="text-2xl font-bold text-center text-green-700 uppercase tracking-widest">Sign up</h1>
                 <form method="POST" action="{{ route('register') }}" class="space-y-4 mt-6">
                     @csrf
                     <div>
