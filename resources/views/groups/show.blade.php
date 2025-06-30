@@ -1,11 +1,11 @@
 <x-app-layout>
-    <div class="bg-white/85 pt-6">
+    <div class="bg-white/85 pt-4">
         <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
 
-        <div class="relative flex bg-yellow-100 w-full h-16 items-center justify-between top-0 left-0 right-0 z-50">
-            <a href="{{ route('groups.index') }}"><i class="fa-regular fa-less-than text-black hover:text-gray-500 ml-4 text-xl"></i></a>
+        <div class="relative flex w-full h-16 items-center shadow-[0_4px_10px_rgba(0,0,0,0.4)] justify-between top-0 left-0 right-0 z-50">
+            <a href="{{ route('groups.index') }}"><i class="fa-regular fa-less-than text-gray-800 hover:text-gray-400 ml-4 text-xl"></i></a>
             @if ($group->users->count() > 2)
-                <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}} ({{ $group->users->count()}})</p>
+                <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center text-gray-800">{{ $group->name}}  ({{ $group->users->count()}})</p>
             @elseif ($group->users->count() == 2)
                 @if (($group->name == Auth::User()->name) || ($group->user_id == Auth::User()->id))
                     @foreach ($group->users as $user)
@@ -16,18 +16,18 @@
                         @endif
                     @endforeach
                 @else
-                    <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name }}</p>
+                    <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center text-emerald-600">{{ $group->name }}</p>
                 @endif
             @else
-                <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center">{{ $group->name}}</p>
+                <p class="text-2xl absolute left-1/2 transform -translate-x-1/2 font-semibold text-center text-emerald-600">{{ $group->name}}</p>
             @endif
             <div x-data="{ open: false }" class="flex ">
                 <button @click="open = !open" class="flex -space-x-4">
                     @foreach ($group->users->take(3) as $user)
-                    <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-9 h-9 rounded-full border-2 border-white hover:z-10" alt="{{ $user->name }}">
+                    <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-9 h-9 md:w-11 md:h-11 rounded-full border border-gray-300 hover:z-10" alt="{{ $user->name }}">
                     @endforeach
                     @if ($group->users->count() > 3)
-                    <div class="w-8 h-8 rounded-full bg-gray-300 text-xs text-white flex items-center justify-center border-2 border-white">
+                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-300 text-sm md:text-base text-gray-800 flex items-center justify-center border border-white">
                         +{{ $group->users->count() - 3 }}
                     </div>
                     @endif
@@ -60,11 +60,12 @@
         </div>
 
         <!--chat-->
-        <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
+        {{-- <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
             @foreach ($messages as $message)
             @php $isMine = $message->user_id === auth()->id();@endphp
 
                 @if ($isMine)
+<<<<<<< HEAD
                     @if ($message->message)
                         <div id="message-{{ $message->id }}" class="flex justify-end items-end">
                             <div class="text-xs text-right mt-1 text-gray-400 mr-2">
@@ -83,6 +84,47 @@
                         <div id="message-{{ $message->id }}" class="flex items-end justify-end">
                             <div class="text-xs text-gray-400 mr-2">
                                 {{ $message->created_at->format('Y-m-d H:i') }}
+=======
+                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)">
+
+                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">
+                            {{ $message->created_at->format('Y-m-d H:i') }}
+                        </div>
+                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow ">
+                            @if ($message->message)
+                                <div style="word-break: break-word; overflow-wrap: break-word;">{{$message->message }}</div>
+                            @endif
+                        </div>
+                        @if ($message->image_url)
+                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                        @endif
+                    </div>
+                @else
+                <div>
+                    <div class="flex items-start">
+                        <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
+                        <div class="flex space-x-2 items-end">
+                            <div class="max-w-[70%]">
+                                <div class="text-sm text-gray-600 font-medium">{{ $message->user->name }}</div>
+                                <div class="bg-white rounded-2xl p-3 shadow">
+                                    @if ($message->message)
+                                    <div style="word-break: break-word; overflow-wrap: break-word;">{{ $message->message }}</div>
+                                    @endif
+                                </div>
+                                @if ($message->image_url)
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+
+
+            @if ($isMine)
+                @if ($message->message)
+                    <div id="message-{{ $message->id }}" class="flex justify-end items-end">
+                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">
+                            {{ $message->created_at->format('Y-m-d H:i') }}
+                        </div>
+                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
+                            <div style="word-break: break-word; overflow-wrap: break-word;">
+                                {{ $message->message }}
+>>>>>>> 6ed12d9549a20e841b25b8d68bfcab21c1af8f37
                             </div>
                             <div class="max-w-[70%]">
                                 <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
@@ -128,6 +170,80 @@
                     @endif
                 @endif
             @endforeach
+        </div> --}}
+        <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
+            @foreach ($messages as $message)
+            @php $isMine = $message->user_id === auth()->id();@endphp
+                @if ($isMine)
+                    @if ($message->message)
+                        <div id="message-{{ $message->id }}" class="flex justify-end items-end">
+                            <div class="text-xs text-right mt-1 text-gray-400 mr-2">
+                                <div class="text-start">{{ $message->created_at->format('H:i') }}</div>
+                                <div>{{ $message->created_at->format('Y-m-d') }}</div>
+                            </div>
+                            <div class="text-base lg:text-xl bg-teal-200 mr-2 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)">
+                                <div style="word-break: break-word; overflow-wrap: break-word; ">
+                                    {!! nl2br(e($message->message)) !!}
+                                </div>
+                                {{-- @if ($message->image_url)
+                                    <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                                @endif --}}
+                            </div>
+                        </div>
+                    @elseif ($message->image_url)
+                        <div id="message-{{ $message->id }}" class="flex items-end justify-end">
+                            <div class="text-xs text-gray-400 mr-2">
+                                <div class="ml-auto">{{ $message->created_at->format('H:i') }}</div>
+                                <div>{{ $message->created_at->format('Y-m-d') }}</div>
+                            </div>
+                            <div class="max-w-[70%]">
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg mr-3" download>
+                            </div>
+                        </div>
+                    @endif
+                @else
+                    @if ($message->message)
+                        <div>
+                            <div class="flex items-start">
+                                <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
+                                <div class="flex space-x-2 items-end">
+                                    <div class="max-w-[70%]">
+                                        <div class="text-sm text-gray-600 font-medium ml-1">{{ $message->user->name }}</div>
+                                        <div class="text-base lg:text-xl bg-white border border-gray-200 rounded-2xl p-3 shadow">
+                                            <div style="word-break: break-word; overflow-wrap: break-word; ">
+                                                {!! nl2br(e($message->message)) !!}
+                                            </div>
+                                            {{-- @if ($message->image_url)
+                                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
+                                            @endif --}}
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-gray-400 items-end">
+                                        <div>{{ $message->created_at->format('H:i') }}</div>
+                                        <div>{{ $message->created_at->format('Y-m-d') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif ($message->image_url)
+                        <div>
+                            <div class="flex items-start">
+                                <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
+                                <div>
+                                    <div class="text-sm md:text-base text-gray-600 font-medium ml-1">{{ $message->user->name }}</div>
+                                    <div class="flex space-x-2 items-end">
+                                        <img src="{{ $message->image_url }}" class="mt-1 max-w-xs rounded-lg" download>
+                                        <div class="text-xs text-gray-400 items-end">
+                                            <div>{{ $message->created_at->format('H:i') }}</div>
+                                            <div>{{ $message->created_at->format('Y-m-d') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+            @endforeach
         </div>
 
         <ul id="custom-menu" class="absolute hidden bg-gray-100  rounded shadow z-50">
@@ -150,6 +266,13 @@
             Delete
         </li>
     </ul>
+
+<!-- 編集用フォーム -->
+<div id="edit-form" class="hidden mt-4">
+    <textarea id="edit-textarea" class="w-full p-2 border rounded"></textarea>
+    <button id="submit-edit" class="mt-2 px-4 py-1 bg-blue-500 text-white rounded">送信</button>
+</div>
+
 
 <script>
     let currentMessageId = null;
@@ -188,10 +311,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+
     //     editForm.classList.add("hidden");
     //     targetMessageElement = null;
     //     currentMessageId = null;
     // });
+
+        const newText = editTextarea.value.trim();
+
+        // 表示を即時反映（必要ならサーバーにもPOST/PUT送信可能）
+        targetMessageElement.innerText = newText;
+
+        // オプション：fetchでサーバーに送信したい場合は以下を使う
+
+        editForm.classList.add("hidden");
+        targetMessageElement = null;
+        currentMessageId = null;
+    });
 
     // メニュー外クリックで閉じる
     document.addEventListener("click", (e) => {
@@ -214,48 +350,22 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     });
-});
-
-    // let currentMessageId = null;
-
-    // window.openCustomMenu = function(event, messageId) {
-    //     event.preventDefault();
-    //     currentMessageId = messageId;
-    //     const menu = document.getElementById('custom-menu');
-    //     menu.style.top = `${event.clientY}px`;
-    //     menu.style.left = `${event.clientX}px`;
-    //     menu.classList.remove('hidden');
-    // }
-
-    // document.getElementById('delete-item').addEventListener('click', () => {
-    //     if (currentMessageId && confirm('本当に削除しますか？')) {
-    //         fetch(`/chat/${currentMessageId}/delete`, {
-    //             method:'DELETE',
-    //             headers:{'X-CSRF-TOKEN': '{{ csrf_token() }}'}
-    //         }).then(response=>{
-    //             if (response.ok) {
-    //                 location.reload();
-    //             }
-    //         });
-    //     }
-    // });
-
-    // document.addEventListener('click', () => {
-    //     document.getElementById('custom-menu').classList.add('hidden');
-    // });
 </script>
 
 
     <form id="chat-form" action="{{ route('message.send')}}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
     @csrf
         <input type="hidden" name="group_id" value="{{ $group->id }}">
+
         <input type="hidden" id="edit-message-id" name="edit_message_id" value="">
         <textarea id="message-input" name="message" rows="1" placeholder="message..." class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300 resize-none max-h-[6rem] overflow-y-auto leading-relaxed text-sm sm:text-base"></textarea>
+
+        <textarea id="message-input" name="message" rows="1" placeholder="message..." class="flex-1 p-2 rounded-lg focus:outline-none focus:ring focus:border-teal-500 resize-none max-h-[6rem] overflow-y-auto leading-relaxed text-sm sm:text-base"></textarea>
         <input type="file" name="image" accept="image/*" class="hidden" id="image-upload">
         <label for="image-upload" class="cursor-pointer">
-            <i class="fa-solid fa-image text-xl text-gray-500 hover:text-blue-500"></i>
+            <i class="fa-solid fa-image text-xl text-gray-500 hover:text-teal-700"></i>
         </label>
-        <button type="submit" id="send-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50" disabled>Send
+        <button type="submit" id="send-btn" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50" disabled>Send
         </button>
     </form>
 

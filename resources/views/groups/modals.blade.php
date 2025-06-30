@@ -17,7 +17,7 @@
 
             <div class="flex justify-center">
                 {{-- Members --}}
-                <div class="container mb-4 w-1/3 mr-2">
+                <div class="container mb-4 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3  mr-2">
                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Members</label>
 
                     <div class="space-y-2 mt-2 max-h-64 overflow-y-auto border p-2 rounded">
