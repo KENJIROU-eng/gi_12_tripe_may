@@ -3,22 +3,25 @@
         <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
                 {{-- タイトル --}}
-                <div class="flex flex-col md:flex-row items-center justify-between text-center mb-10 gap-2 md:gap-0 relative">
-                    {{-- 戻るボタン --}}
-                        <div class="order-1 md:order-1">
-                            <a href="{{ route('itinerary.index') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
-                                <i class="fa-solid fa-arrow-left mr-1"></i> Back
-                            </a>
-                        </div>
-                    <h1 class="order-2 md:order-2 text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
-                        <i class="fa-solid fa-c"></i>
-                        <i class="fa-solid fa-r"></i>
-                        <i class="fa-solid fa-e"></i>
-                        <i class="fa-solid fa-a"></i>
-                        <i class="fa-solid fa-t"></i>
-                        <i class="fa-solid fa-e"></i>
-                    </h1>
+                <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
+                {{-- 戻るボタン（左） --}}
+                <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
+                    <a href="{{ route('itinerary.index') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                    </a>
                 </div>
+
+                {{-- タイトル（中央） --}}
+                <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
+                    <i class="fa-solid fa-c"></i>
+                    <i class="fa-solid fa-r"></i>
+                    <i class="fa-solid fa-e"></i>
+                    <i class="fa-solid fa-a"></i>
+                    <i class="fa-solid fa-t"></i>
+                    <i class="fa-solid fa-e"></i>
+                </h1>
+            </div>
+
                 <form id="itineraryForm" action="{{ route('itinerary.store') }}" method="POST" class="space-y-8">
                     @csrf
                     {{-- ヘッダー入力 --}}
@@ -109,9 +112,7 @@
         </div>
     </div>
     {{-- Scroll to Top Button --}}
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
     {{-- 簡易アニメーションクラス --}}

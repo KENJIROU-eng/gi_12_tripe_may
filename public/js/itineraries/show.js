@@ -279,3 +279,40 @@ window.addEventListener('scroll', () => {
 scrollToTopBtn?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+document.getElementById('saveMemoBtn').addEventListener('click', function () {
+    const content = document.getElementById('itineraryMemo').value;
+    const url = document.getElementById('itineraryMemo').dataset.saveUrl;
+    const token = document.getElementById('itineraryMemo').dataset.csrf;
+
+    const spinner = document.getElementById('spinner');
+    const saveText = document.getElementById('saveMemoText');
+    const btn = document.getElementById('saveMemoBtn');
+
+    // スピナー表示 & Saveテキスト非表示
+    spinner.classList.remove('hidden');
+    saveText.classList.add('hidden');
+    btn.disabled = true;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({ content })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('memoSavedMsg').classList.remove('hidden');
+        setTimeout(() => {
+            document.getElementById('memoSavedMsg').classList.add('hidden');
+        }, 1500);
+    })
+    .finally(() => {
+        // スピナー非表示 & Saveテキスト表示
+        spinner.classList.add('hidden');
+        saveText.classList.remove('hidden');
+        btn.disabled = false;
+    });
+});

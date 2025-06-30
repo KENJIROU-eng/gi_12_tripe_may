@@ -26,11 +26,17 @@ class BelongingController extends Controller
 
         $all_belongings = $itinerary->belongings;
         $members = $itinerary->group->users;
+        $totalCount = $all_belongings->count();
+        $checkedCount = $all_belongings->where('checked', true)->count();
+        $progressPercent = $totalCount > 0 ? floor(($checkedCount / $totalCount) * 100) : 0;
 
         return view('belongings.list', [
             'itineraryId' => $itineraryId,
             'all_belongings' => $all_belongings,
             'members' => $members,
+            'totalCount' => $totalCount,
+            'checkedCount' => $checkedCount,
+            'progressPercent' => $progressPercent,
         ]);
     }
 
@@ -86,45 +92,41 @@ class BelongingController extends Controller
         return response()->json(['message' => '更新成功', 'all_checked' => $isAllChecked]);
     }
 
-public function update(Request $request, $id)
-{
-    // Belonging を ID から取得（自動バインディングが効かない場合の保険）
-    $belonging = Belonging::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        // Belonging を ID から取得（自動バインディングが効かない場合の保険）
+        $belonging = Belonging::findOrFail($id);
 
-    // バリデーション
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'members' => 'required|array',
-        'members.*' => 'exists:users,id',
-    ]);
+        // バリデーション
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'members' => 'required|array',
+            'members.*' => 'exists:users,id',
+        ]);
 
-    // 所属アイテム情報の更新
-    $belonging->update([
-        'name' => $validated['name'],
-        'description' => $validated['description'] ?? null,
-    ]);
+        // 所属アイテム情報の更新
+        $belonging->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ]);
 
-    // 現在の中間テーブルの is_checked 状態を取得（users.id => is_checked）
-    $current = $belonging->users()
-        ->pluck('belonging_user.is_checked', 'users.id')
-        ->toArray();
+        // 現在の中間テーブルの is_checked 状態を取得（users.id => is_checked）
+        $current = $belonging->users()
+            ->pluck('belonging_user.is_checked', 'users.id')
+            ->toArray();
 
-    // 新しく指定されたメンバーに対し、以前の is_checked 状態を保持
-    $syncData = [];
-    foreach ($validated['members'] as $userId) {
-        $syncData[$userId] = ['is_checked' => $current[$userId] ?? false];
+        // 新しく指定されたメンバーに対し、以前の is_checked 状態を保持
+        $syncData = [];
+        foreach ($validated['members'] as $userId) {
+            $syncData[$userId] = ['is_checked' => $current[$userId] ?? false];
+        }
+
+        // 中間テーブル更新（detach + attach）で状態を反映
+        $belonging->users()->sync($syncData);
+
+        return response()->json(['message' => 'Updated successfully']);
     }
-
-    // 中間テーブル更新（detach + attach）で状態を反映
-    $belonging->users()->sync($syncData);
-
-    return response()->json(['message' => 'Updated successfully']);
-}
-
-
-
-
 
     public function destroy($belonging_id)
     {
@@ -134,23 +136,21 @@ public function update(Request $request, $id)
         return response()->json(['message' => 'Deleted successfully']);
     }
 
-    // BelongingController.php
-public function checkDuplicate(Request $request)
-{
-    logger()->info('重複チェック リクエスト内容:', $request->all());
+    public function checkDuplicate(Request $request)
+    {
+        logger()->info('重複チェック リクエスト内容:', $request->all());
 
-    $validated = $request->validate([
-        'name' => 'required|string',
-        'itinerary_id' => 'required|integer'
-    ]);
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'itinerary_id' => 'required|integer'
+        ]);
 
-    $exists = Belonging::where('name', $validated['name'])
-                ->where('itinerary_id', $validated['itinerary_id'])
-                ->first();
+        $exists = Belonging::where('name', $validated['name'])
+                    ->where('itinerary_id', $validated['itinerary_id'])
+                    ->first();
 
-    return response()->json(['exists' => $exists !== null, 'id' => $exists?->id]);
-}
-
+        return response()->json(['exists' => $exists !== null, 'id' => $exists?->id]);
+    }
 
     public function addMembers(Request $request, Belonging $belonging)
     {

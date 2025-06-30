@@ -28,10 +28,30 @@ class CountryController extends Controller
             'city.regex' => 'Please enter city names in English (e.g. Tokyo, New York)',
         ]);
 
-        Country::create($request->only(['name', 'code', 'city']));
+        Country::create([
+            'name' => $request->name,
+            'code' => $request->code,
+            'city' => $request->city,
+            'user_id' => auth()->id(), // ← 追加
+        ]);
 
         return redirect()->back()->with('success', '国を追加しました');
     }
+
+    public function destroy($id)
+    {
+        $country = Country::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $country->delete();
+
+        // AJAXでリアルタイム削除用のJSONレスポンス
+        return response()->json(['message' => 'Country deleted.']);
+    }
+
+
+
 
 }
 

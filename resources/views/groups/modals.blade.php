@@ -19,24 +19,34 @@
                 {{-- Members --}}
                 <div class="container mb-4 w-1/3 mr-2">
                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Members</label>
+
                     <div class="space-y-2 mt-2 max-h-64 overflow-y-auto border p-2 rounded">
-                        @foreach ($users as $user)
-                            <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
-                                <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer"
-                                    {{ $group->users->contains($user->id) ? 'checked' : '' }}>
+                        @if ($group->isBocciFor(auth()->id()))
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <span class="text-sm text-gray-700">{{ Auth::user()->name }}</span>
+                            </div>
+                        @else
+                            @foreach ($users as $user)
+                                <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer"
+                                        {{ $group->users->contains($user->id) ? 'checked' : '' }}>
 
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                        <span class="text-sm text-gray-700">{{ $user->name }}</span>
                                     </div>
-                                    <span class="text-sm text-gray-700">{{ $user->name }}</span>
-                                </div>
 
-                                <div class="w-4 h-4 rounded-full border-2 border-gray-400 peer-checked:bg-blue-400 peer-checked:border-blue-500 flex items-center justify-center transition">
-                                    <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>
-                                </div>
-                            </label>
-                        @endforeach
+                                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 peer-checked:bg-blue-400 peer-checked:border-blue-500 flex items-center justify-center transition">
+                                        <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>
+                                    </div>
+                                </label>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
 

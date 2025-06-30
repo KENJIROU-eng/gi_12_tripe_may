@@ -31,21 +31,21 @@ class AppServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 $userId = $user->id;
                 $cacheKeyPrefix = 'shared_data_user_' . $userId;
+
                 // グループ情報
                 $groupIds = Cache::remember("$cacheKeyPrefix:group_ids", 1, function () use ($userId) {
                     return GroupMember::where('user_id', $userId)->pluck('group_id')->toArray();
                 });
+
                 $groups = Cache::remember("$cacheKeyPrefix:groups", 1, fn () =>
                     Group::whereIn('id', $groupIds)->get()
                 );
+
                 // 旅程情報
                 $itineraries = Cache::remember("$cacheKeyPrefix:itineraries", 1, fn () =>
                     Itinerary::whereIn('group_id', $groupIds)->orderBy('start_date')->get()
                 );
-                $tripSchedule = [];
-                $tripName = [];
-                $tripId = [];
-                $routeUrls = [];
+
                 foreach ($itineraries as $itinerary) {
                     $start_date = new \DateTime($itinerary->start_date);
                     $end_date = new \DateTime($itinerary->end_date);
@@ -54,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
                     $tripId[] = $itinerary->id;
                     $routeUrls[] = route('itinerary.show', $itinerary->id);
                 }
+
                 // 通知数（リアルタイム取得推奨）
                 $nonReadCount = [];
                 $nonReadCount_total = 0;
@@ -66,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
                     $nonReadCount[$groupId] = $count;
                     $nonReadCount_total += $count;
                 }
+
                 // 今日の予定
                 $today = Carbon::today()->toDateString();
                 $todayItineraries = Itinerary::whereDate('start_date', '<=', $today)
@@ -78,6 +80,23 @@ class AppServiceProvider extends ServiceProvider
                 $countryId = session('weather_country_id');
                 $country = Country::find($countryId) ?? Country::first();
                 $weather = null;
+
+                // 今日の予定
+                $today = Carbon::today()->toDateString();
+                $todayItineraries = Itinerary::with('group')  // ← 追加
+                    ->whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today)
+                    ->where(function ($query) use ($user, $groupIds) {
+                        $query->where('created_by', $user->id)
+                            ->orWhereIn('group_id', $groupIds);
+                    })->get();
+
+
+                // 天気情報
+                $countryId = request()->cookie('weather_country_id');
+                $country = Country::find($countryId) ?? Country::first();
+                $weather = null;
+
                 if ($country) {
                     $weather = Cache::remember('weather_' . $country->city, now()->addHour(), function () use ($country) {
                         $apiKey = config('services.weatherapi.key');
@@ -86,6 +105,7 @@ class AppServiceProvider extends ServiceProvider
                             'q' => $country->city,
                             'lang' => 'ja',
                         ]);
+
                         if ($res->ok()) {
                             $data = $res->json();
                             return [
@@ -103,6 +123,7 @@ class AppServiceProvider extends ServiceProvider
                         }
                     });
                 }
+
                 // ビュー共有
                 $view->with('groupIds', $groupIds)
                 ->with('groups', $groups)
@@ -115,10 +136,10 @@ class AppServiceProvider extends ServiceProvider
                 ->with('routeUrls', $routeUrls)
                 ->with('weather', $weather)
                 ->with('todayItineraries', $todayItineraries)
-                ->with('allCountries', Country::all())
-                // ->with('myCountries', Country::where('user_id', $userId)->get())
                 ->with('tripId', $tripId)
                 ->with('routeUrls', $routeUrls);
+                ->with('myCountries', Country::where('user_id', $userId)->get())
+                ->with('tripId', $tripId);
             }
         });
     }

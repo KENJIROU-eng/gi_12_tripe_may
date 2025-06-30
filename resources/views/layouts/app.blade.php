@@ -39,6 +39,7 @@
             @include('layouts.navigation')
             <!-- Page Content -->
             <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
+            {{-- <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;"> --}}
                 {{ $slot }}
             </main>
             @include('layouts.footer')

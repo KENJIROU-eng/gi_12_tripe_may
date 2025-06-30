@@ -142,9 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rowUser = row.dataset.user || '';
             const rowGroup = row.dataset.group || '';
             const rowDate = row.dataset.date || '';
-            const matchesSearch = ['user', 'group', 'title', 'date'].some(key =>
-                (row.dataset[key] || '').toLowerCase().includes(q)
-            );
+            const matchesSearch = (row.dataset.title || '').toLowerCase().includes(q);
             const matchesUser = !selectedUser || rowUser === selectedUser;
             const matchesGroup = !selectedGroup || rowGroup === selectedGroup;
             const matchesDateFrom = !dateFrom || new Date(rowDate) >= new Date(dateFrom);
