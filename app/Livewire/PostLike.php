@@ -11,12 +11,14 @@ class PostLike extends Component
     public Post $post;
     public bool $isLiked = false;
     public int $likeCount = 0;
+    public $viewType = 'list';
 
-    public function mount(Post $post)
+    public function mount(Post $post, $viewType = 'list')
     {
         $this->post = $post;
         $this->isLiked = $post->likes->contains('user_id', Auth::id());
         $this->likeCount = $post->likes()->count();
+        $this->viewType = $viewType;
     }
 
     public function toggleLike()

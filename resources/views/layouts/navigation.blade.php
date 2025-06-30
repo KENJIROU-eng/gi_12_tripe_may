@@ -133,7 +133,6 @@
                         </button>
                         <div x-show="notificationOpen" @click.outside="notificationOpen = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
                             @php $hasUnread = false; @endphp
-
                             @foreach ($groups as $group)
                                 @if ($nonReadCount[$group->id] > 0)
                                     @php $hasUnread = true; @endphp
@@ -145,7 +144,6 @@
                                     </a>
                                 @endif
                             @endforeach
-
                             @if (! $hasUnread)
                                 <div class="px-4 py-2 text-sm text-gray-500 dark:text-gray-300">
                                     No notification

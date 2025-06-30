@@ -6,7 +6,7 @@
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-amber-100 text-yellow-700 z-0">
                 <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
                 <p class="text-xl mb-6">Design your <span class="text-yellow-600">tirp</span></p>
-                <p class="text-xs mb-2">Have an account?</p>
+                <p class="text-sm mb-2">Have an account?</p>
                 <button id="switchToLogin" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign in</button>
             </div>
 
@@ -14,15 +14,15 @@
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-100 text-green-700 z-0">
                 <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
                 <p class="text-xl mb-6">Design your <span class="text-yellow-600">trip</span></p>
-                <p class="text-xs mb-2">Don't have an account?</p>
+                <p class="text-sm mb-2">Don't have an account?</p>
                 <button id="switchToRegister" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign up</button>
             </div>
         </div>
 
         <!-- フォーム切り替え用：モバイル表示専用 -->
-        <div class="sm:hidden absolute top-2 right-2 z-[9999]">
-            <button id="mobileSwitchToLogin" class="bg-pink-500 text-white text-sm px-3 py-1 rounded mr-2">Sign in</button>
-            <button id="mobileSwitchToRegister" class="bg-pink-500 text-white text-sm px-3 py-1 rounded">Sign up</button>
+        <div class="sm:hidden absolute top-2 right-2 z-[9999] p-2 space-x-2">
+            <button id="mobileSwitchToLogin" class="bg-stone-500 text-white text-sm px-3 py-1 rounded">Sign in</button>
+            <button id="mobileSwitchToRegister" class="bg-stone-500 text-white text-sm px-3 py-1 rounded">Sign up</button>
         </div>
 
         <!-- スライドボックス -->
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
-                        <x-primary-button class="ml-3">{{ __('Log in') }}</x-primary-button>
+                        <x-primary-button class="ml-3">{{ __('Sign in') }}</x-primary-button>
                     </div>
                 </form>
             </div>
@@ -97,7 +97,7 @@
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
-                        <x-primary-button class=" mt-4">{{ __('Register') }}</x-primary-button>
+                        <x-primary-button class=" mt-4">{{ __('Sign up') }}</x-primary-button>
                     </div>
                 </form>
             </div>
@@ -110,8 +110,20 @@
             const slider = document.getElementById('formSlider');
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
+            const btnMobileLogin = document.getElementById('mobileSwitchToLogin');
+            const btnMobileRegister = document.getElementById('mobileSwitchToRegister');
 
-            function showForm(showEl, hideEl) {
+            function updateMobileButtons(active) {
+                if (active === 'login') {
+                    btnMobileLogin.classList.add('opacity-50', 'pointer-events-none');
+                    btnMobileRegister.classList.remove('opacity-50', 'pointer-events-none');
+                } else {
+                    btnMobileRegister.classList.add('opacity-50', 'pointer-events-none');
+                    btnMobileLogin.classList.remove('opacity-50', 'pointer-events-none');
+                }
+            }
+
+            function showForm(showEl, hideEl,active) {
                 hideEl.classList.add('opacity-0', '-translate-y-4');
                 hideEl.classList.remove('opacity-100', 'translate-y-0');
 
@@ -129,6 +141,8 @@
                         showEl.classList.add('opacity-100', 'translate-y-0');
                     });
                 }, 300);
+
+                updateMobileButtons(active);
             }
 
 
@@ -144,6 +158,8 @@
                     registerForm.classList.remove('opacity-0', '-translate-y-4');
                     registerForm.classList.add('opacity-100', 'translate-y-0');
                 }
+                updateMobileButtons('register');
+
             }
 
             function switchToLogin() {
@@ -158,6 +174,7 @@
                     loginForm.classList.remove('opacity-0', '-translate-y-4');
                     loginForm.classList.add('opacity-100', 'translate-y-0');
                 }
+                updateMobileButtons('login');
             }
 
             const urlParams = new URLSearchParams(window.location.search);
