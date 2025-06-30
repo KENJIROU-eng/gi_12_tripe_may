@@ -62,7 +62,7 @@
                         <div class="hidden md:grid md:grid-cols-12 items-center text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 py-2">
                             <div class="md:col-span-1"></div>
                             <div class="md:col-span-2 px-2">
-                                <select id="filterUser" class="w-full border-gray-300 rounded">
+                                <select id="filterUser" class="w-full border-gray-300 rounded max-h-40 overflow-y-auto"">
                                     <option value="">All</option>
                                     @foreach ($all_itineraries->pluck('user')->unique('id') as $user)
                                         <option value="{{ strtolower($user->name) }}">{{ $user->name }}</option>
@@ -70,12 +70,12 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2 px-2">
-                                <select id="filterGroup" class="w-full border-gray-300 rounded">
+                                <select id="filterGroup" class="w-full border-gray-300 rounded max-h-40 overflow-y-auto">
                                     <option value="">All</option>
                                     @foreach ($all_itineraries->pluck('group')->filter()->unique('id') as $group)
                                         <option value="{{ strtolower($group->name) }}">{{ $group->name }}</option>
                                     @endforeach
-                                    <option value="no group">No Group</option>
+                                    <option value="no-group">No Group</option>
                                 </select>
                             </div>
                             <div class="md:col-span-3 px-2 flex gap-1">
@@ -233,9 +233,7 @@
         </div>
     </div>
     {{-- Scroll to Top Button --}}
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
 

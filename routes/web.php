@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItineraryController;
+use App\Http\Controllers\ItineraryMemoController;
 use App\Http\Controllers\BelongingController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\FollowController;
@@ -15,7 +16,9 @@ use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ItinerariesController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\WeatherController;
+use App\Http\Controllers\CountryController;
 use App\Events\MessageSent;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,13 +28,13 @@ Route::get('/', function () {
 Route::get('/dashboard', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 #weather
-Route::post('/set-weather-country', function () {
-    session(['weather_country_id' => request('country_id')]);
-    return back();
+Route::post('/set-weather-country', function (Request $request) {
+    $minutes = 60 * 24 * 30;
+    return back()->withCookie(cookie('weather_country_id', $request->input('country_id'), $minutes));
 })->name('weather.setCountry');
 Route::get('/api/weather', [WeatherController::class, 'fetch'])->name('api.weather');
-Route::post('/countries/store', [\App\Http\Controllers\CountryController::class, 'store'])->name('countries.store');
-
+Route::post('/countries/store', [CountryController::class, 'store'])->middleware('auth')->name('countries.store');
+Route::delete('/countries/{id}', [CountryController::class, 'destroy'])->name('countries.destroy');
 
 Route::middleware('auth')->group(function () {
     #profile
@@ -99,6 +102,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/itineraries/{id}/update', [ItineraryController::class, 'update'])->name('itinerary.update');
     Route::get('/itinerary/load', [ItineraryController::class, 'loadMore'])->name('itinerary.load');
     Route::post('/itinerary/{itinerary}/toggle-finish', [ItineraryController::class, 'toggleFinish'])->middleware('auth')->name('itinerary.toggleFinish');
+    Route::post('/itinerary/{id}/memo', [ItineraryMemoController::class, 'save'])->name('itinerary.memo.save');
+
 
     #belonging
     Route::get('/belonging/check-duplicate', [BelongingController::class, 'checkDuplicate'])->name('belonging.checkDuplicate');

@@ -37,6 +37,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
+ * プログレスバーのリアルタイム更新
+ */
+const updateProgressBar = () => {
+    const belongingItems = document.querySelectorAll('.belonging-item');
+    let total = 0;
+    let checked = 0;
+
+    belongingItems.forEach(item => {
+        const checkboxes = item.querySelectorAll('.member-checkbox');
+        const totalCount = checkboxes.length;
+        const checkedCount = [...checkboxes].filter(cb => cb.checked).length;
+
+        if (totalCount > 0) {
+            total += 1;
+            if (checkedCount === totalCount) {
+                checked += 1;
+            }
+        }
+    });
+
+    const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+
+    const countText = document.querySelector('.progress-count-text');
+    const percentText = document.querySelector('.progress-percent-text');
+    const bar = document.querySelector('.progress-bar-fill');
+
+    if (countText) countText.textContent = `${checked} / ${total} items`;
+    if (percentText) percentText.textContent = `${percent}%`;
+    if (bar) bar.style.width = `${percent}%`;
+};
+
+
+    /**
      * チェックボックスの変更監視と同期処理
      */
     const initBelongingCheckboxes = () => {
@@ -53,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             headers: { 'X-CSRF-TOKEN': csrfToken }
                         });
                         updateGrayoutState(item);
+                        updateProgressBar();
                     } catch (err) {
                         checkbox.checked = !checkbox.checked;
                         alert('Check update failed');
@@ -165,8 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const addToExistingBtn = document.getElementById('addToExistingBtn');
         const createNewBtn = document.getElementById('createNewBtn');
         const cancelDuplicate = document.getElementById('cancelDuplicate');
-
-        let lastItemName = '', lastDescription = '', lastMembers = [], lastItineraryId = '', duplicateId = null;
 
         const handleFormSubmit = async function (e) {
             e.preventDefault();
@@ -282,4 +314,34 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCharCount('description', 'descriptionCharCount', 500);
     setupCharCount('editName', 'editNameCharCount', 50);
     setupCharCount('editDescription', 'editDescriptionCharCount', 500);
+
+    // go to top
+    let hideTimeout;
+
+    window.addEventListener('scroll', () => {
+        const isMobile = window.innerWidth < 768;
+        const isAtTop = window.scrollY === 0;
+        const btn = scrollToTopBtn;
+
+        if (!btn) return;
+
+        if (isMobile && !isAtTop) {
+            btn.classList.remove('opacity-0', 'pointer-events-none');
+
+            // 既存の非表示タイマーがあればリセット
+            clearTimeout(hideTimeout);
+
+            // 一定時間（2秒）後に自動で非表示
+            hideTimeout = setTimeout(() => {
+                btn.classList.add('opacity-0', 'pointer-events-none');
+            }, 2000);
+        } else {
+            btn.classList.add('opacity-0', 'pointer-events-none');
+            clearTimeout(hideTimeout);
+        }
+    });
+
+    scrollToTopBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 });

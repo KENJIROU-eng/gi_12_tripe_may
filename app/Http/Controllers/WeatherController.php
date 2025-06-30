@@ -9,7 +9,8 @@ class WeatherController extends Controller
 {
     public function fetch(Request $request)
     {
-        $countryId = session('weather_country_id');
+        $countryId = $request->input('country_id') ?? session('weather_country_id') ?? $request->cookie('weather_country_id');
+
         $country = \App\Models\Country::find($countryId);
 
         if (!$country || !$country->city) {
@@ -39,5 +40,6 @@ class WeatherController extends Controller
             return response()->json(['error' => 'Exception occurred'], 500);
         }
     }
+
 }
 

@@ -183,9 +183,16 @@ class GroupController extends Controller
         $request->validate([
             'name' => 'required|string|max:225',
             'image' =>'nullable|image|max:2048',
-            'members' =>'nullable|array',
+            'members' =>'required|array|min:1',
             'members.*' => 'exists:users,id',
         ]);
+
+        if (!$request->filled('members') || collect($request->members)->filter(fn($id) => $id != auth()->id())->isEmpty()) {
+            return redirect()->back()
+                ->withErrors(['members' => '自分以外のメンバーを1人以上選んでください。'])
+                ->withInput();
+        }
+
 
         //画像の保存
         $imagePath = null;
@@ -238,12 +245,21 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048',
-            'members' => 'nullable|array',
-            'members.*' => 'exists:users,id',
-        ]);
+        // Bocci時のバリデーション
+        if ($group->isBocciFor(Auth::id())) {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|image|max:2048',
+            ]);
+        } else {
+            // そのほかのグループのバリデーション
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|image|max:2048',
+                'members' => 'required|array|min:1',
+                'members.*' => 'exists:users,id',
+            ]);
+        }
 
         $group->name = $validated['name'];
 

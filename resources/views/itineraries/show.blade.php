@@ -1,6 +1,6 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32">
             {{-- 前／次 フロートボタン --}}
             <div class="block">
                 {{-- 前 --}}
@@ -18,8 +18,28 @@
                 </a>
             </div>
 
-            {{-- 左の空白スペース --}}
-            <div class="hidden lg:block lg:w-1/5"></div>
+            {{-- 左：メモパッド --}}
+            <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
+                <div class="sticky top-24 bg-white dark:bg-gray-800 border rounded p-4 shadow text-sm">
+                    <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200"><i class="fa-solid fa-file-pen text-blue-500"></i> Memo</h3>
+
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Jot down anything you like here!</p>
+
+                    <textarea id="itineraryMemo" data-save-url="{{ route('itinerary.memo.save', $itinerary->id) }}" data-csrf="{{ csrf_token() }}" class="w-full h-32 p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition" >{{ old('content', optional($itinerary->memo)->content) }}</textarea>
+
+                    <div class="flex justify-end mt-2">
+                        <button id="saveMemoBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded flex items-center justify-center gap-2" >
+                            <svg id="spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span id="saveMemoText">Save</span>
+                        </button>
+                    </div>
+
+                    <p id="memoSavedMsg" class="hidden text-green-500 text-xs mt-2 transition-opacity duration-300">Memo saved!</p>
+                </div>
+            </div>
 
             {{-- 中央：旅程表 --}}
             <div class="w-full lg:w-3/5 flex flex-col gap-4 order-2 lg:order-none">
@@ -33,17 +53,45 @@
                             </a>
                             {{-- finish button --}}
                             @if (Auth::id() === $itinerary->created_by)
-                                <form action="{{ route('itinerary.toggleFinish', $itinerary->id) }}" method="POST">
+                                <form action="{{ route('itinerary.toggleFinish', $itinerary->id) }}" method="POST" class="md:ml-10">
                                     @csrf
                                     <button type="submit"
-                                        class="mt-1 ms-16 px-4 py-1 rounded text-white shadow text-sm
-                                            {{ $itinerary->finish_at ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600' }}">
-                                        <i class="fa-solid {{ $itinerary->finish_at ? 'fa-check' : '' }} mr-1"></i>
-                                        {{ $itinerary->finish_at ? 'Finish Trip' : 'Unfinish Trip' }}
-                                    </button>
+                                        class="relative inline-flex items-center h-8 w-28 rounded-full transition-colors duration-300 ease-in-out focus:outline-none
+                                        {{ $itinerary->finish_at ? 'bg-green-500' : 'bg-blue-500' }}">
+                                        <span class="sr-only">Toggle Trip Status</span>
 
+                                        {{-- 左ラベル --}}
+                                        <span class="absolute left-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                            {{ $itinerary->finish_at ? 'opacity-100' : 'opacity-0' }}">
+                                            Finish
+                                        </span>
+
+                                        {{-- 右ラベル --}}
+                                        <span class="absolute right-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                            {{ $itinerary->finish_at ? 'opacity-0' : 'opacity-100' }}">
+                                            In progress
+                                        </span>
+
+                                        {{-- スライダー --}}
+                                        <span x-data="{ isWalking: true }" x-init="setInterval(() => isWalking = !isWalking, 500)" class="absolute inline-block h-7 w-10 rounded-full bg-white shadow transform transition duration-300 ease-in-out {{ $itinerary->finish_at ? 'translate-x-[68px]' : 'translate-x-1' }} flex items-center justify-center text-blue-500">
+                                            <template x-if="!@js($itinerary->finish_at)">
+                                                <i x-show="isWalking" class="fa-solid fa-person-walking text-sm"></i>
+                                            </template>
+                                            <template x-if="!@js($itinerary->finish_at)">
+                                                <i x-show="!isWalking" class="fa-solid fa-person-running text-sm"></i>
+                                            </template>
+
+                                            {{-- 完了状態は静的なチェックマーク --}}
+                                            @if ($itinerary->finish_at)
+                                                <i class="fa-solid fa-bed text-sm text-green-500"></i>
+                                            @endif
+                                        </span>
+
+
+                                    </button>
                                 </form>
                             @endif
+
                         </div>
 
                         @foreach ($itinerary->bills as $bill)
@@ -91,16 +139,14 @@
                                             @endif
                                         </button>
                                         {{-- メンバー一覧 --}}
-                                        <div x-show="open" @click.away="open = false"
-                                            class="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-50">
+                                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-50">
                                             <div class="p-4">
                                                 <h2 class="text-sm font-semibold text-gray-600 mb-2">Group Members</h2>
                                                 <ul class="space-y-2 max-h-60 overflow-y-auto">
                                                     @foreach ($itinerary->group->users as $user)
                                                         <li class="flex items-center space-x-3">
                                                             <a href="{{ route('profile.show', $user->id) }}">
-                                                                <img src="{{ $user->avatar ?? asset('images/user.png') }}"
-                                                                    class="w-8 h-8 rounded-full object-cover" alt="{{ $user->name }}">
+                                                                <img src="{{ $user->avatar ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full object-cover" alt="{{ $user->name }}">
                                                             </a>
                                                             <a href="{{ route('profile.show', $user->id) }}">
                                                                 <p class="text-sm">{{ $user->name }}</p>
@@ -134,15 +180,13 @@
                                     </div>
                                     <div class="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2 mt-2 sm:mt-0">
                                         {{-- View Google Map --}}
-                                        <a id="shareMapBtn" href="#" target="_blank" onclick="event.preventDefault(); openShareMapLink();"
-                                        class="text-blue-500 px-1 py-1 hidden sm:inline-flex items-center  hover:text-blue-700" title="View Google Map">
+                                        <a id="shareMapBtn" href="#" target="_blank" onclick="event.preventDefault(); openShareMapLink();" class="text-blue-500 px-1 py-1 hidden sm:inline-flex items-center  hover:text-blue-700" title="View Google Map">
                                             <i class="fa-solid fa-map-location-dot mr-1"></i> View Google Map
                                         </a>
 
                                         {{-- Edit --}}
                                         @if (!$itinerary->finish_at)
-                                            <a href="{{ route('itinerary.edit', $itinerary->id) }}"
-                                            class="text-yellow-500 px-1 py-1 inline-flex items-center hover:text-yellow-700" title="Edit">
+                                            <a href="{{ route('itinerary.edit', $itinerary->id) }}" class="text-yellow-500 px-1 py-1 inline-flex items-center hover:text-yellow-700" title="Edit">
                                                 <i class="fa-solid fa-pen mr-1"></i> Edit
                                             </a>
 
@@ -246,9 +290,11 @@
                         {{-- 右：割り勘／持ち物／マップ --}}
                         <div class="lg:col-span-3 flex flex-col gap-4 lg:h-[690px]">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {{-- Bill --}}
                                 <div class="border rounded-lg shadow-sm bg-white dark:bg-gray-900 p-4 h-auto md:h-[400px]" id="goDutch-container">
                                     @include('goDutch.index', ['total_Pay' => $total_Pay, 'total_getPay' => $total_getPay])
                                 </div>
+                                {{-- Belonging --}}
                                 <div class="border rounded-lg shadow-sm bg-white dark:bg-gray-900 p-4 h-auto md:h-[400px]" id="belongings-container">
                                     @include('belongings.index', ['all_belongings' => $all_belongings])
                                 </div>
@@ -284,9 +330,7 @@
     </div>
 
     {{-- Scroll to Top Button --}}
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
 

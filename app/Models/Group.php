@@ -34,33 +34,36 @@ class Group extends Model
 
     public static function getOrCreatePersonalGroup($userId)
     {
-        $groupName = 'Bocci';
-
-        // 自分が所属している Bocci グループがあるか？
-        $group = Group::where('name', $groupName)
+        // 自分が作成者であり、かつ自分だけが所属するグループを探す
+        $group = Group::where('user_id', $userId)
             ->whereHas('users', function ($query) use ($userId) {
                 $query->where('users.id', $userId);
             })
-            ->first();
+            ->withCount('users')
+            ->get()
+            ->first(fn($g) => $g->users_count === 1);
 
         if ($group) {
             return $group;
         }
 
-        // 自分専用の Bocci グループがまだないので作成
+        // 存在しなければ新しく作成（初期名は 'Bocci'）
         $group = Group::create([
-            'name' => $groupName,
-            'user_id' => $userId, // ← グループ作成者を記録（必須）
+            'name' => 'Bocci',
+            'user_id' => $userId,
         ]);
 
-        // 自分自身をグループに追加
         $group->users()->attach($userId);
 
         return $group;
     }
 
+    public function isBocciFor($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
 
-
-
-
+        return $this->user_id == $userId
+            && $this->users()->count() === 1
+            && $this->users->pluck('id')->contains($userId);
+    }
 }

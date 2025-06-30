@@ -45,4 +45,9 @@ class Itinerary extends Model
     public function belongings() {
         return $this->hasMany(Belonging::class);
     }
+
+    public function memo()
+    {
+        return $this->hasOne(ItineraryMemo::class);
+    }
 }
