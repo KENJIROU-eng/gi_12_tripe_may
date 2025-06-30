@@ -176,6 +176,9 @@ class ProfileController extends Controller
 
     $postIds = $top3->pluck('post_id')->toArray();
     $posts = Post::whereIn('id', $postIds)->get();
+    $posts = $posts->sortBy(function ($post) use ($postIds) {
+        return array_search($post->id, $postIds);
+    })->values();
     $likeCounts = [];
     foreach ($posts as $post) {
         $likeCounts[] = $post->likes()->count();

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
     //06−27追加
     const imageInput = document.getElementById('image-upload');
     const textarea = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send-btn'); 
+    const sendBtn = document.getElementById('send-btn');
     // const messageInput = form.querySelector('input[name="message"]');
     // const imageInput = form.querySelector('input[name="image"]');
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
     imageInput.addEventListener('change', updateSendButton);
 
 
-    
+
 
     //3.フォーム送信イベントをキャッチ
     form.addEventListener('submit', async (e) => {
@@ -67,14 +67,18 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
         const data = await response.json();
         if (data.success) {
-            // alert('送信成功！');
-            // 例えばフォームをリセットしたい場合
-            document.getElementById('chat-form').reset();
-            //今日追加したやつ27/06
+            if (data.mode === 'edit') {
+                location.reload();
+            }else {
+                // alert('送信成功！');
+                // 例えばフォームをリセットしたい場合
+                document.getElementById('chat-form').reset();
+                //今日追加したやつ27/06
 
-            const messagesDiv = document.getElementById('messages');
-            if (messagesDiv) {
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                const messagesDiv = document.getElementById('messages');
+                if (messagesDiv) {
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
             }
         } else {
             alert('送信に失敗しました。');
@@ -251,6 +255,8 @@ for (let i = 0; i < length; i++) {
                     audio.play().catch(e => console.error("Audio play error:", e));
                     };
 
+                    Livewire.emit('refreshMessages');
+
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
@@ -302,7 +308,7 @@ if (groupId && myUserId) {
             if (e.image_url) {
                 messageContent += `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">`;
             }
-            
+
             if (isMine) {
                 // テキストがある場合は枠付き
                 if (e.message && e.message.text) {
@@ -321,7 +327,7 @@ if (groupId && myUserId) {
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
                             <div class="max-w-[70%]">
-                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>                            
+                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>
                                 <div class="mt-2">${messageContent}</div>
                             </div>
                         </div>
@@ -329,7 +335,7 @@ if (groupId && myUserId) {
                 }
                 wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
                 wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
-            
+
             } else {
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
@@ -364,14 +370,14 @@ if (groupId && myUserId) {
                     `;
                 }
             }
-            
+
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
-            //messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
-            // Alpine.initTree(wrapper);
-            // messagesDiv.appendChild(wrapper);
-            // messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
+            // messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
+            Alpine.initTree(wrapper);
+            messagesDiv.appendChild(wrapper);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
         });
 }
 

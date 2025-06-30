@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="mt-2 min-h-screen">
+    <div class="py-6 mt-2 min-h-screen">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 sm:p-6 text-black dark:text-gray-100">
@@ -72,7 +72,7 @@
                                 </div> --}}
                                 <div class="relative rounded-xl px-6 py-8 max-w-sm mx-auto mt-10">
                                     <div class="text-center ">
-                                        <a href="{{ route('itinerary.share') }}" class="bg-gradient-to-r from-blue-500 via-green-500 to-red-500 py-2 px-4 text-lg text-shadow-lg rounded-md font-bold text-white inline-block w-full max-w-md hover:bg-green-600">
+                                        <a href="{{ route('itinerary.share') }}" class="bg-gradient-to-r from-blue-500 via-green-500 to-red-500 py-2 px-4 text-lg text-shadow-lg rounded-md font-bold text-white inline-block w-full max-w-md hover:from-green-500 hover:via-blue-500 hover:to-yellow-500">
                                             Create Trip Itinerary
                                         </a>
                                     </div>

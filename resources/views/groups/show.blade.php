@@ -64,36 +64,6 @@
             @foreach ($messages as $message)
             @php $isMine = $message->user_id === auth()->id();@endphp
 
-                {{-- @if ($isMine)
-                    <div cid="message-{{ $message->id }}" class="flex justify-end items-end" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)">
-
-
-                        <div class="text-xs text-right mt-1 text-gray-400 mr-2">
-                            {{ $message->created_at->format('Y-m-d H:i') }}
-                        </div>
-                        <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow ">
-                            @if ($message->message)
-                                <div style="word-break: break-word; overflow-wrap: break-word;">{{$message->message }}</div>
-                            @endif
-                        </div>
-                        @if ($message->image_url)
-                            <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>
-                        @endif
-                    </div>
-                @else
-                <div>
-                    <div class="flex items-start">
-                        <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 rounded-full mt-1" alt="{{ $message->user->name }}">
-                        <div class="flex space-x-2 items-end">
-                            <div class="max-w-[70%]">
-                                <div class="text-sm text-gray-600 font-medium">{{ $message->user->name }}</div>
-                                <div class="bg-white rounded-2xl p-3 shadow">
-                                    @if ($message->message)
-                                        <div style="word-break: break-word; overflow-wrap: break-word;">{{ $message->message }}</div>
-                                    @endif
-                                </div>
-                                @if ($message->image_url)
-                                <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download> --}}
                 @if ($isMine)
                     @if ($message->message)
                         <div id="message-{{ $message->id }}" class="flex justify-end items-end">
@@ -173,13 +143,13 @@
 
     <ul id="custom-menu"
     class="absolute hidden bg-gray-100  rounded shadow z-50">
-    <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
-        Edit
-    </li>
-    <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
-        Delete
-    </li>
-</ul>
+        <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
+            Edit
+        </li>
+        <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
+            Delete
+        </li>
+    </ul>
 
 <script>
     let currentMessageId = null;

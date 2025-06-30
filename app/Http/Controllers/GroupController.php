@@ -40,8 +40,9 @@ class GroupController extends Controller
             $message->message = $request->message;
             $message->save();
 
-            return redirect()->back()->with('status', 'メッセージを更新しました');
-        }
+            return response()->json(['success' => true, 'image_url' => $message->image_url ?? '','mode' => 'edit',]);
+            // return redirect()->back()->with('status', 'メッセージを更新しました');
+        }else {
 
         $user = auth()->user();
         $imageUrl = null;
@@ -75,6 +76,7 @@ class GroupController extends Controller
         return response()->json(['success' => true, 'image_url' => $message->image_url ?? '',]); //成功したらJSONレスポンスを返す
         //return back();
         //return response()->json(['status' => 'Message sent!']);
+        }
     }
 
     //メッセージを表示
