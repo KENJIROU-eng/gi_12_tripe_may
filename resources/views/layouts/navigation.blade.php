@@ -1,7 +1,7 @@
 <nav x-data="{ open: false, planOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 fixed top-0 left-0 right-0 z-40 shadow h-16">
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
         <div class="h-full relative flex items-center justify-center">
-
+            
             {{-- 左：ロゴと今日の予定 --}}
             <div class="absolute left-0 flex items-center gap-6 h-full space-x-8">
                 {{-- ロゴ --}}
