@@ -70,7 +70,10 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
             // alert('送信成功！');
             // 例えばフォームをリセットしたい場合
             document.getElementById('chat-form').reset();
-            //今日追加したやつ27/06
+            
+            textarea.value = '';
+            textarea.style.height = 'auto';
+            updateSendButton();
 
             const messagesDiv = document.getElementById('messages');
             if (messagesDiv) {
@@ -86,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
             alert('通信error');
         }
     });
+
+    textarea.value = '';
+    textarea.style.height = 'auto';
+    sendBtn.disabled = true;
 
     if (imageInput) {
         imageInput.addEventListener('change', () => {
@@ -127,6 +134,23 @@ import Pusher from 'pusher-js'; //Pusherのクライアントライブラリ（W
 // });
 
 window.Pusher = Pusher; //Laravel Echoが内部的に Pusher を使うため
+
+// HTMLエスケープ用関数
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// nl2br関数
+function nl2br(str) {
+    if (typeof str !== "string") return "";
+    return str.replace(/\r?\n/g, '<br>');
+}
+
 
 //2.チャットが属するグループのIDをHTMLから取得
 const groupId = document.getElementById('messages')?.dataset.groupId;
@@ -295,7 +319,9 @@ if (groupId && myUserId) {
 
             //テキスト組み込み
             if (e.message && e.message.text) {
-                messageContent += `<div>${e.message.text}</div>`;
+                //messageContent += `<div>${e.message.text}</div>`;
+                // messageContent += escapeHtml(e.message.text);
+                messageContent += nl2br(escapeHtml(e.message.text));
             }
 
             //画像組み込み
@@ -307,10 +333,10 @@ if (groupId && myUserId) {
                 // テキストがある場合は枠付き
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
-                        <div class="flex items-end">
+                        <div class="flex items-end justify-end">
                             <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
                             <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
-                                <div style="word-break: break-word; overflow-wrap: break-word;">
+                                <div style="word-break: break-word; overflow-wrap: break-word; ">
                                     ${messageContent}
                                 </div>
                             </div>
@@ -320,10 +346,8 @@ if (groupId && myUserId) {
                     // 画像だけの場合
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
-                            <div class="max-w-[70%]">
                                 <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>                            
                                 <div class="mt-2">${messageContent}</div>
-                            </div>
                         </div>
                     `;
                 }
@@ -339,7 +363,7 @@ if (groupId && myUserId) {
                                 <div class="max-w-[70%]">
                                     <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
                                     <div class="bg-white rounded-2xl p-3 shadow">
-                                        <div style="word-break: break-word; overflow-wrap: break-word;">
+                                        <div style="word-break: break-word; overflow-wrap: break-word; ">
                                             ${messageContent}
                                         </div>
                                     </div>
@@ -368,10 +392,23 @@ if (groupId && myUserId) {
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
-            //messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
-            // Alpine.initTree(wrapper);
-            // messagesDiv.appendChild(wrapper);
-            // messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
+            // messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
+            Alpine.initTree(wrapper);
+            messagesDiv.appendChild(wrapper);
+            requestAnimationFrame(() => {
+                const img = wrapper.querySelector('img');
+                if (img) {
+                    if (img.complete) {
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    } else {
+                        img.addEventListener('load', () => {
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        });
+                    }
+                } else {
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
+            });
         });
 }
 

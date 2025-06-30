@@ -1,11 +1,11 @@
 <x-app-layout>
     {{-- <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;"> --}}
-        <div class= "mt-5 h-[880px]">
+        <div class= "mt-5 h-[905px]">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
                 <div class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                     <div class="pt-2 text-black dark:text-gray-100 h-full">
                         <div class="relative flex justify-center items-center flex-col h-full">
-                            <a href="{{ route('post.list') }}" class="text-blue-600 hover:text-blue-800 font-semibold text-xl flex items-center mb-2 md:mb-0 md:absolute md:left-0 md:top-0 md:pl-4">
+                            <a href="{{ route('post.list') }}" class="text-teal-500 hover:text-teal-700 font-semibold text-xl flex items-center mb-2 md:mb-0 md:absolute md:left-0 md:top-0 md:pl-4">
                                 <i class="fa-solid fa-arrow-left mr-2"></i> Post List
                             </a>
                             <div class="hidden md:block w-[100px]"></div>
@@ -93,20 +93,22 @@
                                                 </a>
                                             @endif
                                         </div> --}}
-                                        @livewire('post-like', ['post' => $post], key($post->id))
+                                        {{-- @livewire('post-like', ['post' => $post], key($post->id)) --}}
+                                        @livewire('post-like', ['post' => $post, 'viewType' => 'show'], key($post->id))
 
-                                        <div x-data="{open:false}" class="mr-4">
+
+                                        {{-- <div x-data="{open:false}" class="mr-4">
                                             <button @click="open = true">
                                                 {{ $post->likes()->count() }}
                                             </button>
                                             @include('posts.modals.likeUser', ['post' => $post])
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-auto">
                                             {{-- trigger --}}
                                             <div x-data="{ open: false }">
                                                 <div class="flex items-center space-x-1">
-                                                    <button @click="open = true" class="text-gray-400 hover:text-gray-600 text-2xl">
+                                                    <button @click="open = true" class="text-gray-400 hover:text-gray-600 text-2xl ml-1">
                                                         <i class="fa-regular fa-comments"></i>
                                                     </button>
                                                     <p class="text-black">{{ $post->comments->count() }}</p>
@@ -125,7 +127,7 @@
                                     <div class="text-xs text-gray-500 ml-3 mt-1">
                                         {{ $post->created_at->format('M d, Y') }}
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $isLong = mb_strlen($post->description) > 350;
                                     @endphp
                                     @if ($isLong)
@@ -145,13 +147,13 @@
                                                 <span x-show="open">閉じる</span>
                                             </button>
                                         </div>
-                                    @else
+                                    @else --}}
                                         <div class="px-4 mb-2">
                                             <div class="font-light whitespace-pre-line break-words text-gray-800 dark:text-gray-100">
                                                 {{ $post->description }}
                                             </div>
                                         </div>
-                                    @endif
+                                    {{-- @endif --}}
                                 </div>
                             </div>
                         </div>
