@@ -228,6 +228,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // notification
+document.addEventListener('livewire:init', () => {
 for (let i = 0; i < length; i++) {
     window.Echo.private(`group.${groupIds[i]}`)
     .listen('.message.sent', (e) => {
@@ -255,7 +256,20 @@ for (let i = 0; i < length; i++) {
                     audio.play().catch(e => console.error("Audio play error:", e));
                     };
 
-                    Livewire.emit('refreshMessages');
+                    // if (window.Livewire && typeof window.Livewire.trigger === 'function') {
+                    //     console.log('送信！', groupIds[i], myUserId);
+                    //     window.Livewire.trigger('refreshMessages', groupIds[i], myUserId);
+                    // }
+                    // Livewire.dispatch('refresh', {
+                    //     groupId: groupIds[i],
+                    //     userId: myUserId,
+                    // });
+                    // window.dispatchEvent(new CustomEvent('refresh-messages', {
+                    //     detail: {
+                    //         groupId: groupId,
+                    //         userId: myUserId
+                    //     }
+                    // }));
 
                     // 10秒後に自動削除
                     setTimeout(() => {
@@ -273,6 +287,7 @@ for (let i = 0; i < length; i++) {
         };
     });
 }
+});
 
 
 

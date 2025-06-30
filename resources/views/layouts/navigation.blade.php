@@ -59,6 +59,8 @@
                 </div>
             </div>
 
+            <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
+
             {{-- 中央：メニュー --}}
             <div class="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex items-center space-x-8">
                 @auth
@@ -71,6 +73,7 @@
             {{-- 右：通知・ドロップダウン・ハンバーガー --}}
             <div class="absolute right-0 flex items-center h-full space-x-4 sm:space-x-12 pr-2">
                 {{-- 通知 --}}
+                {{-- @livewire('message-refresh', ['groups' => $groups, 'groupIds' => $groupIds]) --}}
                 @if ($groupIds)
                     <div x-data="{ notificationOpen: false }" class="relative">
                         <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
