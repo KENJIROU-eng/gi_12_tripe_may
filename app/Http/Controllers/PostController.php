@@ -167,7 +167,7 @@ class PostController extends Controller
     }
 
 
-    
+
 
     // 以降不要
     public function broadcastEvent(Request $request)

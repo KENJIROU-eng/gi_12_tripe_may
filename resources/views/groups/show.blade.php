@@ -59,6 +59,7 @@
             </div>
         </div>
 
+
         <!--chat-->
         {{-- <div id="messages" data-group-id="{{ $group->id }}" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
             @foreach ($messages as $message)
@@ -122,9 +123,6 @@
                             {{ $message->created_at->format('Y-m-d H:i') }}
                         </div>
                         <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, {{ $message->id }})">
-                            <div style="word-break: break-word; overflow-wrap: break-word;">
-                                {{ $message->message }}
->>>>>>> 6ed12d9549a20e841b25b8d68bfcab21c1af8f37
                             </div>
                             <div class="max-w-[70%]">
                                 <img src="{{ $message->image_url }}" class="mt-2 max-w-xs rounded-lg" download>

@@ -42,7 +42,7 @@
                     @livewire('notification-toggle')
 
                     {{-- modal --}}
-                    <div id="audio-permission-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
+                    {{-- <div id="audio-permission-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
                         <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow-lg">
                             <p class="text-gray-800 text-lg mb-6">
                                 If you permit notification sounds, please click the button below
@@ -52,7 +52,7 @@
                                 <button id="cancel-sound-btn" class="px-5 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     {{-- contents --}}
                     <div class="mt-8">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
