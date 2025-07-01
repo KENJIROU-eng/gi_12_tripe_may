@@ -1,13 +1,13 @@
 <x-app-layout>
     {{-- <div style="background-image: url('/images/pexels-quintingellar-844167.jpg'); background-size: cover; background-position: center"> --}}
-        <div class= "mt-5 h-[905px]">
-            <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
-                <div class="bg-white/95 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
+        <div class= "mt-5">
+            <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white/95 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class=" text-black dark:text-gray-100">
                         {{-- title --}}
-                        <div class="relative flex items-center justify-center h-16 my-5">
-                            <h1 class=" text-4xl lg:text-5xl xl:text-6xl font-semibold font-bree absolute left-1/2 transform -translate-x-1/2">Group List</h1>
-                            <a href="{{ route('groups.create')}}" class="absolute right-4 text-sm sm:text-base lg:text-lg font-medium text-teal-500 hover:text-teal-700 bg-white border border-teal-500 hover:border-teal-700 rounded-3xl shadow-md p-2"><i class="fa-solid fa-plus"></i> New Group</a>
+                        <div class="relative flex items-center justify-center h-16 my-3 sm:my-5">
+                            <h1 class=" text-3xl lg:text-5xl xl:text-6xl font-semibold font-bree absolute left-1/2 transform -translate-x-1/2">Group List</h1>
+                            <a href="{{ route('groups.create')}}" class="absolute right-3 text-xs sm:text-base lg:text-lg font-medium text-teal-500 hover:text-teal-700 bg-white border border-teal-500 hover:border-teal-700 rounded-3xl shadow-md p-1 sm:p-2"><i class="fa-solid fa-plus"></i> New Group</a>
                         </div>
                         <div class="p-[2px] bg-gradient-to-r from-stone-200 via-stone-400 to-stone-200"></div>
                         {{-- contents --}}
@@ -82,7 +82,7 @@
                                         </div>
                                     @endforeach
                                     @foreach ($groups_filtered as $group)
-                                        <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow p-5 mb-3 mx-3 hover:bg-orange-100 transition">
+                                        <div class="flex items-center justify-between fonu-serif bg-white rounded-lg shadow-lg p-5 mb-3 mx-3 hover:bg-orange-100 transition">
                                             <a href="{{ route('message.show', $group->id)}}" class="flex items-center space-x-4 w-full ml-2">
                                                 @if ($group->image)
                                                     <img src="{{ asset('storage/' . $group->image)}}" alt="Group Image" class="w-14 h-14 rounded-full object-cover">

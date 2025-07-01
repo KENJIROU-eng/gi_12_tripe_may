@@ -70,7 +70,9 @@ class MessageSent implements ShouldBroadcast
             'image_url' => $this->message->image_url ?? '',
             'groupMember_name' => $groupMember_name,
             'group_name' => $group->name,
-            'time' => $this->message->created_at->format('Y-m-d H:i'),//ex12:55
+            // 'time' => $this->message->created_at->format('Y-m-d H:i'),//ex12:55
+            'time_hm' => $this->message->created_at->format('H:i'),
+            'time_ymd' => $this->message->created_at->format('Y-m-d'),
         ];
     }
 }
