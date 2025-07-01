@@ -1,24 +1,9 @@
 <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 fixed top-0 left-0 right-0 z-40 shadow h-16">
     <div x-data="{ open: false, planOpen: false }" class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
-        <div class="h-full relative flex items-center justify-center">
+        <div class="h-full relative flex items-center justify-between">
+
             
-            <?php
-$__split = function ($name, $params = []) {
-    return [$name, $params];
-};
-[$__name, $__params] = $__split('message-notification', ['lazy' => true]);
-
-$__html = app('livewire')->mount($__name, $__params, 'lw-3562299566-0', $__slots ?? [], get_defined_vars());
-
-echo $__html;
-
-unset($__html);
-unset($__name);
-unset($__params);
-unset($__split);
-if (isset($__slots)) unset($__slots);
-?>
-            <div class="absolute left-0 flex items-center gap-6 h-full space-x-8">
+            <div class="flex items-center gap-6 h-full flex-shrink-0">
                 
                 <div class="flex items-center space-x-2">
                     <a href="<?php echo e(route('dashboard')); ?>" class="h-10 w-10 flex-shrink-0">
@@ -87,8 +72,6 @@ if (isset($__slots)) unset($__slots);
                 </div>
             </div>
 
-            <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
-
             
             <div class="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex text-xl items-center space-x-6">
                 <?php if(auth()->guard()->check()): ?>
@@ -140,12 +123,13 @@ if (isset($__slots)) unset($__slots);
             </div>
 
             
-            <div class="absolute right-0 flex items-center h-full space-x-4 sm:space-x-12 pr-2">
+            <div class="flex items-center h-full gap-2 sm:gap-4 pr-2 flex-shrink-0">
                 
                 <?php if($groupIds): ?>
                     <div x-data="{ notificationOpen: false }" class="relative">
-                        <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
-                            <i class="fa-solid fa-bell text-lg"></i>
+                        <button data-notification-button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-green-500 focus:outline-none focus:ring-0 focus:border-transparent" aria-label="Notification" title="Notification">
+
+                            <i class="fa-solid fa-comment-dots text-xl"></i>
                             <?php if($nonReadCount_total > 0): ?>
                                 <span class="absolute -top-1 -right-1 inline-block w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                                     <?php echo e($nonReadCount_total); ?>
@@ -176,6 +160,14 @@ if (isset($__slots)) unset($__slots);
                         </div>
                     </div>
                 <?php endif; ?>
+
+                
+                <button id="sound-toggle" class=" text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none" aria-label="Toggle notification sound" title="Toggle notification sound">
+                    <i id="sound-icon" class="fa-solid fa-bell text-xl"></i>
+                    <span id="sound-status" class="ml-1 text-sm text-gray-500 dark:text-gray-300 hidden sm:inline-block">
+                        ON
+                    </span>
+                </button>
 
                 
                 
@@ -256,8 +248,7 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginal68cb1971a2b92c9735f83359058f7108; ?>
 <?php unset($__componentOriginal68cb1971a2b92c9735f83359058f7108); ?>
 <?php endif; ?>
-                                <?php if(Auth::User()->notification != false): ?>
-                                    <?php if (isset($component)) { $__componentOriginal68cb1971a2b92c9735f83359058f7108 = $component; } ?>
+                                <?php if (isset($component)) { $__componentOriginal68cb1971a2b92c9735f83359058f7108 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal68cb1971a2b92c9735f83359058f7108 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.dropdown-link','data' => ['href' => route('settings')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('dropdown-link'); ?>
@@ -276,7 +267,6 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginal68cb1971a2b92c9735f83359058f7108; ?>
 <?php unset($__componentOriginal68cb1971a2b92c9735f83359058f7108); ?>
 <?php endif; ?>
-                                <?php endif; ?>
                                 <form method="POST" action="<?php echo e(route('logout')); ?>">
                                     <?php echo csrf_field(); ?>
                                     <?php if (isset($component)) { $__componentOriginal68cb1971a2b92c9735f83359058f7108 = $component; } ?>
@@ -451,8 +441,7 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginald69b52d99510f1e7cd3d80070b28ca18; ?>
 <?php unset($__componentOriginald69b52d99510f1e7cd3d80070b28ca18); ?>
 <?php endif; ?>
-                    <?php if(Auth::User()->notification != false): ?>
-                        <?php if (isset($component)) { $__componentOriginald69b52d99510f1e7cd3d80070b28ca18 = $component; } ?>
+                    <?php if (isset($component)) { $__componentOriginald69b52d99510f1e7cd3d80070b28ca18 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald69b52d99510f1e7cd3d80070b28ca18 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.responsive-nav-link','data' => ['href' => route('settings')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('responsive-nav-link'); ?>
@@ -471,7 +460,6 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginald69b52d99510f1e7cd3d80070b28ca18; ?>
 <?php unset($__componentOriginald69b52d99510f1e7cd3d80070b28ca18); ?>
 <?php endif; ?>
-                    <?php endif; ?>
                     <form method="POST" action="<?php echo e(route('logout')); ?>">
                         <?php echo csrf_field(); ?>
                         <?php if (isset($component)) { $__componentOriginald69b52d99510f1e7cd3d80070b28ca18 = $component; } ?>
@@ -507,6 +495,92 @@ if (isset($__slots)) unset($__slots);
                 localStorage.removeItem(`notificationsEnabled_user_${userId}`);
             }
         }
+
+        // 通知音をグローバルに保持
+        let notificationSound;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const userId = document.body.dataset.userId || 'default';
+            const toggleBtn = document.getElementById('sound-toggle');
+            const icon = document.getElementById('sound-icon');
+            const statusText = document.getElementById('sound-status');
+
+            // 通知音を事前に読み込み
+            notificationSound = new Audio('/sounds/maou_se_onepoint23.mp3');
+            notificationSound.preload = 'auto';
+            notificationSound.volume = 1;
+
+            // 状態の初期化
+            const audioUnlocked = localStorage.getItem(`audioUnlocked_user_${userId}`) === '1';
+            updateUI(audioUnlocked);
+
+            toggleBtn.addEventListener('click', () => {
+                const current = localStorage.getItem(`audioUnlocked_user_${userId}`) === '1';
+                const next = !current;
+
+                if (next) {
+                    const dummy = new Audio('/sounds/maou_se_onepoint23.mp3');
+                    dummy.volume = 0;
+                    dummy.play().then(() => {
+                        localStorage.setItem(`audioUnlocked_user_${userId}`, '1');
+                        console.log('🔊 Sound ON');
+                        updateUI(true);
+                    }).catch(err => {
+                        console.warn('❌ Sound permission denied:', err);
+                    });
+                } else {
+                    localStorage.setItem(`audioUnlocked_user_${userId}`, '0');
+                    console.log('🔇 Sound OFF');
+                    updateUI(false);
+                }
+            });
+
+            function updateUI(enabled) {
+                if (enabled) {
+                    icon.classList.replace('fa-bell-slash', 'fa-bell');
+                    icon.classList.add('text-yellow-500');
+                    icon.classList.remove('text-gray-600');
+                    if (statusText) statusText.textContent = 'ON';
+                } else {
+                    icon.classList.replace('fa-bell', 'fa-bell-slash');
+                    icon.classList.remove('text-yellow-500');
+                    icon.classList.add('text-gray-600');
+                    if (statusText) statusText.textContent = 'OFF';
+                }
+            }
+
+            // グローバル再生関数
+            window.playNotificationSound = function () {
+                const enabled = localStorage.getItem(`audioUnlocked_user_${userId}`) === '1';
+                if (enabled && notificationSound) {
+                    notificationSound.currentTime = 0;
+                    notificationSound.play().catch(e => console.warn('🔕 Sound play failed:', e));
+                }
+            };
+
+            // 🔔 通知音をページロード時に鳴らすかのロジックを変更
+            const currentCount = <?php echo e($nonReadCount_total); ?>;
+            const countKey = `prevNonReadCount_user_${userId}`;
+            const prevCount = parseInt(localStorage.getItem(countKey) || '0');
+
+            if (currentCount > prevCount) {
+                playNotificationSound();
+            }
+
+            // 通知を開いたときに前回カウントを更新（これを通知表示時にも追加）
+            const notificationButton = document.querySelector('[data-notification-button]');
+            if (notificationButton) {
+                notificationButton.addEventListener('click', () => {
+                    if (currentCount > 0) {
+                        playNotificationSound();
+                    }
+                    localStorage.setItem(countKey, currentCount.toString());
+                });
+            }
+
+            // fallback: 自動で更新（通知表示がない場合用）
+            localStorage.setItem(countKey, currentCount.toString());
+        });
     </script>
 </nav>
 <?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>

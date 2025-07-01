@@ -1,6 +1,7 @@
 <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 fixed top-0 left-0 right-0 z-40 shadow h-16">
     <div x-data="{ open: false, planOpen: false }" class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
-        <div class="h-full relative flex items-center justify-center">
+        <div class="h-full relative flex items-center justify-between">
+
             {{-- 左：ロゴと今日の予定 --}}
             <div class="flex items-center gap-6 h-full flex-shrink-0">
                 {{-- ロゴ --}}
@@ -70,8 +71,6 @@
                 </div>
             </div>
 
-            <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
-
             {{-- 中央：メニュー --}}
             <div class="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex text-xl items-center space-x-6">
                 @auth
@@ -124,7 +123,7 @@
                 {{-- 通知 --}}
                 @if ($groupIds)
                     <div x-data="{ notificationOpen: false }" class="relative">
-                        <button data-notification-button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-green-500 focus:outline-none focus:ring-0 focus:border-transparent">
+                        <button data-notification-button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-green-500 focus:outline-none focus:ring-0 focus:border-transparent" aria-label="Notification" title="Notification">
 
                             <i class="fa-solid fa-comment-dots text-xl"></i>
                             @if ($nonReadCount_total > 0)
@@ -179,9 +178,7 @@
                                 @endcan
                                 <x-dropdown-link :href="route('profile.show', Auth::id())"><i class="fa-solid fa-address-card"></i> Profile</x-dropdown-link>
                                 <x-dropdown-link :href="route('profile.users.list')"><i class="fa-solid fa-magnifying-glass"></i> Search Users</x-dropdown-link>
-                                @if (Auth::User()->notification != false)
-                                    <x-dropdown-link :href="route('settings')"><i class="fa-solid fa-gear"></i> Settings</x-dropdown-link>
-                                @endif
+                                <x-dropdown-link :href="route('settings')"><i class="fa-solid fa-gear"></i> Settings</x-dropdown-link>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link href="#" onclick="event.preventDefault(); clearAudioSettings(); this.closest('form').submit();">
@@ -221,9 +218,7 @@
                     <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('group*')">Group</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('profile.show', Auth::id())">Profile</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('profile.users.list')">Search Users</x-responsive-nav-link>
-                    @if (Auth::User()->notification != false)
-                        <x-responsive-nav-link :href="route('settings')">Settings</x-responsive-nav-link>
-                    @endif
+                    <x-responsive-nav-link :href="route('settings')">Settings</x-responsive-nav-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-responsive-nav-link href="#" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-responsive-nav-link>
