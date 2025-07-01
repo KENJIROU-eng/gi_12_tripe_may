@@ -42,7 +42,10 @@
             {{-- <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;"> --}}
                 {{ $slot }}
             </main>
-            @include('layouts.footer')
+            {{-- groupのshowでは非表示 --}}
+            @if (!in_array(Route::currentRouteName(), ['message.show']))
+                @include('layouts.footer')
+            @endif
         </div>
         @stack('scripts')
         <script>

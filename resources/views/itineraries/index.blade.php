@@ -1,6 +1,6 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto">
                 <div class="text-black dark:text-gray-100">
                     {{-- title --}}

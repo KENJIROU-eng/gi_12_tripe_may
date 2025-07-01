@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
                 $cacheKeyPrefix = 'shared_data_user_' . $userId;
 
                 // グループ情報
-                $groupIds = Cache::remember("$cacheKeyPrefix:group_ids", 1, function () use ($userId) {
+                $groupIds = Cache::remember("$cacheKeyPrefix:group_ids", 0, function () use ($userId) {
                     return GroupMember::where('user_id', $userId)->pluck('group_id')->toArray();
                 });
 

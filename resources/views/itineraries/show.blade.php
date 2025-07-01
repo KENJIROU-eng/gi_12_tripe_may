@@ -3,17 +3,22 @@
         <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32">
             {{-- 前／次 フロートボタン --}}
             <div class="block">
-                {{-- 前 --}}
-                <a href="{{ $previous ? route('itinerary.show', $previous->id) : '#' }}"
+                {{-- 次 --}}
+                <a href="{{ $next ? route('itinerary.show', $next->id) : '#' }}"
                     class="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
-                    title="Previous">
+                    title="Next">
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                </a>
+                <a href=""
+                    class="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
+                    title="">
                     <i class="fa-solid fa-chevron-left text-xl"></i>
                 </a>
 
-                {{-- 次 --}}
-                <a href="{{ $next ? route('itinerary.show', $next->id) : '#' }}"
+                {{-- 前 --}}
+                <a href="{{ $previous ? route('itinerary.show', $previous->id) : '#' }}"
                     class="fixed top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
-                    title="Next">
+                    title="Previous">
                     <i class="fa-solid fa-chevron-right text-xl"></i>
                 </a>
             </div>
