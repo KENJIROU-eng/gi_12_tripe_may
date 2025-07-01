@@ -2,14 +2,12 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use App\Models\Message;
-use App\Models\ReadMessage;
 
-class MessageRefreshTmp extends Component
+class MessageNotification extends Component
 {
-
     // public array $nonReadCount = [];
     // public int $nonReadCount_total = 0;
     public $count = 0;
@@ -42,7 +40,7 @@ class MessageRefreshTmp extends Component
 
     public function render()
     {
-        return view('livewire.message-refresh-tmp', [
+        return view('livewire.message-notification',[
         // 'nonReadCount' => $this->nonReadCount,
         'count' => $this->count,
         // 'groups' => $this->groups,

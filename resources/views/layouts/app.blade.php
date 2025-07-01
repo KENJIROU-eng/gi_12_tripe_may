@@ -36,12 +36,6 @@
 
     </head>
     <body data-user-id="{{ Auth::user()->id }}" class="page-transition">
-        @php
-            session_start();
-            $myUserId = Auth::user()->id;
-            // セッションに保存されていると仮定
-            $enabled = $_SESSION["notificationsEnabled_user_$myUserId"] ?? 0;
-        @endphp
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Content -->

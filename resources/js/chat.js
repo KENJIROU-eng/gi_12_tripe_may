@@ -240,12 +240,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.enableNotification = function () {
     document.getElementById('notify-box').style.display = 'none';
+    Livewire.dispatch('notification-enabled');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '1');
     location.reload();
 }
 
 window.dismissNotification = function () {
     document.getElementById('notify-box').style.display = 'none';
+    Livewire.dispatch('notification-dismiss');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '0');
 }
 
@@ -268,6 +270,7 @@ for (let i = 0; i < length; i++) {
         if (Number(localStorage.getItem(`notificationsEnabled_user_${myUserId}`)) === 1) {
             if (!groupId) {
                 if (myUserId != e.user_id) {
+                    Livewire.dispatch('refresh');
                     const container = document.getElementById('notification-area');
                     if (!container) return;
 
@@ -294,7 +297,6 @@ for (let i = 0; i < length; i++) {
                     //     groupId: groupIds[i],
                     //     userId: myUserId,
                     // });
-                    Livewire.dispatch('refresh');
                     // window.dispatchEvent(new CustomEvent('refresh-messages', {
                     //     detail: {
                     //         groupId: groupId,
@@ -363,7 +365,8 @@ if (groupId && myUserId) {
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
                             <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
-                            <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
+                            <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, ${e.message_id}, this)"
+                            x-data="{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }">
                                 <div style="word-break: break-word; overflow-wrap: break-word; ">
                                     ${messageContent}
                                 </div>
@@ -382,8 +385,8 @@ if (groupId && myUserId) {
                         </div>
                     `;
                 }
-                wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
-                wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
+                // wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id}, this)`);
+                // wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
 
             } else {
                 if (e.message && e.message.text) {

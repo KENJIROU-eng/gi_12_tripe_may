@@ -155,15 +155,7 @@
 
     </div>
 
-    <ul id="custom-menu"
-    class="absolute hidden bg-gray-100  rounded shadow z-50">
-        <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
-            Edit
-        </li>
-        <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
-            Delete
-        </li>
-    </ul>
+    
 
 <!-- 編集用フォーム -->
 
@@ -179,12 +171,12 @@ window.openCustomMenu = function(event, messageId, element) {
 
     currentMessageId = messageId;
     targetMessageElement = element;
-    console.log(targetMessageElement);
 
     const menu = document.getElementById('custom-menu');
     menu.style.top = `${event.clientY}px`;
     menu.style.left = `${event.clientX}px`;
     menu.classList.remove('hidden');
+    console.log(currentMessageId);
 };
 
 // DOM読み込み後にイベントを設定
@@ -194,8 +186,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 編集クリック時
     editItem.addEventListener("click", () => {
-        console.log('Editクリック時のelement:', targetMessageElement);
         if (!targetMessageElement) return;
+        console.log(currentMessageId);
 
         const currentText = targetMessageElement.innerText.trim();
         document.getElementById("message-input").value = currentText;

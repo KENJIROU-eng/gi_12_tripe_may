@@ -1,3 +1,6 @@
+<div>
+    {{$count}}
+</div>
 {{-- @if (!empty($groups) && count($groups) > 0)
     <div x-data="{ notificationOpen: false }" class="relative">
         <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
@@ -29,6 +32,3 @@
         </div>
     </div>
 @endif --}}
-<div>
-{{$count}}
-</div>
