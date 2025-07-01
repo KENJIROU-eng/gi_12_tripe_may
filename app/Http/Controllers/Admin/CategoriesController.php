@@ -20,7 +20,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $all_categories = $this->category->paginate(7)->onEachSide(2);
+        $all_categories = $this->category->paginate(6)->onEachSide(2);
 
         return view('admin.categories.show')
             ->with('all_categories', $all_categories);
@@ -40,13 +40,13 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_name' => 'required|min:1|max:1000',
+            'category_name' => 'required|min:1|max:1000|unique:categories,name',
         ]);
 
         $this->category->name = $request->category_name;
         $this->category->save();
 
-        $all_categories = $this->category->paginate(7)->onEachSide(2);
+        $all_categories = $this->category->paginate(6)->onEachSide(2);
 
         return redirect()->route('admin.categories.show')
             ->with('all_categories', $all_categories);

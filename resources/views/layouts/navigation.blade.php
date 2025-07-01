@@ -123,8 +123,8 @@
             {{-- 右：通知・ドロップダウン・ハンバーガー --}}
             <div class="absolute right-0 flex items-center h-full space-x-4 sm:space-x-12 pr-2">
                 {{-- 通知 --}}
-                {{-- @livewire('message-refresh', ['groups' => $groups, 'groupIds' => $groupIds]) --}}
-                @if ($groupIds)
+                @livewire('message-refresh-tmp')
+                {{-- @if ($groupIds)
                     <div x-data="{ notificationOpen: false }" class="relative">
                         <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
                             <i class="fa-solid fa-bell text-lg"></i>
@@ -154,7 +154,7 @@
                             @endif
                         </div>
                     </div>
-                @endif
+                @endif --}}
 
                 {{-- ドロップダウンとハンバーガー --}}
                 {{-- ドロップダウン（PC専用） --}}
@@ -172,7 +172,9 @@
                                 @endcan
                                 <x-dropdown-link :href="route('profile.show', Auth::id())"><i class="fa-solid fa-address-card"></i> Profile</x-dropdown-link>
                                 <x-dropdown-link :href="route('profile.users.list')"><i class="fa-solid fa-magnifying-glass"></i> Search Users</x-dropdown-link>
-                                <x-dropdown-link :href="route('settings')"><i class="fa-solid fa-gear"></i> Settings</x-dropdown-link>
+                                @if ((int)$enabled === 1) 
+                                    <x-dropdown-link :href="route('settings')"><i class="fa-solid fa-gear"></i> Settings</x-dropdown-link>
+                                @endif
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link href="#" onclick="event.preventDefault(); clearAudioSettings(); this.closest('form').submit();">

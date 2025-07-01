@@ -20,6 +20,9 @@
                             </button>
                         </form>
                     </div>
+                     @error('category_name')
+                        <div class="text-red-500 text-md">{{ $message }}</div>
+                    @enderror
 
                     {{-- コンテンツレイアウト --}}
                     <div class="flex flex-col lg:flex-row gap-6">

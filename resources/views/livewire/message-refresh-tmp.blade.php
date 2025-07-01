@@ -1,11 +1,10 @@
-@if ($groupIds)
+{{-- @if (!empty($groups) && count($groups) > 0)
     <div x-data="{ notificationOpen: false }" class="relative">
         <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
             <i class="fa-solid fa-bell text-lg"></i>
             @if ($nonReadCount_total > 0)
                 <span class="absolute -top-1 -right-1 inline-block w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {{-- {{ $nonReadCount_total }} --}}
-                    {{ $count }}
+                    {{ $nonReadCount_total }}
                 </span>
             @endif
         </button>
@@ -29,4 +28,7 @@
             @endif
         </div>
     </div>
-@endif
+@endif --}}
+<div>
+{{$count}}
+</div>

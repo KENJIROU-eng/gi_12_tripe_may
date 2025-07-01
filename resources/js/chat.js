@@ -294,6 +294,7 @@ for (let i = 0; i < length; i++) {
                     //     groupId: groupIds[i],
                     //     userId: myUserId,
                     // });
+                    Livewire.dispatch('refresh');
                     // window.dispatchEvent(new CustomEvent('refresh-messages', {
                     //     detail: {
                     //         groupId: groupId,
@@ -304,7 +305,7 @@ for (let i = 0; i < length; i++) {
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
-                        location.reload(); //notification count 用
+                        // location.reload(); //notification count 用
                     }, 4000);
                 };
             };

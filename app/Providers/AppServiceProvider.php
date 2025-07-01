@@ -31,7 +31,10 @@ class AppServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 $userId = $user->id;
                 $cacheKeyPrefix = 'shared_data_user_' . $userId;
-
+                $tripSchedule = [];
+                $tripName = [];
+                $tripId = [];
+                $routeUrls = [];
                 // グループ情報
                 $groupIds = Cache::remember("$cacheKeyPrefix:group_ids", 1, function () use ($userId) {
                     return GroupMember::where('user_id', $userId)->pluck('group_id')->toArray();
@@ -137,7 +140,7 @@ class AppServiceProvider extends ServiceProvider
                 ->with('weather', $weather)
                 ->with('todayItineraries', $todayItineraries)
                 ->with('tripId', $tripId)
-                ->with('routeUrls', $routeUrls);
+                ->with('routeUrls', $routeUrls)
                 ->with('myCountries', Country::where('user_id', $userId)->get())
                 ->with('tripId', $tripId);
             }

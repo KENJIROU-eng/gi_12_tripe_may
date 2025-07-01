@@ -30,6 +30,13 @@
                             </div>
                         @else
                             @foreach ($users as $user)
+                                @php
+                                    $memberIds = [];
+                                    foreach($group->users as $member) {
+                                        $memberIds[] = $member->id;
+                                    }
+                                @endphp
+                                @if ($user->isFollowed() || in_array($user->id, $memberIds))
                                 <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
                                     <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer"
                                         {{ $group->users->contains($user->id) ? 'checked' : '' }}>
@@ -45,6 +52,7 @@
                                         <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>
                                     </div>
                                 </label>
+                                @endif
                             @endforeach
                         @endif
                     </div>

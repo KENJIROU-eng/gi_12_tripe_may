@@ -20,6 +20,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+        <script src="https://unpkg.com/alpinejs" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         @livewireStyles
@@ -35,6 +36,12 @@
 
     </head>
     <body data-user-id="{{ Auth::user()->id }}" class="page-transition">
+        @php
+            session_start();
+            $myUserId = Auth::user()->id;
+            // セッションに保存されていると仮定
+            $enabled = $_SESSION["notificationsEnabled_user_$myUserId"] ?? 0;
+        @endphp
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Content -->
@@ -42,7 +49,10 @@
             {{-- <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;"> --}}
                 {{ $slot }}
             </main>
-            @include('layouts.footer')
+            {{-- groupのshowでは非表示 --}}
+            @if (!in_array(Route::currentRouteName(), ['message.show']))
+                @include('layouts.footer')
+            @endif
         </div>
         @stack('scripts')
         <script>

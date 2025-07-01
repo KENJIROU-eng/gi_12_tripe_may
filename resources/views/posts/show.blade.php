@@ -11,6 +11,7 @@
                             <div class="hidden md:block w-[100px]"></div>
                             <div class="container shadow-lg 2xl:w-3/5 w-4/5 max-h-[90vh] overflow-y-auto border mx-auto mb-3">
                                 <div class="flex items-center mt-4">
+                                    @if ($post->user)
                                     <div class="rounded-full overflow-hidden w-14 h-14 ml-4">
                                         @if ($post->user->avatar)
                                             <a href="{{ route('profile.show', $post->user->id) }}">
@@ -67,7 +68,7 @@
                                             @include('posts.modals.delete', ['post' => $post])
                                         </div>
                                     </div>
-
+                                    @endif
                                     <!-- Title -->
                                     <h1 class="font-bold text-center mb-2 text-2xl">{{ $post->title }}</h1>
 

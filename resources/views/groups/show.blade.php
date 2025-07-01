@@ -268,10 +268,10 @@
     </ul>
 
 <!-- 編集用フォーム -->
-<div id="edit-form" class="hidden mt-4">
+{{-- <div id="edit-form" class="hidden mt-4">
     <textarea id="edit-textarea" class="w-full p-2 border rounded"></textarea>
     <button id="submit-edit" class="mt-2 px-4 py-1 bg-blue-500 text-white rounded">送信</button>
-</div>
+</div> --}}
 
 
 <script>
@@ -309,13 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("message-input").focus();
         customMenu.classList.add("hidden");
     });
-
-
-
-    //     editForm.classList.add("hidden");
-    //     targetMessageElement = null;
-    //     currentMessageId = null;
-    // });
 
         const newText = editTextarea.value.trim();
 
@@ -358,8 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <input type="hidden" name="group_id" value="{{ $group->id }}">
 
         <input type="hidden" id="edit-message-id" name="edit_message_id" value="">
-        <textarea id="message-input" name="message" rows="1" placeholder="message..." class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300 resize-none max-h-[6rem] overflow-y-auto leading-relaxed text-sm sm:text-base"></textarea>
-
         <textarea id="message-input" name="message" rows="1" placeholder="message..." class="flex-1 p-2 rounded-lg focus:outline-none focus:ring focus:border-teal-500 resize-none max-h-[6rem] overflow-y-auto leading-relaxed text-sm sm:text-base"></textarea>
         <input type="file" name="image" accept="image/*" class="hidden" id="image-upload">
         <label for="image-upload" class="cursor-pointer">

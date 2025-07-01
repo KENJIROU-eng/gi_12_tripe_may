@@ -28,6 +28,12 @@ class TrackTransitionChatroom
                 $messageIds = Message::where('group_id', $groupId)->pluck('id')->toArray();
                 ReadMessage::whereIn('message_id', $messageIds)->where('user_id', Auth::User()->id)->whereNull('read_at')->update(['read_at' => now()]);
         }
+        
+        if (preg_match('#^/chat/(\d+)$#', $currentPath, $matches) && !preg_match('#^/chat/(\d+)$#', $previousPath)) {
+                $groupId = $matches[1];
+                $messageIds = Message::where('group_id', $groupId)->pluck('id')->toArray();
+                ReadMessage::whereIn('message_id', $messageIds)->where('user_id', Auth::User()->id)->whereNull('read_at')->update(['read_at' => now()]);
+        }
 
         return $next($request);
     }
