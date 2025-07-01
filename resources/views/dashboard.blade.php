@@ -38,7 +38,6 @@
                                 class="w-48 sm:w-48 md:w-48 rounded-full object-cover">
                         </div>
                     </div>
-
                     {{-- notification --}}
                     @livewire('notification-toggle')
 

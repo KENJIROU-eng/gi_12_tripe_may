@@ -2,7 +2,22 @@
     <div x-data="{ open: false, planOpen: false }" class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
         <div class="h-full relative flex items-center justify-center">
             
-            
+            <?php
+$__split = function ($name, $params = []) {
+    return [$name, $params];
+};
+[$__name, $__params] = $__split('message-notification', ['lazy' => true]);
+
+$__html = app('livewire')->mount($__name, $__params, 'lw-3562299566-0', $__slots ?? [], get_defined_vars());
+
+echo $__html;
+
+unset($__html);
+unset($__name);
+unset($__params);
+unset($__split);
+if (isset($__slots)) unset($__slots);
+?>
             <div class="absolute left-0 flex items-center gap-6 h-full space-x-8">
                 
                 <div class="flex items-center space-x-2">
@@ -127,23 +142,40 @@
             
             <div class="absolute right-0 flex items-center h-full space-x-4 sm:space-x-12 pr-2">
                 
-                <?php
-$__split = function ($name, $params = []) {
-    return [$name, $params];
-};
-[$__name, $__params] = $__split('message-notification');
+                <?php if($groupIds): ?>
+                    <div x-data="{ notificationOpen: false }" class="relative">
+                        <button @click.stop="notificationOpen = !notificationOpen" class="relative px-2 sm:ms-4 text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none focus:ring-0 focus:border-transparent" >
+                            <i class="fa-solid fa-bell text-lg"></i>
+                            <?php if($nonReadCount_total > 0): ?>
+                                <span class="absolute -top-1 -right-1 inline-block w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                                    <?php echo e($nonReadCount_total); ?>
 
-$__html = app('livewire')->mount($__name, $__params, 'lw-3562299566-0', $__slots ?? [], get_defined_vars());
+                                </span>
+                            <?php endif; ?>
+                        </button>
+                        <div x-show="notificationOpen" @click.outside="notificationOpen = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
+                            <?php $hasUnread = false; ?>
+                            <?php $__currentLoopData = $groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if($nonReadCount[$group->id] > 0): ?>
+                                    <?php $hasUnread = true; ?>
+                                    <a href="<?php echo e(route('message.show', $group->id)); ?>" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                        <?php echo e($group->name); ?>
 
-echo $__html;
+                                        <span class="ml-2 inline-block text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                            <?php echo e($nonReadCount[$group->id]); ?>
 
-unset($__html);
-unset($__name);
-unset($__params);
-unset($__split);
-if (isset($__slots)) unset($__slots);
-?>
-                
+                                        </span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php if(! $hasUnread): ?>
+                                <div class="px-4 py-2 text-sm text-gray-500 dark:text-gray-300">
+                                    No notification
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 
                 
@@ -224,7 +256,7 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginal68cb1971a2b92c9735f83359058f7108; ?>
 <?php unset($__componentOriginal68cb1971a2b92c9735f83359058f7108); ?>
 <?php endif; ?>
-                                <?php if(Auth::User()->notification != false): ?> 
+                                <?php if(Auth::User()->notification != false): ?>
                                     <?php if (isset($component)) { $__componentOriginal68cb1971a2b92c9735f83359058f7108 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal68cb1971a2b92c9735f83359058f7108 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.dropdown-link','data' => ['href' => route('settings')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -419,7 +451,7 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginald69b52d99510f1e7cd3d80070b28ca18; ?>
 <?php unset($__componentOriginald69b52d99510f1e7cd3d80070b28ca18); ?>
 <?php endif; ?>
-                    <?php if(Auth::User()->notification != false): ?> 
+                    <?php if(Auth::User()->notification != false): ?>
                         <?php if (isset($component)) { $__componentOriginald69b52d99510f1e7cd3d80070b28ca18 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald69b52d99510f1e7cd3d80070b28ca18 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.responsive-nav-link','data' => ['href' => route('settings')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>

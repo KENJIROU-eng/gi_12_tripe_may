@@ -4,13 +4,13 @@ namespace App\Livewire;
 
 use Livewire\Attributes\On;
 use Livewire\Component;
-use App\Models\Message;
+// use App\Models\Message;
 
 class MessageNotification extends Component
 {
     // public array $nonReadCount = [];
     // public int $nonReadCount_total = 0;
-    public $count = 0;
+    // public $count = 0;
     // public $groups = [];
     // public $groupIds = [];
 
@@ -19,11 +19,10 @@ class MessageNotification extends Component
     //     $this->groups = $groups ?? [];
     //     $this->groupIds = $groupIds ?? [];
     // }
-    
-    #[On('refresh')]
-    public function refreshMessages()
-    {
-        Log::debug('Livewire: refresh イベント受信 ✅');
+
+    // #[On('message-notice')]
+    // public function refreshMessages()
+    // {
         // $groupId = $params['groupId'] ?? null;
         // $userId = $params['userId'] ?? null;
         // $messageIds = Message::where('group_id', $groupId)->pluck('id');
@@ -32,20 +31,34 @@ class MessageNotification extends Component
         //     ->whereNull('read_at')
         //     ->count();
 
-        // $this->count = $count; 
+        // $this->count = $count;
         // $this->nonReadCount[$groupId] = $count;
         // $this->nonReadCount_total = array_sum($this->nonReadCount);
-        $this->count = Message::all()->count();
+        // $this->count = Message::all()->count();
+    //     $this->count = $this->count + 1;
+    // }
+
+    // public function render()
+    // {
+        // return view('livewire.message-notification',['count' => $this->count]);
+        // 'nonReadCount' => $this->nonReadCount,
+        // 'count' => $this->count,
+        // 'groups' => $this->groups,
+        // 'groupIds' => $this->groupIds,
+        // 'nonReadCount_total' => $this->nonReadCount_total,
+        // ]);
+    // }
+    public $count = 0;
+
+    #[On('message-notice')]
+    public function refreshMessages()
+    {
+        logger('refreshMessages 発火！');
+        $this->count++;
     }
 
     public function render()
     {
-        return view('livewire.message-notification',[
-        // 'nonReadCount' => $this->nonReadCount,
-        'count' => $this->count,
-        // 'groups' => $this->groups,
-        // 'groupIds' => $this->groupIds,
-        // 'nonReadCount_total' => $this->nonReadCount_total,
-        ]);
+        return view('livewire.message-notification', ['count' => $this->count]);
     }
 }

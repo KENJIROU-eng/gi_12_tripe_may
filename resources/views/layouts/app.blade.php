@@ -58,8 +58,6 @@
             };
             const routeUrls = @json($routeUrls ?? []);
         </script>
-
-
         @livewireScripts
     </body>
 </html>

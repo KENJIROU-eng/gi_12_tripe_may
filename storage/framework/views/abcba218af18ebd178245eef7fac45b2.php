@@ -60,8 +60,6 @@
             };
             const routeUrls = <?php echo json_encode($routeUrls ?? [], 15, 512) ?>;
         </script>
-
-
         <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
     </body>

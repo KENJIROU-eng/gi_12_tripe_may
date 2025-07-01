@@ -7,7 +7,7 @@ use Livewire\Attributes\On;
 
 class NotificationToggle extends Component
 {
-     public $user;
+    public $user;
 
     public function mount()
     {

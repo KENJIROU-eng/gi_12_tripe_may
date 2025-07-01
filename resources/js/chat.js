@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
             // alert('送信成功！');
             // 例えばフォームをリセットしたい場合
             document.getElementById('chat-form').reset();
-            
+
             textarea.value = '';
             textarea.style.height = 'auto';
             updateSendButton();
@@ -260,7 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // notification
-document.addEventListener('livewire:init', () => {
+// document.addEventListener('livewire:init', () => {
 for (let i = 0; i < length; i++) {
     window.Echo.private(`group.${groupIds[i]}`)
     .listen('.message.sent', (e) => {
@@ -270,7 +270,7 @@ for (let i = 0; i < length; i++) {
         if (Number(localStorage.getItem(`notificationsEnabled_user_${myUserId}`)) === 1) {
             if (!groupId) {
                 if (myUserId != e.user_id) {
-                    Livewire.dispatch('refresh');
+                    // Livewire.dispatch('message-notice');
                     const container = document.getElementById('notification-area');
                     if (!container) return;
 
@@ -307,7 +307,7 @@ for (let i = 0; i < length; i++) {
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
-                        // location.reload(); //notification count 用
+                        location.reload(); //notification count 用
                     }, 4000);
                 };
             };
@@ -320,7 +320,7 @@ for (let i = 0; i < length; i++) {
         };
     });
 }
-});
+// });
 
 
 
@@ -379,7 +379,7 @@ if (groupId && myUserId) {
                         <div class="flex items-end justify-end">
 
                             <div class="max-w-[70%]">
-                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>                            
+                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>
                                 <div class="mt-2">${messageContent}</div>
                             </div>
                         </div>
