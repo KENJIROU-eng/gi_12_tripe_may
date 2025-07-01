@@ -364,12 +364,16 @@ if (groupId && myUserId) {
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
-                            <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
-                            <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, ${e.message_id}, this)"
-                            x-data="{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }">
-                                <div style="word-break: break-word; overflow-wrap: break-word; ">
-                                    ${messageContent}
-                                </div>
+                            <div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
+                            </div>
+                        
+                            <div class="bg-teal-200 text-base lg:text-xl mr-2 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, ${e.message_id}, this)"
+                                x-data="{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }">
+                                    <div style="word-break: break-word; overflow-wrap: break-word; ">
+                                        ${messageContent}
+                                    </div>
                             </div>
                         </div>
                     `;
@@ -377,10 +381,12 @@ if (groupId && myUserId) {
                     // 画像だけの場合
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
-
                             <div class="max-w-[70%]">
-                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>
                                 <div class="mt-2">${messageContent}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
                             </div>
                         </div>
                     `;
@@ -395,14 +401,17 @@ if (groupId && myUserId) {
                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
                             <div class="flex space-x-2 items-end">
                                 <div class="max-w-[70%]">
-                                    <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
-                                    <div class="bg-white rounded-2xl p-3 shadow">
+                                    <div class="text-sm md:text-base text-gray-600 font-medium">${e.user_name}</div>
+                                    <div class="text-base lg:text-xl bg-white border border-gray-200 rounded-2xl p-3 shadow">
                                         <div style="word-break: break-word; overflow-wrap: break-word; ">
                                             ${messageContent}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-xs text-gray-400 items-end">${e.time}</div>
+                                <div>
+                                    <div class="text-xs  mt-1 text-gray-400 ml-1">${e.time_hm}</div>
+                                    <div class="text-xs  mt-1 text-gray-400 ml-1">${e.time_ymd}</div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -412,10 +421,13 @@ if (groupId && myUserId) {
                         <div class="flex items-start">
                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
                             <div class="max-w-[70%]">
-                                <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                <div class="text-sm md:text-base text-gray-600 font-medium">${e.user_name}</div>
                                 <div class="flex items-end space-y-1">
                                     <div>${messageContent}</div>
-                                    <div class="text-xs text-gray-400 ml-2">${e.time}</div>
+                                    <div>
+                                        <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_hm}</div>
+                                        <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_ymd}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
