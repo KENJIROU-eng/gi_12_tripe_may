@@ -40,12 +40,18 @@
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <?php echo $__env->make('layouts.navigation', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             <!-- Page Content -->
-            <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
-            
-                <?php echo e($slot); ?>
 
-            </main>
             
+
+            <main class="relative pt-12 min-h-screen" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
+                <?php if(Str::startsWith(Route::currentRouteName(), 'post.') || Str::startsWith(Route::currentRouteName(), 'group.')): ?>
+                    <div class="absolute inset-y-0  left-[3%] right-[3%] md:left-[10%] md:right-[10%] top-12 bottom-0 bg-gray-50 dark:bg-gray-800 z-0 "></div>
+                <?php endif; ?>
+                <div class="relative z-10">
+                    <?php echo e($slot); ?>
+
+                </div>
+            </main>
             <?php if(!in_array(Route::currentRouteName(), ['message.show'])): ?>
                 <?php echo $__env->make('layouts.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             <?php endif; ?>

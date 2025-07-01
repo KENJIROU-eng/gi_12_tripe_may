@@ -162,14 +162,12 @@
                 <?php endif; ?>
 
                 
-                <?php if(Auth::User()->notification != false): ?>
-                    <button id="sound-toggle" class=" text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none" aria-label="Toggle notification sound" title="Toggle notification sound">
-                        <i id="sound-icon" class="fa-solid fa-bell text-xl"></i>
-                        <span id="sound-status" class="ml-1 text-sm text-gray-500 dark:text-gray-300 hidden sm:inline-block">
-                            ON
-                        </span>
-                    </button>
-                <?php endif; ?>
+                <button id="sound-toggle" class=" text-gray-600 dark:text-gray-200 hover:text-yellow-500 focus:outline-none" aria-label="Toggle notification sound" title="Toggle notification sound">
+                    <i id="sound-icon" class="fa-solid fa-bell text-xl"></i>
+                    <span id="sound-status" class="ml-1 text-sm text-gray-500 dark:text-gray-300 hidden sm:inline-block">
+                        ON
+                    </span>
+                </button>
 
                 
                 

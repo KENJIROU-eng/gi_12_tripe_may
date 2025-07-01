@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
             } else {
                 Auth::logout();
                 return redirect('/login')->withErrors([
-                'email' => 'メールアドレスの認証がまだ完了していません。',
+                'email' => 'You do not finish email verification!',
                 ]);
             }
 

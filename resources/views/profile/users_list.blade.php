@@ -69,6 +69,10 @@
                         @endforeach
 
                     </div>
+                    {{-- ページネーション --}}
+                    <div class="flex justify-center mt-6">
+                        {{ $all_users->links('vendor.pagination.custom') }}
+                    </div>
                 </div>
             </div>
         </div>

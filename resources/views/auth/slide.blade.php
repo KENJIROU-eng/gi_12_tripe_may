@@ -4,17 +4,19 @@
         <div class="absolute w-full h-full flex flex-col sm:flex-row">
             <!-- 左ボックス -->
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-amber-100 text-yellow-700 z-0">
-                <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
-                <p class="text-xl mb-6">Design your <span class="text-yellow-600">tirp</span></p>
-                <p class="text-sm mb-2">Have an account?</p>
+                <h2 class="text-3xl font-semibold tracking-widest mb-2">Welcome to Tripe@s</h2>
+                <p class="text-xl">If you have an account,</p>
+                <p class="text-xl mb-6">please sign in</p>
+                {{-- <p class="text-sm mb-2">Have an account?</p> --}}
                 <button id="switchToLogin" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign in</button>
             </div>
 
             <!-- 右ボックス -->
             <div class="sm:w-1/2 w-full h-1/2 sm:h-full flex flex-col items-center justify-center bg-orange-100 text-green-700 z-0">
-                <h2 class="text-3xl font-semibold tracking-widest mb-2">Enjoyably &amp; Smoothly</h2>
-                <p class="text-xl mb-6">Design your <span class="text-yellow-600">trip</span></p>
-                <p class="text-sm mb-2">Don't have an account?</p>
+                <h2 class="text-3xl font-semibold tracking-widest mb-2">Welcome to Tripe@s</h2>
+                <p class="text-xl">If you don't have an account,</p>
+                <p class="text-xl mb-6">please sign up</p>
+                {{-- <p class="text-sm mb-2">Don't have an account?</p> --}}
                 <button id="switchToRegister" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-lime-100 transition">Sign up</button>
             </div>
         </div>
