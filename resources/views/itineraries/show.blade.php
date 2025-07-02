@@ -9,11 +9,6 @@
                     title="Next">
                     <i class="fa-solid fa-chevron-left text-xl"></i>
                 </a>
-                <a href=""
-                    class="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
-                    title="">
-                    <i class="fa-solid fa-chevron-left text-xl"></i>
-                </a>
 
                 {{-- 前 --}}
                 <a href="{{ $previous ? route('itinerary.show', $previous->id) : '#' }}"
@@ -23,27 +18,12 @@
                 </a>
             </div>
 
-            {{-- 左：メモパッド --}}
+            {{-- 左：ルート表示 --}}
             <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
-                <div class="sticky top-24 bg-white dark:bg-gray-800 border rounded p-4 shadow text-sm">
-                    <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200"><i class="fa-solid fa-file-pen text-blue-500"></i> Memo</h3>
-
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Jot down anything you like here!</p>
-
-                    <textarea id="itineraryMemo" data-save-url="{{ route('itinerary.memo.save', $itinerary->id) }}" data-csrf="{{ csrf_token() }}" class="w-full h-32 p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition" >{{ old('content', optional($itinerary->memo)->content) }}</textarea>
-
-                    <div class="flex justify-end mt-2">
-                        <button id="saveMemoBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded flex items-center justify-center gap-2" >
-                            <svg id="spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                            <span id="saveMemoText">Save</span>
-                        </button>
-                    </div>
-
-                    <p id="memoSavedMsg" class="hidden text-green-500 text-xs mt-2 transition-opacity duration-300">Memo saved!</p>
-                </div>
+                <h2 class="text-lg font-semibold text-blue-600 mb-2">Route Steps</h2>
+                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[736px]">
+                    {{-- JavaScriptでステップ追加 --}}
+                </ul>
             </div>
 
             {{-- 中央：旅程表 --}}
@@ -58,43 +38,46 @@
                             </a>
                             {{-- finish button --}}
                             @if (Auth::id() === $itinerary->created_by)
-                                <form action="{{ route('itinerary.toggleFinish', $itinerary->id) }}" method="POST" class="md:ml-10">
-                                    @csrf
-                                    <button type="submit"
-                                        class="relative inline-flex items-center h-8 w-28 rounded-full transition-colors duration-300 ease-in-out focus:outline-none
-                                        {{ $itinerary->finish_at ? 'bg-green-500' : 'bg-blue-500' }}">
-                                        <span class="sr-only">Toggle Trip Status</span>
+                                <div class="flex flex-col items-center md:ml-10">
+                                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1 hidden sm:block">
+                                        Toggle Trip Status
+                                    </p>
+                                    <form action="{{ route('itinerary.toggleFinish', $itinerary->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="relative inline-flex items-center h-8 w-28 rounded-full transition-colors duration-300 ease-in-out focus:outline-none
+                                            {{ $itinerary->finish_at ? 'bg-green-500' : 'bg-blue-500' }}">
+                                            <span class="sr-only">Trip Progress Switch</span>
 
-                                        {{-- 左ラベル --}}
-                                        <span class="absolute left-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
-                                            {{ $itinerary->finish_at ? 'opacity-100' : 'opacity-0' }}">
-                                            Finish
-                                        </span>
+                                            {{-- 左ラベル --}}
+                                            <span class="absolute left-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                                {{ $itinerary->finish_at ? 'opacity-100' : 'opacity-0' }}">
+                                                Finish
+                                            </span>
 
-                                        {{-- 右ラベル --}}
-                                        <span class="absolute right-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
-                                            {{ $itinerary->finish_at ? 'opacity-0' : 'opacity-100' }}">
-                                            In progress
-                                        </span>
+                                            {{-- 右ラベル --}}
+                                            <span class="absolute right-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                                {{ $itinerary->finish_at ? 'opacity-0' : 'opacity-100' }}">
+                                                In progress
+                                            </span>
 
-                                        {{-- スライダー --}}
-                                        <span x-data="{ isWalking: true }" x-init="setInterval(() => isWalking = !isWalking, 500)" class="absolute inline-block h-7 w-10 rounded-full bg-white shadow transform transition duration-300 ease-in-out {{ $itinerary->finish_at ? 'translate-x-[68px]' : 'translate-x-1' }} flex items-center justify-center text-blue-500">
-                                            <template x-if="!@js($itinerary->finish_at)">
-                                                <i x-show="isWalking" class="fa-solid fa-person-walking text-sm"></i>
-                                            </template>
-                                            <template x-if="!@js($itinerary->finish_at)">
-                                                <i x-show="!isWalking" class="fa-solid fa-person-running text-sm"></i>
-                                            </template>
+                                            {{-- スライダー --}}
+                                            <span x-data="{ isWalking: true }" x-init="setInterval(() => isWalking = !isWalking, 500)" class="absolute inline-block h-7 w-10 rounded-full bg-white shadow transform transition duration-300 ease-in-out {{ $itinerary->finish_at ? 'translate-x-[68px]' : 'translate-x-1' }} flex items-center justify-center text-blue-500">
+                                                <template x-if="!@js($itinerary->finish_at)">
+                                                    <i x-show="isWalking" class="fa-solid fa-person-walking text-sm"></i>
+                                                </template>
+                                                <template x-if="!@js($itinerary->finish_at)">
+                                                    <i x-show="!isWalking" class="fa-solid fa-person-running text-sm"></i>
+                                                </template>
 
-                                            {{-- 完了状態は静的なチェックマーク --}}
-                                            @if ($itinerary->finish_at)
-                                                <i class="fa-solid fa-bed text-sm text-green-500"></i>
-                                            @endif
-                                        </span>
-
-
-                                    </button>
-                                </form>
+                                                {{-- 完了状態は静的なチェックマーク --}}
+                                                @if ($itinerary->finish_at)
+                                                    <i class="fa-solid fa-bed text-sm text-green-500"></i>
+                                                @endif
+                                            </span>
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
 
                         </div>
@@ -196,9 +179,11 @@
                                             </a>
 
                                             {{-- Delete --}}
-                                            <span class="flex items-center text-red-500">
-                                                @include('itineraries.modals.delete', ['itinerary' => $itinerary, 'showText' => true])
-                                            </span>
+                                            @if (Auth::id() === $itinerary->created_by)
+                                                <span class="flex items-center text-red-500">
+                                                    @include('itineraries.modals.delete', ['itinerary' => $itinerary, 'showText' => true])
+                                                </span>
+                                            @endif
                                         @endif
                                     </div>
                                 </div>
@@ -324,12 +309,88 @@
                 </div>
             </div>
 
-            {{-- 右：ルート表示 --}}
-            <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
-                <h2 class="text-lg font-semibold text-blue-600 mb-2">Route Steps</h2>
-                <ul id="route-steps" class="space-y-2 text-sm text-gray-700 dark:text-gray-200 overflow-y-auto max-h-[736px]">
-                    {{-- JavaScriptでステップ追加 --}}
-                </ul>
+            {{-- 右：How to Use・メモパッド --}}
+            <div class="w-full lg:w-1/5 max-w-sm order-3 lg:order-none space-y-4">
+
+                {{-- How to Useカード --}}
+                <div class="border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4">
+                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
+                        <h2 class="text-base font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                            <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> How to Use This Page
+                        </h2>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-route text-purple-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">View Itinerary Details</p>
+                                <p>Scroll through your daily destinations, transportation modes, and total travel distances and durations.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-toggle-on text-green-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">Trip Status</p>
+                                <p>If you're the creator, you can toggle between "In progress" and "Finished" to mark the status of this trip.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-people-group text-blue-400 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">Group Info</p>
+                                <p>Check which group this trip is shared with and who the members are.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-money-bill-wave text-yellow-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">GoDutch</p>
+                                <p>View and manage shared bills among group members.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-box-open text-pink-400 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">Belongings</p>
+                                <p>Track shared items and who is responsible for bringing each one.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-map-location-dot text-red-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold">Route Map</p>
+                                <p>At the bottom, check the full map overview with your stops and calculated routes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Memoパッドカード --}}
+                <div class="sticky top-24 bg-white dark:bg-gray-800 border rounded p-4 shadow text-sm">
+                    <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200">
+                        <i class="fa-solid fa-file-pen text-blue-500"></i> Memo
+                    </h3>
+
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Jot down anything you like here!</p>
+
+                    <textarea id="itineraryMemo" data-save-url="{{ route('itinerary.memo.save', $itinerary->id) }}" data-csrf="{{ csrf_token() }}" class="w-full h-[70px] p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition">{{ old('content', optional($itinerary->memo)->content) }}</textarea>
+
+                    <div class="flex justify-end mt-2">
+                        <button id="saveMemoBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded flex items-center justify-center gap-2">
+                            <svg id="spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span id="saveMemoText">Save</span>
+                        </button>
+                    </div>
+
+                    <p id="memoSavedMsg" class="hidden text-green-500 text-xs mt-2 transition-opacity duration-300">Memo saved!</p>
+                </div>
             </div>
         </div>
     </div>

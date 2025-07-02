@@ -1,6 +1,10 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
+            {{-- 左 --}}
+            <div class="w-full lg:w-1/5"></div>
+
+            {{-- 中央 --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
                 {{-- タイトル --}}
                 <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
@@ -153,6 +157,66 @@
                 @endpush
 
             </div>
+
+            {{-- 右 --}}
+            <div class="w-full lg:w-1/5">
+                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
+                    <h2 class="text-base font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                        How to Use
+                                    </h2>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-pen-to-square text-blue-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 1: Modify Basic Information</p>
+                            <p>You can update the itinerary title and trip dates.</p>
+                            <p>Only the creator of the itinerary can change the associated group.</p>
+                            <p class="text-red-600 dark:text-red-400 font-semibold mt-1">
+                                ⚠️ Note: If the group is changed, all GoDutch bill data will be deleted.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-calendar-days text-green-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 2: Check the Daily Layout</p>
+                            <p>Each day within your trip duration will show its own destination input section.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-map-pin text-red-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 3: Edit Destinations</p>
+                            <p>Change, add, or remove the places you plan to visit. Each place has its own travel mode option.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-arrows-up-down-left-right text-yellow-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 4: Reorder If Needed</p>
+                            <p>Drag and drop destinations to adjust the visiting order for each day.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-route text-purple-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 5: Review Route Updates</p>
+                            <p>Distances and durations are recalculated based on the updated order and travel modes.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-floppy-disk text-teal-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 6: Save Your Changes</p>
+                            <p>Click the “Update” button to apply the changes to your itinerary.</p>
+                        </div>
+                    </div>
+                </div>
+
         </div>
     </div>
     {{-- Scroll to Top Button --}}

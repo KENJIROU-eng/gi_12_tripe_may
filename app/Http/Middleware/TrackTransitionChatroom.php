@@ -22,11 +22,22 @@ class TrackTransitionChatroom
     {
         $currentPath = '/' . ltrim(request()->path(), '/');
         $previousPath = '/' . ltrim(session()->get('previous_path', '/'), '/');
+        $previousPage = parse_url(url()->previous(), PHP_URL_PATH);
+        $currentPage = $request->path();
 
         if (preg_match('#^/chat/(\d+)$#', $currentPath, $matches) && !preg_match('#^/chat/(\d+)$#', $previousPath)) {
                 $groupId = $matches[1];
                 $messageIds = Message::where('group_id', $groupId)->pluck('id')->toArray();
                 ReadMessage::whereIn('message_id', $messageIds)->where('user_id', Auth::User()->id)->whereNull('read_at')->update(['read_at' => now()]);
+        }
+
+         if (preg_match('#^/chat/(\d+)$#', $previousPage, $matches) && !preg_match('#^/chat/(\d+)$#', $currentPage)) {
+            if (!preg_match('#^/logout#', $currentPage) && $currentPage !== '/') {
+                $groupId = $matches[1];
+                $group = Group::findOrFail($groupId);
+                $messages = $group->messages->pluck('id')->toArray();
+                $readMessages = ReadMessage::whereIn('message_id', $messages)->where('user_id', Auth::User()->id)->whereNull('read_at')->update(['read_at' => now()]);
+            }
         }
 
         return $next($request);

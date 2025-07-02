@@ -1,26 +1,30 @@
 <x-app-layout class="h-screen flex flex-col overflow-hidden">
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
+            {{-- 左 --}}
+            <div class="w-full lg:w-1/5"></div>
+
+            {{-- 中央 --}}
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
                 {{-- タイトル --}}
                 <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
-                {{-- 戻るボタン（左） --}}
-                <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
-                    <a href="{{ route('itinerary.index') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
-                        <i class="fa-solid fa-arrow-left mr-1"></i> Back
-                    </a>
-                </div>
+                    {{-- 戻るボタン（左） --}}
+                    <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
+                        <a href="{{ route('itinerary.index') }}" class="inline-flex items-center text-sm text-blue-500 hover:underline">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                        </a>
+                    </div>
 
-                {{-- タイトル（中央） --}}
-                <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
-                    <i class="fa-solid fa-c"></i>
-                    <i class="fa-solid fa-r"></i>
-                    <i class="fa-solid fa-e"></i>
-                    <i class="fa-solid fa-a"></i>
-                    <i class="fa-solid fa-t"></i>
-                    <i class="fa-solid fa-e"></i>
-                </h1>
-            </div>
+                    {{-- タイトル（中央） --}}
+                    <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
+                        <i class="fa-solid fa-c"></i>
+                        <i class="fa-solid fa-r"></i>
+                        <i class="fa-solid fa-e"></i>
+                        <i class="fa-solid fa-a"></i>
+                        <i class="fa-solid fa-t"></i>
+                        <i class="fa-solid fa-e"></i>
+                    </h1>
+                </div>
 
                 <form id="itineraryForm" action="{{ route('itinerary.store') }}" method="POST" class="space-y-8">
                     @csrf
@@ -108,6 +112,62 @@
                     <script src="{{ asset('js/itineraries/create.js') }}"></script>
                     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap" async defer></script>
                 @endpush
+            </div>
+
+            {{-- 右 --}}
+            <div class="w-full lg:w-1/5">
+                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
+                    <h2 class="text-base font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                        How to Use
+                    </h2>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-pen text-blue-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 1: Set the Trip Info</p>
+                            <p>Enter a title and select the start and end dates of your trip.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-calendar-days text-green-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 2: Generate Daily Sections</p>
+                            <p>Once the dates are selected, destination fields for each day will appear.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot text-red-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 3: Add Your Destinations</p>
+                            <p>Input the names of each place you plan to visit and choose a travel mode (e.g., walking, driving).</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-up-down-left-right text-yellow-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 4: Reorder Destinations</p>
+                            <p>Drag and drop to reorder destinations — the system uses this order to calculate routes.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-route text-purple-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 5: Review the Route</p>
+                            <p>Distances and durations are automatically calculated between stops.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-teal-500 mt-1"></i>
+                        <div>
+                            <p class="font-semibold">Step 6: Create Itinerary</p>
+                            <p>Click the “Create” button to save your trip and proceed to the next step.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
