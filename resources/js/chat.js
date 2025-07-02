@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
     //06−27追加
     const imageInput = document.getElementById('image-upload');
     const textarea = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send-btn'); 
+    const sendBtn = document.getElementById('send-btn');
     // const messageInput = form.querySelector('input[name="message"]');
     // const imageInput = form.querySelector('input[name="image"]');
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
     imageInput.addEventListener('change', updateSendButton);
 
 
-    
+
 
     //3.フォーム送信イベントをキャッチ
     form.addEventListener('submit', async (e) => {
@@ -67,17 +67,27 @@ document.addEventListener('DOMContentLoaded', () => { //ページ内のHTML要�
 
         const data = await response.json();
         if (data.success) {
+
+            if (data.mode === 'edit') {
+                location.reload();
+            }else {
+                // alert('送信成功！');
+                // 例えばフォームをリセットしたい場合
+                document.getElementById('chat-form').reset();
+                //今日追加したやつ27/06
+
             // alert('送信成功！');
             // 例えばフォームをリセットしたい場合
             document.getElementById('chat-form').reset();
-            
+
             textarea.value = '';
             textarea.style.height = 'auto';
             updateSendButton();
 
-            const messagesDiv = document.getElementById('messages');
-            if (messagesDiv) {
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                const messagesDiv = document.getElementById('messages');
+                if (messagesDiv) {
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
             }
         } else {
             alert('送信に失敗しました。');
@@ -230,12 +240,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.enableNotification = function () {
     document.getElementById('notify-box').style.display = 'none';
+    Livewire.dispatch('notification-enabled');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '1');
     location.reload();
 }
 
 window.dismissNotification = function () {
     document.getElementById('notify-box').style.display = 'none';
+    Livewire.dispatch('notification-dismiss');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '0');
 }
 
@@ -248,6 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // notification
+// document.addEventListener('livewire:init', () => {
 for (let i = 0; i < length; i++) {
     window.Echo.private(`group.${groupIds[i]}`)
     .listen('.message.sent', (e) => {
@@ -257,6 +270,7 @@ for (let i = 0; i < length; i++) {
         if (Number(localStorage.getItem(`notificationsEnabled_user_${myUserId}`)) === 1) {
             if (!groupId) {
                 if (myUserId != e.user_id) {
+                    // Livewire.dispatch('message-notice');
                     const container = document.getElementById('notification-area');
                     if (!container) return;
 
@@ -275,6 +289,21 @@ for (let i = 0; i < length; i++) {
                     audio.play().catch(e => console.error("Audio play error:", e));
                     };
 
+                    // if (window.Livewire && typeof window.Livewire.trigger === 'function') {
+                    //     console.log('送信！', groupIds[i], myUserId);
+                    //     window.Livewire.trigger('refreshMessages', groupIds[i], myUserId);
+                    // }
+                    // Livewire.dispatch('refresh', {
+                    //     groupId: groupIds[i],
+                    //     userId: myUserId,
+                    // });
+                    // window.dispatchEvent(new CustomEvent('refresh-messages', {
+                    //     detail: {
+                    //         groupId: groupId,
+                    //         userId: myUserId
+                    //     }
+                    // }));
+
                     // 10秒後に自動削除
                     setTimeout(() => {
                         notification.remove();
@@ -291,6 +320,7 @@ for (let i = 0; i < length; i++) {
         };
     });
 }
+// });
 
 
 
@@ -328,17 +358,22 @@ if (groupId && myUserId) {
             if (e.image_url) {
                 messageContent += `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">`;
             }
-            
+
             if (isMine) {
                 // テキストがある場合は枠付き
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
-                            <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time}</div>
-                            <div class="bg-green-300 rounded-2xl p-3 max-w-[70%] shadow">
-                                <div style="word-break: break-word; overflow-wrap: break-word; ">
-                                    ${messageContent}
-                                </div>
+                            <div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
+                            </div>
+                        
+                            <div class="bg-teal-200 text-base lg:text-xl mr-2 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, ${e.message_id}, this)"
+                                x-data="{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }">
+                                    <div style="word-break: break-word; overflow-wrap: break-word; ">
+                                        ${messageContent}
+                                    </div>
                             </div>
                         </div>
                     `;
@@ -346,14 +381,19 @@ if (groupId && myUserId) {
                     // 画像だけの場合
                     wrapper.innerHTML = `
                         <div class="flex items-end justify-end">
-                                <div class="text-xs text-gray-400 mt-1 mr-2">${e.time}</div>                            
+                            <div class="max-w-[70%]">
                                 <div class="mt-2">${messageContent}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
+                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
+                            </div>
                         </div>
                     `;
                 }
-                wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id})`);
-                wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
-            
+                // wrapper.setAttribute('oncontextmenu', `openCustomMenu(event, ${e.message_id}, this)`);
+                // wrapper.setAttribute('x-data', `{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }`);
+
             } else {
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
@@ -361,14 +401,17 @@ if (groupId && myUserId) {
                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
                             <div class="flex space-x-2 items-end">
                                 <div class="max-w-[70%]">
-                                    <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
-                                    <div class="bg-white rounded-2xl p-3 shadow">
+                                    <div class="text-sm md:text-base text-gray-600 font-medium">${e.user_name}</div>
+                                    <div class="text-base lg:text-xl bg-white border border-gray-200 rounded-2xl p-3 shadow">
                                         <div style="word-break: break-word; overflow-wrap: break-word; ">
                                             ${messageContent}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-xs text-gray-400 items-end">${e.time}</div>
+                                <div>
+                                    <div class="text-xs  mt-1 text-gray-400 ml-1">${e.time_hm}</div>
+                                    <div class="text-xs  mt-1 text-gray-400 ml-1">${e.time_ymd}</div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -378,23 +421,27 @@ if (groupId && myUserId) {
                         <div class="flex items-start">
                             <img src="${e.avatar_url ?? '/images/user.png'}" class="w-8 h-8 rounded-full mt-1" alt="${e.user_name}">
                             <div class="max-w-[70%]">
-                                <div class="text-sm text-gray-600 font-medium">${e.user_name}</div>
+                                <div class="text-sm md:text-base text-gray-600 font-medium">${e.user_name}</div>
                                 <div class="flex items-end space-y-1">
                                     <div>${messageContent}</div>
-                                    <div class="text-xs text-gray-400 ml-2">${e.time}</div>
+                                    <div>
+                                        <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_hm}</div>
+                                        <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_ymd}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
             }
-            
+
             //自分のメッセージは右寄せ（緑背景）、他人のは左寄せ（白背景）にする
 
             //DOMに追加してスクロール
             // messagesDiv.appendChild(messageElement); //メッセージをチャットに追加
             Alpine.initTree(wrapper);
             messagesDiv.appendChild(wrapper);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; //チャットのスクロールを一番下に自動で移動
             requestAnimationFrame(() => {
                 const img = wrapper.querySelector('img');
                 if (img) {

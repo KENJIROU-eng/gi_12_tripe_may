@@ -211,17 +211,17 @@
             <div class="relative w-64 bg-white dark:bg-gray-900 p-4 h-full overflow-y-auto z-40">
                 @auth
                     @can('admin')
-                        <x-responsive-nav-link :href="route('admin.users.show')"><i class="fa-solid fa-user-secret"></i> Admin</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('admin.users.show')">Admin</x-responsive-nav-link>
                     @endcan
-                    <x-responsive-nav-link :href="route('post.list')" :active="request()->routeIs('post*')"><i class="fa-solid fa-camera text-red-500 opacity-70"></i> Post</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('itinerary.index')" :active="request()->routeIs('itinerary*')"><i class="fa-solid fa-road text-blue-500 opacity-70"></i> Itinerary</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('group*')"><i class="fa-solid fa-comments text-yellow-500 opacity-70"></i> Group</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('profile.show', Auth::id())"><i class="fa-solid fa-address-card"></i> Profile</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('profile.users.list')"><i class="fa-solid fa-magnifying-glass"></i> Search Users</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('settings')"><i class="fa-solid fa-gear"></i> Settings</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('post.list')" :active="request()->routeIs('post*')">Post</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('itinerary.index')" :active="request()->routeIs('itinerary*')">Itinerary</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('group*')">Group</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('profile.show', Auth::id())">Profile</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('profile.users.list')">Search Users</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('settings')">Settings</x-responsive-nav-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <x-responsive-nav-link href="#" onclick="event.preventDefault(); this.closest('form').submit();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</x-responsive-nav-link>
+                        <x-responsive-nav-link href="#" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-responsive-nav-link>
                     </form>
                 @endauth
             </div>

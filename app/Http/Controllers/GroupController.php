@@ -28,7 +28,21 @@ class GroupController extends Controller
             'message' => 'nullable|string',
             'image' =>'nullable|image|max:2048',
             'group_id' => 'required|exists:groups,id',
+            'edit_message_id' => 'nullable|exists:messages,id',
         ]);
+
+        // 編集の場合
+        if ($request->filled('edit_message_id')) {
+            $message = Message::where('id', $request->edit_message_id)
+                ->where('user_id', auth()->id()) // 自分のメッセージだけ
+                ->firstOrFail();
+
+            $message->message = $request->message;
+            $message->save();
+
+            return response()->json(['success' => true, 'image_url' => $message->image_url ?? '','mode' => 'edit',]);
+            // return redirect()->back()->with('status', 'メッセージを更新しました');
+        }else {
 
         $user = auth()->user();
         $imageUrl = null;
@@ -62,6 +76,7 @@ class GroupController extends Controller
         return response()->json(['success' => true, 'image_url' => $message->image_url ?? '',]); //成功したらJSONレスポンスを返す
         //return back();
         //return response()->json(['status' => 'Message sent!']);
+        }
     }
 
     //メッセージを表示

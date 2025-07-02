@@ -14,6 +14,9 @@
                 <input type="text" name="name" id="name-{{ $group->id }}" value="{{ $group->name }}"
                         class="w-3/4 mt-1 p-2 block rounded-md focus:ring focus:border-blue-300 ml-2" required>
             </div>
+            @error('name')
+                <div class="text-red-500 text-xs">{{ $message }}</div>
+            @enderror
 
             <div class="flex justify-center">
                 {{-- Members --}}
@@ -30,6 +33,13 @@
                             </div>
                         @else
                             @foreach ($users as $user)
+                                @php
+                                    $memberIds = [];
+                                    foreach($group->users as $member) {
+                                        $memberIds[] = $member->id;
+                                    }
+                                @endphp
+                                @if ($user->isFollowed() || in_array($user->id, $memberIds))
                                 <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
                                     <input type="checkbox" name="members[]" value="{{ $user->id }}" class="hidden peer"
                                         {{ $group->users->contains($user->id) ? 'checked' : '' }}>
@@ -45,6 +55,7 @@
                                         <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>
                                     </div>
                                 </label>
+                                @endif
                             @endforeach
                         @endif
                     </div>
@@ -59,10 +70,13 @@
 
                     <input type="file" name="image" id="image-{{ $group->id }}" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 text-center">
                 </div>
+                @error('image')
+                    <div class="text-red-500 text-xs">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="flex justify-end mt-6 gap-2">
-                <button type="button" @click="showEditModal = false" class="bg-gray-400 text-black px-4 py-2 rounded hover:bg-gray-500">Cancel</button>
+                <button type="button" @click="showEditModal = false" class="bg-white border border-gray-400 text-black px-4 py-2 rounded hover:bg-gray-300">Cancel</button>
                 <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Update Group</button>
             </div>
         </form>

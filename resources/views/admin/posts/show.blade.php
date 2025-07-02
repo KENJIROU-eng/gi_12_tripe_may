@@ -43,10 +43,11 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($all_posts as $post)
+                                        @if ($post->user)
                                         <tr class="{{ $loop->odd ? 'bg-green-100' : 'bg-green-50' }} text-sm sm:text-base">
                                             <td class="py-2">{{ $post->id }}</td>
                                             <td class="py-2">
-                                                @if ($post->user->avatar)
+                                                @if ($post->user && $post->user->avatar)
                                                     <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mx-auto object-cover">
                                                 @else
                                                     <i class="fa-solid fa-circle-user text-blue-600 text-lg sm:text-xl"></i>
@@ -67,6 +68,7 @@
                                                 </form>
                                             </td>
                                         </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>

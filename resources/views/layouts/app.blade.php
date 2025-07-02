@@ -20,9 +20,10 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-        @livewireStyles
+        <script src="https://unpkg.com/alpinejs" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        @livewireStyles
 
         {{-- Stylesheet --}}
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -38,11 +39,17 @@
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
             <!-- Page Content -->
-            <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
-            {{-- <main class="pt-12" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;"> --}}
-                {{ $slot }}
+
+            
+
+            <main class="relative pt-12 min-h-screen" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
+                @if (Str::startsWith(Route::currentRouteName(), 'post.') || Str::startsWith(Route::currentRouteName(), 'group.'))
+                    <div class="absolute inset-y-0  left-[3%] right-[3%] md:left-[10%] md:right-[10%] top-12 bottom-0 bg-gray-50 dark:bg-gray-800 z-0 "></div>
+                @endif
+                <div class="relative z-10">
+                    {{ $slot }}
+                </div>
             </main>
-            {{-- groupのshowでは非表示 --}}
             @if (!in_array(Route::currentRouteName(), ['message.show']))
                 @include('layouts.footer')
             @endif
@@ -57,8 +64,6 @@
             };
             const routeUrls = @json($routeUrls ?? []);
         </script>
-
-
         @livewireScripts
     </body>
 </html>

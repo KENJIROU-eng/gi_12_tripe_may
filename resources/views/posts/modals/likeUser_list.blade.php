@@ -14,17 +14,19 @@
             @foreach ($post->likes as $like)
                 <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                     <a href="" class="flex items-center space-x-4 w-full ml-2">
-                        @if ($like->user->avatar)
+                        @if (optional($like->user)->avatar)
                             <img src="{{ $like->user->avatar }}" alt="{{ $like->user->name }}" class="w-12 h-12 rounded-full object-cover">
                         @else
-                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                            {{ strtoupper(substr($like->user->name, 0, 1)) }}
-                        </div>
+                            @if (optional($like->user)->name)
+                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                    {{ strtoupper(substr($like->user->name, 0, 1)) }}
+                                </div>
+                                
+                                <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                    <p class="font-semibold text-2xl truncate ">{{ $like->user->name }}</p>
+                                </div>
+                            @endif
                         @endif
-
-                        <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                            <p class="font-semibold text-2xl truncate ">{{ $like->user->name }}</p>
-                        </div>
                     </a>
                 </div>
             @endforeach

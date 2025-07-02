@@ -139,8 +139,12 @@
             </div>
         </div>
 
+
     </div>
-    @push('scripts')
+
+        
+        @push('scripts')
+
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const countryNameInput = document.getElementById('countryName');
@@ -148,7 +152,6 @@
                 const citySelect = document.getElementById('citySelect');
 
                 const countryMap = {"Japan":"jp","United States":"us","Canada":"ca","United Kingdom":"gb","France":"fr","Germany":"de","Italy":"it","Spain":"es","Portugal":"pt","Netherlands":"nl","Belgium":"be","Switzerland":"ch","Austria":"at","Sweden":"se","Norway":"no","Denmark":"dk","Finland":"fi","Ireland":"ie","Russia":"ru","Poland":"pl","Czech Republic":"cz","Hungary":"hu","Greece":"gr","Turkey":"tr","Israel":"il","Saudi Arabia":"sa","United Arab Emirates":"ae","Egypt":"eg","South Africa":"za","Morocco":"ma","Nigeria":"ng","Kenya":"ke","India":"in","Pakistan":"pk","Bangladesh":"bd","Sri Lanka":"lk","Nepal":"np","Thailand":"th","Vietnam":"vn","Malaysia":"my","Singapore":"sg","Indonesia":"id","Philippines":"ph","Cambodia":"kh","Laos":"la","Myanmar":"mm","China":"cn","Taiwan":"tw","Hong Kong":"hk","South Korea":"kr","Mongolia":"mn","Australia":"au","New Zealand":"nz","Mexico":"mx","Brazil":"br","Argentina":"ar","Chile":"cl","Peru":"pe","Colombia":"co","Venezuela":"ve","Panama":"pa","Cuba":"cu","Jamaica":"jm","Guatemala":"gt","Ukraine":"ua","Croatia":"hr","Serbia":"rs","Romania":"ro","Bulgaria":"bg","Estonia":"ee","Latvia":"lv","Lithuania":"lt","Iceland":"is","Kazakhstan":"kz","Iran":"ir","Iraq":"iq","Syria":"sy","Jordan":"jo","Lebanon":"lb","Qatar":"qa","Bahrain":"bh","Oman":"om","Kuwait":"kw","Algeria":"dz","Tunisia":"tn","Libya":"ly","Ethiopia":"et","Uganda":"ug","Tanzania":"tz","Zimbabwe":"zw","Angola":"ao","Zambia":"zm","Mozambique":"mz","Sudan":"sd","Cameroon":"cm","Senegal":"sn","Ghana":"gh","Ivory Coast":"ci","Republic of the Congo":"cg","Democratic Republic of the Congo":"cd","Madagascar":"mg","Paraguay":"py","Uruguay":"uy","Bolivia":"bo","Ecuador":"ec","Suriname":"sr","Guyana":"gy"};
-
                 const countryCityMap={"Japan":["Tokyo","Osaka","Kyoto","Aichi","Kumamoto"],"United States":["New York","Los Angeles","Chicago"],"Canada":["Toronto","Vancouver","Montreal"],"United Kingdom":["London","Manchester","Edinburgh"],"Australia":["Sydney","Melbourne","Brisbane"],"Germany":["Berlin","Munich","Hamburg"],"France":["Paris","Lyon","Marseille"],"Italy":["Rome","Milan","Venice"],"Spain":["Madrid","Barcelona","Valencia"],"Mexico":["Mexico City","Cancun","Guadalajara"],"Brazil":["São Paulo","Rio de Janeiro","Brasília"],"Argentina":["Buenos Aires","Córdoba","Rosario"],"South Africa":["Johannesburg","Cape Town","Durban"],"Russia":["Moscow","Saint Petersburg","Novosibirsk"],"China":["Beijing","Shanghai","Guangzhou"],"India":["Mumbai","Delhi","Bangalore"],"Indonesia":["Jakarta","Bali","Surabaya"],"South Korea":["Seoul","Busan","Incheon"],"Turkey":["Istanbul","Ankara","Izmir"],"Netherlands":["Amsterdam","Rotterdam","The Hague"],"Switzerland":["Zurich","Geneva","Basel"],"Sweden":["Stockholm","Gothenburg","Malmö"],"Norway":["Oslo","Bergen","Trondheim"],"Denmark":["Copenhagen","Aarhus","Odense"],"Finland":["Helsinki","Turku","Tampere"],"Belgium":["Brussels","Antwerp","Ghent"],"Austria":["Vienna","Salzburg","Graz"],"Portugal":["Lisbon","Porto","Faro"],"Greece":["Athens","Thessaloniki","Heraklion"],"Poland":["Warsaw","Krakow","Wroclaw"],"Czech Republic":["Prague","Brno","Ostrava"],"Hungary":["Budapest","Debrecen","Szeged"],"Ireland":["Dublin","Cork","Galway"],"New Zealand":["Auckland","Wellington","Christchurch"],"Chile":["Santiago","Valparaiso","Concepción"],"Colombia":["Bogotá","Medellín","Cali"],"Peru":["Lima","Cusco","Arequipa"],"Egypt":["Cairo","Alexandria","Giza"],"United Arab Emirates":["Dubai","Abu Dhabi","Sharjah"],"Saudi Arabia":["Riyadh","Jeddah","Dammam"],"Israel":["Tel Aviv","Jerusalem","Haifa"],"Thailand":["Bangkok","Chiang Mai","Phuket"],"Vietnam":["Hanoi","Ho Chi Minh City","Da Nang"],"Malaysia":["Kuala Lumpur","George Town","Malacca"],"Singapore":["Singapore"],"Philippines":["Manila","Cebu","Davao"],"Pakistan":["Karachi","Lahore","Islamabad"],"Bangladesh":["Dhaka","Chittagong","Sylhet"],"Sri Lanka":["Colombo","Kandy","Galle"],"Nepal":["Kathmandu","Pokhara","Biratnagar"],"Kazakhstan":["Almaty","Nur-Sultan","Shymkent"],"Iran":["Tehran","Mashhad","Isfahan"],"Iraq":["Baghdad","Erbil","Basra"],"Morocco":["Casablanca","Marrakesh","Rabat"],"Kenya":["Nairobi","Mombasa","Kisumu"],"Uganda":["Kampala","Entebbe","Jinja"],"Tanzania":["Dar es Salaam","Zanzibar","Dodoma"],"Ethiopia":["Addis Ababa","Dire Dawa","Gondar"],"Nigeria":["Lagos","Abuja","Port Harcourt"],"Ghana":["Accra","Kumasi","Tamale"],"Cameroon":["Yaounde","Douala","Garoua"],"Senegal":["Dakar","Saint-Louis","Thiès"],"Algeria":["Algiers","Oran","Constantine"],"Tunisia":["Tunis","Sousse","Gabes"],"Libya":["Tripoli","Benghazi","Misurata"],"Zimbabwe":["Harare","Bulawayo","Mutare"],"Zambia":["Lusaka","Ndola","Kitwe"],"Mozambique":["Maputo","Beira","Nampula"],"Angola":["Luanda","Huambo","Lubango"],"Sudan":["Khartoum","Omdurman","Port Sudan"],"Iceland":["Reykjavik","Akureyri","Keflavik"],"Croatia":["Zagreb","Split","Dubrovnik"],"Serbia":["Belgrade","Novi Sad","Niš"],"Romania":["Bucharest","Cluj-Napoca","Timisoara"],"Bulgaria":["Sofia","Plovdiv","Varna"],"Estonia":["Tallinn","Tartu","Narva"],"Latvia":["Riga","Daugavpils","Liepaja"],"Lithuania":["Vilnius","Kaunas","Klaipeda"],"Slovenia":["Ljubljana","Maribor","Koper"],"Slovakia":["Bratislava","Košice","Prešov"],"Ukraine":["Kyiv","Lviv","Odessa"],"Belarus":["Minsk","Gomel","Vitebsk"],"Moldova":["Chișinău","Tiraspol","Bălți"],"Georgia":["Tbilisi","Batumi","Kutaisi"],"Armenia":["Yerevan","Gyumri","Vanadzor"],"Azerbaijan":["Baku","Ganja","Sumqayit"],"Paraguay":["Asunción","Ciudad del Este","Encarnación"],"Uruguay":["Montevideo","Salto","Paysandú"],"Bolivia":["La Paz","Santa Cruz","Cochabamba"],"Ecuador":["Quito","Guayaquil","Cuenca"],"Suriname":["Paramaribo","Nieuw Nickerie","Moengo"],"Guyana":["Georgetown","Linden","New Amsterdam"]};
 
                 countryNameInput.addEventListener('input', function () {
@@ -161,7 +164,6 @@
                     const name = formatted;
                     const code = countryMap[name] ?? '';
                     countryCodeInput.value = code;
-
                     // 都市セレクトを更新
                     const cities = countryCityMap[name] ?? [];
                     citySelect.innerHTML = '';
@@ -187,7 +189,7 @@
                         citySelect.appendChild(option);
                     }
                 });
-
+)
                 // 都市選択で国名欄を「国名 (都市名)」に更新
                 citySelect.addEventListener('change', function () {
                     const country = countryNameInput.value.trim();
@@ -267,5 +269,4 @@
             }
         </script>
     @endpush
-
 </nav>

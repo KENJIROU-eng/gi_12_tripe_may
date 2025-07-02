@@ -56,7 +56,7 @@ class PayPalController extends Controller
                 ]
             ],
             "application_context" => [
-                "cancel_url" => route('goDutch.index', $itinerary_id),
+                "cancel_url" => route('goDutch.finalize', $itinerary_id),
                 "return_url" => route('paypal.success', ['itinerary_id'=> $itinerary_id, 'user_id' => $user_id])
             ]
         ]);
@@ -109,3 +109,11 @@ class PayPalController extends Controller
     }
 
 }
+
+//参考　支払い先指定
+
+// 'payee' => [
+//             'email_address' => $receiverPaypalEmail
+//         ]
+
+

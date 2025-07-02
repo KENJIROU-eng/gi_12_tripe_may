@@ -15,7 +15,7 @@ class ItinerariesController extends Controller
     }
 
     public function index() {
-        $all_itineraries = $this->itinerary->paginate(7)->onEachSide(2);
+        $all_itineraries = $this->itinerary->paginate(6)->onEachSide(2);
 
         return view('admin.itineraries.show')
             ->with('all_itineraries', $all_itineraries);

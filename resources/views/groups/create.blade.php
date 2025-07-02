@@ -1,6 +1,6 @@
 
-<x-app-layout>
-    <div class= "mt-5 h-[880px]">
+<x-app-layout class="h-screen">
+    <div class= "mt-5">
         <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
@@ -17,6 +17,10 @@
                                 <label for="name" class="block text-sm font-semibold text-black ">Group Name</label>
                                 <input type="text" name="name" id="name" class="w-3/4 mt-1 p-2 block  rounded-md focus:ring focus:border-blue-300 ml-2" required>
                             </div>
+                            @error('name')
+                                    <div class="text-red-500 text-xs">{{ $message }}</div>
+                            @enderror
+
                             <div class="flex justify-center">
                                 <div class="container mb-4 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3  md:mx-0">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
@@ -54,9 +58,12 @@
                                         Max file size is 1048kb.
                                     </div>
                                 </div>
+                                @error('image')
+                                    <div class="text-red-500 text-xs">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="flex justify-center mt-6">
-                                <div class=" px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-300 duration-300 mr-3">
+                                <div class=" px-4 py-2 border border-gray-400 rounded-md hover:bg-gray-300 duration-300 mr-3">
                                     <a href="{{ route('groups.index') }}" class="block text-center" >Cancel</a>
                                 </div>
                                 <button type="submit" class="bg-yellow-300 text-black px-4 py-2 rounded hover:bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 hover:text-white hover:shadow-lg duration-300 max-w-md text-lg">

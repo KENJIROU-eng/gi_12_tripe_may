@@ -63,13 +63,16 @@ class MessageSent implements ShouldBroadcast
         }
         return [
             'message' => ['text' => $this->message->message,],
+            'message_id' => $this->message->id,
             'user_id' => $this->message->user_id,
             'user_name' => $this->message->user->name,
             'user_avatar' => $this->message->user->user_avatar,
             'image_url' => $this->message->image_url ?? '',
             'groupMember_name' => $groupMember_name,
             'group_name' => $group->name,
-            'time' => $this->message->created_at->format('Y-m-d H:i'),//ex12:55
+            // 'time' => $this->message->created_at->format('Y-m-d H:i'),//ex12:55
+            'time_hm' => $this->message->created_at->format('H:i'),
+            'time_ymd' => $this->message->created_at->format('Y-m-d'),
         ];
     }
 }

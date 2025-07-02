@@ -74,7 +74,7 @@ class PostController extends Controller
     {
 
         $request->validate([
-            'title' => 'required|min:1|max:50',
+            'title' => 'required|min:1|max:30',
             'description' => 'required|min:1|max:500',
             'image' => 'required|mimes:jpeg,jpg,png,gif|max:5120',
         ]);
@@ -131,7 +131,7 @@ class PostController extends Controller
     public function update(Request $request, $post_id)
     {
         $request->validate([
-            'title' => 'required|min:1|max:50',
+            'title' => 'required|min:1|max:30',
             'description' => 'required|min:1|max:500',
             'image' => 'mimes:jpeg,jpg,png,gif|max:5120',
             'category_name' => 'required'
@@ -163,8 +163,10 @@ class PostController extends Controller
     {
         $post = $this->post->findOrFail($post_id);
         $post->delete();
+
         
         return redirect()->route('post.list');
+            
     }
 
 

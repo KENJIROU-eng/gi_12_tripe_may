@@ -5,7 +5,7 @@
                 <div class="p-6 text-black dark:text-gray-100">
                     {{-- title --}}
                     <!-- Backボタン（左上固定） -->
-                    <div class="absolute left-4 sm:left-6">
+                    <div class="">
                         <a href="{{ route('profile.show', $user->id) }}" class="inline-flex items-center text-sm sm:text-base text-blue-500 hover:underline">
                             <i class="fa-solid fa-arrow-left mr-1"></i> Back to profile page
                         </a>
@@ -19,6 +19,7 @@
                     {{-- contents --}}
                     <div class="mx-auto h-full mt-8">
                         @foreach ($followings as $following)
+                            @if (!empty($following->following))
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                                 <a href="{{ route('profile.show', $following->following->id) }}" class="flex items-center space-x-4 w-full ml-2">
                                     @if ($following->avatar)
@@ -33,6 +34,7 @@
                                     </div>
                                 </a>
                             </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>

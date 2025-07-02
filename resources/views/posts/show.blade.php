@@ -1,17 +1,21 @@
 <x-app-layout>
     {{-- <div style="background-image: url('/images/pexels-fotios-photos-5653734.jpg'); background-size: cover; background-position: center;"> --}}
-        <div class= "mt-5 h-[905px]">
-            <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
-                <div class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
+            {{-- <div class= " fixed inset-0 bg-gray-50 dark:bg-gray-800 -z-10"></div> --}}
+            <div class="mt-5 w-11/12 md:w-4/5 mx-auto lg:px-8">
+                <div class=" shadow-sm sm:rounded-lg">
+                    <div class="pt-4 text-black dark:text-gray-100">
+                        <div class="relative flex flex-col items-center">
+            {{-- <div class="mt-5 w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 flex-grow">
+                <div class=" overflow-hidden shadow-sm sm:rounded-lg h-full flex flex-col">
                     <div class="pt-2 text-black dark:text-gray-100 h-full">
-                        <div class="relative flex justify-center items-center flex-col h-full">
+                        <div class="relative flex justify-center items-center flex-col h-full"> --}}
                             <a href="{{ route('post.list') }}" class="text-teal-500 hover:text-teal-700 font-semibold text-xl flex items-center mb-2 md:mb-0 md:absolute md:left-0 md:top-0 md:pl-4">
                                 <i class="fa-solid fa-arrow-left mr-2"></i> Post List
                             </a>
-                            <div class="hidden md:block w-[100px]"></div>
-                            <div class="container shadow-lg 2xl:w-3/5 w-4/5 max-h-[90vh] overflow-y-auto border mx-auto mb-3">
+                            {{-- <div class="hidden md:block w-[100px]"></div> --}}
+                            <div class="container shadow-lg 2xl:w-3/5 w-11/12 max-h-[90vh] overflow-y-auto border mx-auto mb-12">
                                 <div class="flex items-center mt-4">
-                                    <div class="rounded-full overflow-hidden w-14 h-14 ml-4">
+                                    <div class="rounded-full overflow-hidden w-12 h-12 md:w-14 md:h-14 ml-4">
                                         @if ($post->user->avatar)
                                             <a href="{{ route('profile.show', $post->user->id) }}">
                                                 <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="object-cover w-14 h-14">
@@ -67,9 +71,9 @@
                                             @include('posts.modals.delete', ['post' => $post])
                                         </div>
                                     </div>
-
+                                    @endif
                                     <!-- Title -->
-                                    <h1 class="font-bold text-center mb-2 text-2xl">{{ $post->title }}</h1>
+                                    <h1 class="font-bold text-center mb-2 text-lg md:text-xl lg:text-2xl">{{ $post->title }}</h1>
 
                                     <!-- Image -->
                                     <div class="mb-2 bg-gradient-to-r from-gray-200 via-white to-gray-200 ">
@@ -127,27 +131,7 @@
                                     <div class="text-xs text-gray-500 ml-3 mt-1">
                                         {{ $post->created_at->format('M d, Y') }}
                                     </div>
-                                    {{-- @php
-                                        $isLong = mb_strlen($post->description) > 350;
-                                    @endphp
-                                    @if ($isLong)
-                                        <div x-data="{ open: false }" class="px-4 mb-2">
-                                            <div
-                                                :class="open ? '' : 'line-clamp-5'"
-                                                class="font-light whitespace-pre-line break-words text-gray-800 dark:text-gray-100 transition-all duration-300"
-                                            >
-                                                {{ $post->description }}
-                                            </div>
-
-                                            <button
-                                                @click="open = !open"
-                                                class="text-sm mt-2 text-blue-500 hover:underline focus:outline-none transition"
-                                            >
-                                                <span x-show="!open">続きを読む</span>
-                                                <span x-show="open">閉じる</span>
-                                            </button>
-                                        </div>
-                                    @else --}}
+                                    
                                         <div class="px-4 mb-2">
                                             <div class="font-light whitespace-pre-line break-words text-gray-800 dark:text-gray-100">
                                                 {{ $post->description }}

@@ -1,6 +1,5 @@
 <?php
 namespace App\Providers;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +12,6 @@ use App\Models\Itinerary;
 use App\Models\Message;
 use App\Models\ReadMessage;
 use Carbon\Carbon;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -23,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
     /**
      * Bootstrap any application services.
      */
@@ -34,7 +31,10 @@ class AppServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 $userId = $user->id;
                 $cacheKeyPrefix = 'shared_data_user_' . $userId;
-
+                $tripSchedule = [];
+                $tripName = [];
+                $tripId = [];
+                $routeUrls = [];
                 // グループ情報
                 $groupIds = Cache::remember("$cacheKeyPrefix:group_ids", 0, function () use ($userId) {
                     return GroupMember::where('user_id', $userId)->pluck('group_id')->toArray();
@@ -48,11 +48,6 @@ class AppServiceProvider extends ServiceProvider
                 $itineraries = Cache::remember("$cacheKeyPrefix:itineraries", 1, fn () =>
                     Itinerary::whereIn('group_id', $groupIds)->orderBy('start_date')->get()
                 );
-
-                $tripSchedule = [];
-                $tripName = [];
-                $tripId = [];
-                $routeUrls = [];
 
                 foreach ($itineraries as $itinerary) {
                     $start_date = new \DateTime($itinerary->start_date);
@@ -75,6 +70,19 @@ class AppServiceProvider extends ServiceProvider
                     $nonReadCount[$groupId] = $count;
                     $nonReadCount_total += $count;
                 }
+
+                // 今日の予定
+                $today = Carbon::today()->toDateString();
+                $todayItineraries = Itinerary::whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today)
+                    ->where(function ($query) use ($user, $groupIds) {
+                        $query->where('created_by', $user->id)
+                              ->orWhereIn('group_id', $groupIds);
+                    })->get();
+                // 天気情報
+                $countryId = session('weather_country_id');
+                $country = Country::find($countryId) ?? Country::first();
+                $weather = null;
 
                 // 今日の予定
                 $today = Carbon::today()->toDateString();
@@ -131,6 +139,8 @@ class AppServiceProvider extends ServiceProvider
                 ->with('routeUrls', $routeUrls)
                 ->with('weather', $weather)
                 ->with('todayItineraries', $todayItineraries)
+                ->with('tripId', $tripId)
+                ->with('routeUrls', $routeUrls)
                 ->with('myCountries', Country::where('user_id', $userId)->get())
                 ->with('tripId', $tripId);
             }
