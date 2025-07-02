@@ -314,7 +314,7 @@
 
                 {{-- How to Useカード --}}
                 <div class="border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4">
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
+                    <div class="dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
                         <h2 class="text-base font-semibold mb-2 text-gray-900 dark:text-gray-100">
                             <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> How to Use This Page
                         </h2>
