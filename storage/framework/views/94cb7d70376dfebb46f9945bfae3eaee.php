@@ -9,12 +9,12 @@
 <?php endif; ?>
 <?php $component->withAttributes(['class' => 'h-screen flex flex-col overflow-hidden']); ?>
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
                 
-                <div class="flex flex-col md:flex-row items-center justify-between text-center mb-10 gap-2 md:gap-0 relative">
+                <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
                     
-                        <div class="order-1 md:order-1">
+                        <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
                             <a href="<?php echo e(route('itinerary.show', $itinerary->id)); ?>" class="inline-flex items-center text-sm text-blue-500 hover:underline">
                                 <i class="fa-solid fa-arrow-left mr-1"></i> Back
                             </a>
@@ -235,7 +235,7 @@ unset($__errorArgs, $__bag); ?>
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                <select name="group_id" id="group_id" class="w-full border-gray-300 rounded-md">
+                                <select name="group_id" id="group_id" class="w-full border-gray-300 rounded-md max-h-40 overflow-y-auto"">
                                     <option value="" <?php echo e(is_null($itinerary->group_id) ? 'selected' : ''); ?>>No Group</option>
                                     <?php $__currentLoopData = $allGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($group->id); ?>" <?php echo e($group->id == $itinerary->group_id ? 'selected' : ''); ?>>
@@ -276,8 +276,7 @@ unset($__errorArgs, $__bag); ?>
 
                         
                         <div class="md:col-span-1 text-end">
-                            <button type="submit"
-                                class="w-full md:w-auto px-4 mt-5 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
+                            <button type="submit" class="w-full md:w-auto px-4 mt-5 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
                                 Update
                             </button>
                         </div>
@@ -294,13 +293,13 @@ unset($__errorArgs, $__bag); ?>
                             <input type="hidden" name="total_duration" id="total_duration" />
                             <input type="hidden" name="initial_place" id="initial_place" />
 
-                            <div id="dateFieldsContainer" class="flex-1 overflow-y-auto max-h-[530px] space-y-4"></div>
+                            <div id="dateFieldsContainer" class="flex-1 overflow-y-auto max-h-[510px] space-y-4"></div>
                             <div id="totalSummary" class="mt-4 text-right text-sm text-gray-600 dark:text-gray-300 hidden"></div>
                         </div>
 
                         
                         <div class="md:w-1/2 w-full bg-white dark:bg-gray-700 rounded-lg p-2 shadow relative">
-                            <div id="map" class="h-72 md:h-[580px] w-full rounded-md border"></div>
+                            <div id="map" class="h-72 md:h-[560px] w-full rounded-md border"></div>
                         </div>
                     </div>
                 </form>
@@ -336,9 +335,7 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
     
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
 

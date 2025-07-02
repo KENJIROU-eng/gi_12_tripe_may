@@ -5,4 +5,4 @@
         <button onclick="dismissNotification()" class="bg-gray-300 text-gray-800 flex-1 py-1 rounded">Cancel</button>
     </div>
 </div>
-<?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/livewire/notification-toggle.blade.php ENDPATH**/ ?>
+<?php /**PATH /Users/kawaimayu/Desktop/gi_12_tripe_may/resources/views/livewire/notification-toggle.blade.php ENDPATH**/ ?>

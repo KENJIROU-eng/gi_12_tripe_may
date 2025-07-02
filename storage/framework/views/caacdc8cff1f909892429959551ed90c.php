@@ -95,7 +95,7 @@
                                             <?php echo $__env->make('posts.modals.delete', ['post' => $post], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                                         </div>
                                     </div>
-
+                                    
                                     <!-- Title -->
                                     <h1 class="font-bold text-center mb-2 text-lg md:text-xl lg:text-2xl"><?php echo e($post->title); ?></h1>
 

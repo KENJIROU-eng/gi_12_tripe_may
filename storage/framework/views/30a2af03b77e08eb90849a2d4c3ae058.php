@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes(['class' => 'h-screen flex flex-col overflow-hidden']); ?>
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
             <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto">
                 <div class="text-black dark:text-gray-100">
                     
@@ -71,7 +71,7 @@
                         <div class="hidden md:grid md:grid-cols-12 items-center text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 py-2">
                             <div class="md:col-span-1"></div>
                             <div class="md:col-span-2 px-2">
-                                <select id="filterUser" class="w-full border-gray-300 rounded">
+                                <select id="filterUser" class="w-full border-gray-300 rounded max-h-40 overflow-y-auto"">
                                     <option value="">All</option>
                                     <?php $__currentLoopData = $all_itineraries->pluck('user')->unique('id'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e(strtolower($user->name)); ?>"><?php echo e($user->name); ?></option>
@@ -79,12 +79,12 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2 px-2">
-                                <select id="filterGroup" class="w-full border-gray-300 rounded">
+                                <select id="filterGroup" class="w-full border-gray-300 rounded max-h-40 overflow-y-auto">
                                     <option value="">All</option>
                                     <?php $__currentLoopData = $all_itineraries->pluck('group')->filter()->unique('id'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e(strtolower($group->name)); ?>"><?php echo e($group->name); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="no group">No Group</option>
+                                    <option value="no-group">No Group</option>
                                 </select>
                             </div>
                             <div class="md:col-span-3 px-2 flex gap-1">
@@ -246,9 +246,7 @@
         </div>
     </div>
     
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
 

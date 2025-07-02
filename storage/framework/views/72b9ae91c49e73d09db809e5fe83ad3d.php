@@ -117,7 +117,7 @@ unset($__errorArgs, $__bag); ?>
 
                                 
                                 <div class="grid grid-cols-4 w-full  gap-2">
-                                    <div class="col-span-  col-start-2 w-full flex items-center justify-center py-2 border border-gray-300 rounded-md hover:bg-gray-300 duration-300">
+                                    <div class="col-span-  col-start-2 w-full flex items-center justify-center py-2 border bg-white border-gray-400 rounded-md hover:bg-gray-300 duration-300">
                                         <a href="<?php echo e(route('post.list')); ?>" class="block text-center" >Cancel</a>
                                     </div>
                                     <div class="col-span-1 col-start-3 w-full">

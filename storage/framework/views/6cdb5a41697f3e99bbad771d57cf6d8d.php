@@ -9,26 +9,51 @@
 <?php endif; ?>
 <?php $component->withAttributes(['class' => 'h-screen flex flex-col overflow-hidden']); ?>
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-24 md:pb-0">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32">
             
             <div class="block">
                 
-                <a href="<?php echo e($previous ? route('itinerary.show', $previous->id) : '#'); ?>"
+                <a href="<?php echo e($next ? route('itinerary.show', $next->id) : '#'); ?>"
                     class="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
-                    title="Previous">
+                    title="Next">
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                </a>
+                <a href=""
+                    class="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
+                    title="">
                     <i class="fa-solid fa-chevron-left text-xl"></i>
                 </a>
 
                 
-                <a href="<?php echo e($next ? route('itinerary.show', $next->id) : '#'); ?>"
+                <a href="<?php echo e($previous ? route('itinerary.show', $previous->id) : '#'); ?>"
                     class="fixed top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white border rounded-full shadow p-2 text-blue-500 hover:bg-blue-100 z-50"
-                    title="Next">
+                    title="Previous">
                     <i class="fa-solid fa-chevron-right text-xl"></i>
                 </a>
             </div>
 
             
-            <div class="hidden lg:block lg:w-1/5"></div>
+            <div class="w-full lg:w-1/5 max-w-sm border rounded-lg shadow-md bg-white dark:bg-gray-800 p-4 h-fit order-3 lg:order-none">
+                <div class="sticky top-24 bg-white dark:bg-gray-800 border rounded p-4 shadow text-sm">
+                    <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200"><i class="fa-solid fa-file-pen text-blue-500"></i> Memo</h3>
+
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Jot down anything you like here!</p>
+
+                    <textarea id="itineraryMemo" data-save-url="<?php echo e(route('itinerary.memo.save', $itinerary->id)); ?>" data-csrf="<?php echo e(csrf_token()); ?>" class="w-full h-32 p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition" ><?php echo e(old('content', optional($itinerary->memo)->content)); ?></textarea>
+
+                    <div class="flex justify-end mt-2">
+                        <button id="saveMemoBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded flex items-center justify-center gap-2" >
+                            <svg id="spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span id="saveMemoText">Save</span>
+                        </button>
+                    </div>
+
+                    <p id="memoSavedMsg" class="hidden text-green-500 text-xs mt-2 transition-opacity duration-300">Memo saved!</p>
+                </div>
+            </div>
 
             
             <div class="w-full lg:w-3/5 flex flex-col gap-4 order-2 lg:order-none">
@@ -42,18 +67,45 @@
                             </a>
                             
                             <?php if(Auth::id() === $itinerary->created_by): ?>
-                                <form action="<?php echo e(route('itinerary.toggleFinish', $itinerary->id)); ?>" method="POST">
+                                <form action="<?php echo e(route('itinerary.toggleFinish', $itinerary->id)); ?>" method="POST" class="md:ml-10">
                                     <?php echo csrf_field(); ?>
                                     <button type="submit"
-                                        class="mt-1 ms-16 px-4 py-1 rounded text-white shadow text-sm
-                                            <?php echo e($itinerary->finish_at ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'); ?>">
-                                        <i class="fa-solid <?php echo e($itinerary->finish_at ? 'fa-check' : ''); ?> mr-1"></i>
-                                        <?php echo e($itinerary->finish_at ? 'Finish Trip' : 'Unfinish Trip'); ?>
+                                        class="relative inline-flex items-center h-8 w-28 rounded-full transition-colors duration-300 ease-in-out focus:outline-none
+                                        <?php echo e($itinerary->finish_at ? 'bg-green-500' : 'bg-blue-500'); ?>">
+                                        <span class="sr-only">Toggle Trip Status</span>
+
+                                        
+                                        <span class="absolute left-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                            <?php echo e($itinerary->finish_at ? 'opacity-100' : 'opacity-0'); ?>">
+                                            Finish
+                                        </span>
+
+                                        
+                                        <span class="absolute right-2 text-[11px] font-bold text-white z-10 transition-opacity duration-300
+                                            <?php echo e($itinerary->finish_at ? 'opacity-0' : 'opacity-100'); ?>">
+                                            In progress
+                                        </span>
+
+                                        
+                                        <span x-data="{ isWalking: true }" x-init="setInterval(() => isWalking = !isWalking, 500)" class="absolute inline-block h-7 w-10 rounded-full bg-white shadow transform transition duration-300 ease-in-out <?php echo e($itinerary->finish_at ? 'translate-x-[68px]' : 'translate-x-1'); ?> flex items-center justify-center text-blue-500">
+                                            <template x-if="!<?php echo \Illuminate\Support\Js::from($itinerary->finish_at)->toHtml() ?>">
+                                                <i x-show="isWalking" class="fa-solid fa-person-walking text-sm"></i>
+                                            </template>
+                                            <template x-if="!<?php echo \Illuminate\Support\Js::from($itinerary->finish_at)->toHtml() ?>">
+                                                <i x-show="!isWalking" class="fa-solid fa-person-running text-sm"></i>
+                                            </template>
+
+                                            
+                                            <?php if($itinerary->finish_at): ?>
+                                                <i class="fa-solid fa-bed text-sm text-green-500"></i>
+                                            <?php endif; ?>
+                                        </span>
+
 
                                     </button>
-
                                 </form>
                             <?php endif; ?>
+
                         </div>
 
                         <?php $__currentLoopData = $itinerary->bills; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -103,16 +155,14 @@
                                             <?php endif; ?>
                                         </button>
                                         
-                                        <div x-show="open" @click.away="open = false"
-                                            class="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-50">
+                                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-50">
                                             <div class="p-4">
                                                 <h2 class="text-sm font-semibold text-gray-600 mb-2">Group Members</h2>
                                                 <ul class="space-y-2 max-h-60 overflow-y-auto">
                                                     <?php $__currentLoopData = $itinerary->group->users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <li class="flex items-center space-x-3">
                                                             <a href="<?php echo e(route('profile.show', $user->id)); ?>">
-                                                                <img src="<?php echo e($user->avatar ?? asset('images/user.png')); ?>"
-                                                                    class="w-8 h-8 rounded-full object-cover" alt="<?php echo e($user->name); ?>">
+                                                                <img src="<?php echo e($user->avatar ?? asset('images/user.png')); ?>" class="w-8 h-8 rounded-full object-cover" alt="<?php echo e($user->name); ?>">
                                                             </a>
                                                             <a href="<?php echo e(route('profile.show', $user->id)); ?>">
                                                                 <p class="text-sm"><?php echo e($user->name); ?></p>
@@ -148,15 +198,13 @@
                                     </div>
                                     <div class="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2 mt-2 sm:mt-0">
                                         
-                                        <a id="shareMapBtn" href="#" target="_blank" onclick="event.preventDefault(); openShareMapLink();"
-                                        class="text-blue-500 px-1 py-1 hidden sm:inline-flex items-center  hover:text-blue-700" title="View Google Map">
+                                        <a id="shareMapBtn" href="#" target="_blank" onclick="event.preventDefault(); openShareMapLink();" class="text-blue-500 px-1 py-1 hidden sm:inline-flex items-center  hover:text-blue-700" title="View Google Map">
                                             <i class="fa-solid fa-map-location-dot mr-1"></i> View Google Map
                                         </a>
 
                                         
                                         <?php if(!$itinerary->finish_at): ?>
-                                            <a href="<?php echo e(route('itinerary.edit', $itinerary->id)); ?>"
-                                            class="text-yellow-500 px-1 py-1 inline-flex items-center hover:text-yellow-700" title="Edit">
+                                            <a href="<?php echo e(route('itinerary.edit', $itinerary->id)); ?>" class="text-yellow-500 px-1 py-1 inline-flex items-center hover:text-yellow-700" title="Edit">
                                                 <i class="fa-solid fa-pen mr-1"></i> Edit
                                             </a>
 
@@ -264,9 +312,11 @@
                         
                         <div class="lg:col-span-3 flex flex-col gap-4 lg:h-[690px]">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                
                                 <div class="border rounded-lg shadow-sm bg-white dark:bg-gray-900 p-4 h-auto md:h-[400px]" id="goDutch-container">
                                     <?php echo $__env->make('goDutch.index', ['total_Pay' => $total_Pay, 'total_getPay' => $total_getPay], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                                 </div>
+                                
                                 <div class="border rounded-lg shadow-sm bg-white dark:bg-gray-900 p-4 h-auto md:h-[400px]" id="belongings-container">
                                     <?php echo $__env->make('belongings.index', ['all_belongings' => $all_belongings], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                                 </div>
@@ -302,9 +352,7 @@
     </div>
 
     
-    <button id="scrollToTopBtn"
-        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
-        aria-label="Scroll to top">
+    <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
 

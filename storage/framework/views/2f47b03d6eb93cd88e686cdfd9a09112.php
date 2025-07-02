@@ -8,7 +8,7 @@
 <?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
-    <div class="mt-2 min-h-screen">
+    <div class="py-6 mt-2 min-h-screen">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 sm:p-6 text-black dark:text-gray-100">
@@ -29,28 +29,26 @@
                                 class="w-48 sm:w-48 md:w-48 rounded-full object-cover">
                         </div>
                     </div>
+                    
+                    <?php
+$__split = function ($name, $params = []) {
+    return [$name, $params];
+};
+[$__name, $__params] = $__split('notification-toggle');
+
+$__html = app('livewire')->mount($__name, $__params, 'lw-3642233802-0', $__slots ?? [], get_defined_vars());
+
+echo $__html;
+
+unset($__html);
+unset($__name);
+unset($__params);
+unset($__split);
+if (isset($__slots)) unset($__slots);
+?>
 
                     
-                    <div id="notify-box" class="fixed bottom-16 right-4 bg-white p-4 rounded shadow max-w-sm z-50">
-                        <p>Do you wanna receive the notifications?</p>
-                        <div class="flex gap-2 mt-4">
-                            <button onclick="enableNotification()" class="bg-blue-500 text-white flex-1 py-1 rounded">Yes</button>
-                            <button onclick="dismissNotification()" class="bg-gray-300 text-gray-800 flex-1 py-1 rounded">Cancel</button>
-                        </div>
-                    </div>
-
                     
-                    <div id="audio-permission-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
-                        <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow-lg">
-                            <p class="text-gray-800 text-lg mb-6">
-                                If you permit notification sounds, please click the button below
-                            </p>
-                            <div class="flex justify-center space-x-4">
-                                <button id="enable-sound-btn" class="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">OK</button>
-                                <button id="cancel-sound-btn" class="px-5 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
                     
                     <div class="mt-8">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -59,7 +57,7 @@
                                 
                                 <div class="relative rounded-xl px-6 py-8 max-w-sm mx-auto mt-10">
                                     <div class="text-center ">
-                                        <a href="<?php echo e(route('itinerary.share')); ?>" class="bg-gradient-to-r from-blue-500 via-green-500 to-red-500 py-2 px-4 text-lg text-shadow-lg rounded-md font-bold text-white inline-block w-full max-w-md hover:bg-green-600">
+                                        <a href="<?php echo e(route('itinerary.share')); ?>" class="bg-gradient-to-r from-blue-500 via-green-500 to-red-500 py-2 px-4 text-lg text-shadow-lg rounded-md font-bold text-white inline-block w-full max-w-md hover:from-green-500 hover:via-blue-500 hover:to-yellow-500">
                                             Create Trip Itinerary
                                         </a>
                                     </div>

@@ -8,6 +8,7 @@
 <?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
+
     
         <div class= "mt-5">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8">
@@ -50,15 +51,19 @@
                                                             <?php $__currentLoopData = $message->group->users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <?php if(($message->group->name == $user->name) || ($message->group->user_id == $user->id)): ?>
                                                                     <?php if(Auth::User()->id != $user->id): ?>
-                                                                        <p class="font-semibold text-2xl truncate"><?php echo e($user->name); ?></p>
+                                                                        <p class="font-semibold text-xl md:text-2xl truncate"><?php echo e($user->name); ?></p>
                                                                     <?php endif; ?>
                                                                 <?php endif; ?>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         <?php else: ?>
-                                                            <p class="font-semibold text-2xl truncate "><?php echo e($message->group->name); ?></p>
+                                                            <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]"><?php echo e(\Illuminate\Support\Str::limit($message->group->name, 10)); ?></p>
+                                                            <!-- PC以上は制限なし -->
+                                                            <p class="font-semibold text-xl md:text-2xl hidden md:block truncate"><?php echo e($message->group->name); ?></p>
                                                         <?php endif; ?>
                                                     <?php else: ?>
-                                                        <p class="font-semibold text-2xl truncate "><?php echo e($message->group->name); ?></p>
+                                                        <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]"><?php echo e(\Illuminate\Support\Str::limit($message->group->name, 10)); ?></p>
+                                                        <!-- PC以上は制限なし -->
+                                                        <p class="font-semibold text-xl md:text-2xl hidden md:block truncate"><?php echo e($message->group->name); ?></p>
                                                     <?php endif; ?>
                                                     <p class="text-lg ml-3">(<?php echo e($message->group->members->count()); ?>)</p>
                                                 </div>
@@ -103,7 +108,9 @@
                                                 </div>
                                                 <?php endif; ?>
                                                 <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                                    <p class="font-semibold text-2xl truncate "><?php echo e($group->name); ?></p>
+                                                    <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]"><?php echo e(\Illuminate\Support\Str::limit($group->name, 10)); ?></p>
+                                                    <!-- PC以上は制限なし -->
+                                                    <p class="font-semibold text-xl md:text-2xl hidden md:block truncate"><?php echo e($group->name); ?></p>
                                                     <p class="text-lg ml-3">(<?php echo e($group->members->count()); ?>)</p>
                                                 </div>
                                                 <?php if($nonReadCount): ?>
@@ -148,7 +155,9 @@
                                                 </div>
                                                 <?php endif; ?>
                                                 <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                                    <p class="font-semibold text-2xl truncate "><?php echo e($group->name); ?></p>
+                                                    <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]"><?php echo e(\Illuminate\Support\Str::limit($group->name, 10)); ?></p>
+                                                    <!-- PC以上は制限なし -->
+                                                    <p class="font-semibold text-xl md:text-2xl hidden md:block truncate"><?php echo e($group->name); ?></p>
                                                     <p class="text-lg ml-3">(<?php echo e($group->members->count()); ?>)</p>
                                                 </div>
                                                 <?php if($nonReadCount): ?>

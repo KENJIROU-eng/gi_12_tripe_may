@@ -7,10 +7,10 @@
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
-    <div class="py-10 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4">
+<?php $component->withAttributes(['class' => 'h-screen flex flex-col overflow-hidden']); ?>
+    <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
+        <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32">
+            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
             
             <div class="flex items-center justify-between mb-4">
                 
@@ -29,7 +29,6 @@
                     <i class="fa-solid fa-i"></i>
                     <i class="fa-solid fa-n"></i>
                     <i class="fa-solid fa-g"></i>
-
                 </h1>
 
                 
@@ -143,7 +142,7 @@ unset($__errorArgs, $__bag); ?>
                         
                         <div class="flex justify-between items-center mb-1">
                             <label class="block font-medium text-sm text-gray-700 dark:text-gray-300">
-                                <i class="fa-solid fa-users"></i> Assign to Members
+                                <i class="fa-solid fa-users"></i> <span class="text-red-500 ml-1">*</span>Assign to Members
                             </label>
                             <button type="button" id="toggleSelectAllMembers" class="text-sm text-blue-600 hover:underline">
                                 Select All
@@ -172,16 +171,39 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    <div class="pt-2 text-right">
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
-                            Add
-                        </button>
-                    </div>
+                    
+                    <?php if($totalCount > 0): ?>
+                        <div class="pt-2 md:flex md:items-center md:justify-between">
+                            
+                            <div class="w-full px-4 mb-4">
+                                <div class="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
+                                    <span class="progress-count-text"><?php echo e($checkedCount); ?> / <?php echo e($totalCount); ?> items</span>
+                                    <span class="progress-percent-text"><?php echo e($progressPercent); ?>%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 overflow-hidden">
+                                    <div class="progress-bar-fill bg-blue-500 h-full transition-all duration-300" style="width: <?php echo e($progressPercent); ?>%;"></div>
+                                </div>
+                            </div>
+
+                            
+                            <div class="text-right md:w-auto">
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="pt-2 text-right">
+                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
+                                Add
+                            </button>
+                        </div>
+                    <?php endif; ?>
+
                 </form>
 
-
                 
-                <div class="mt-8 space-y-6">
+                <div class="mt-8 max-h-[470px] overflow-y-auto pr-1 space-y-6" id="belongingListScrollArea">
                     <?php $__empty_1 = true; $__currentLoopData = $all_belongings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $belonging): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <div class="relative border p-2 rounded-md bg-white dark:bg-gray-700 shadow-sm belonging-item" data-belonging-id="<?php echo e($belonging->id); ?>" data-belonging-name="<?php echo e($belonging->name); ?>" data-belonging-description="<?php echo e($belonging->description); ?>" data-belonging-users='<?php echo json_encode($belonging->users->pluck("id"), 15, 512) ?>' data-checked="<?php echo e($belonging->users->every(fn($u) => $u->pivot->is_checked) ? '1' : '0'); ?>">
                             <div class="absolute top-2 right-2 flex space-x-2">
@@ -201,7 +223,6 @@ unset($__errorArgs, $__bag); ?>
                                 <?php echo e($belonging->description); ?>
 
                             </div>
-
 
                             
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-2 max-h-20 overflow-y-auto pr-1">
@@ -231,6 +252,13 @@ unset($__errorArgs, $__bag); ?>
     </div>
 
     
+    <button id="scrollToTopBtn"
+        class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-400 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"
+        aria-label="Scroll to top">
+        <i class="fa-solid fa-arrow-up"></i> Go to Top
+    </button>
+
+    
     <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-md w-full max-w-lg">
             <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
@@ -253,7 +281,7 @@ unset($__errorArgs, $__bag); ?>
                 <?php echo csrf_field(); ?>
                 <input type="hidden" id="editBelongingId">
                 <div>
-                    <label class="block mb-1 font-medium text-sm">Item Name</label>
+                    <label class="block mb-1 font-medium text-sm"><span class="text-red-500 ml-1">*</span>Item Name</label>
                     <input type="text" id="editName" class="w-full rounded-md border-gray-300" required maxlength="50">
                     <div id="editNameCharCount" class="right-2 top-2 text-sm text-gray-400">
                         0 / 50
@@ -268,7 +296,7 @@ unset($__errorArgs, $__bag); ?>
                 </div>
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label class="block mb-1 font-medium text-sm"><i class="fa-solid fa-users"></i> Assign to Members</label>
+                        <label class="block mb-1 font-medium text-sm"><i class="fa-solid fa-users"></i> <span class="text-red-500 ml-1">*</span>Assign to Members</label>
                         <button type="button" id="editToggleSelectAll" class="text-sm text-blue-600 hover:underline">
                             Select All
                         </button>
@@ -310,8 +338,8 @@ unset($__errorArgs, $__bag); ?>
     </div>
 
     <?php $__env->startPush('scripts'); ?>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="<?php echo e(asset('js/itineraries/belonging.js')); ?>?v=<?php echo e(now()->timestamp); ?>"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="<?php echo e(asset('js/itineraries/belonging.js')); ?>?v=<?php echo e(now()->timestamp); ?>"></script>
     <?php $__env->stopPush(); ?>
 
     <style>

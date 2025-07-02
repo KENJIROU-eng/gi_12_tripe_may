@@ -14,18 +14,20 @@
             <?php $__currentLoopData = $post->likes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $like): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                     <a href="" class="flex items-center space-x-4 w-full ml-2">
-                        <?php if($like->user->avatar): ?>
+                        <?php if(optional($like->user)->avatar): ?>
                             <img src="<?php echo e($like->user->avatar); ?>" alt="<?php echo e($like->user->name); ?>" class="w-12 h-12 rounded-full object-cover">
                         <?php else: ?>
-                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                            <?php echo e(strtoupper(substr($like->user->name, 0, 1))); ?>
+                            <?php if(optional($like->user)->name): ?>
+                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                    <?php echo e(strtoupper(substr($like->user->name, 0, 1))); ?>
 
-                        </div>
+                                </div>
+                                
+                                <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
+                                    <p class="font-semibold text-2xl truncate "><?php echo e($like->user->name); ?></p>
+                                </div>
+                            <?php endif; ?>
                         <?php endif; ?>
-
-                        <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                            <p class="font-semibold text-2xl truncate "><?php echo e($like->user->name); ?></p>
-                        </div>
                     </a>
                 </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

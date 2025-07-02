@@ -127,11 +127,15 @@ unset($__errorArgs, $__bag); ?>
                                                     <i class="fa-solid fa-circle-xmark"></i> Unpaid
                                                 </div>
                                                 
-                                                <div class="text-center text-sm text-blue-600">
+                                                 <div class="text-center text-sm text-blue-600 flex gap-6 items-center justify-center">
                                                     <?php if(Auth::User()->id == $detail[0]->id): ?>
-                                                        <a href="<?php echo e(route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2], 'user_id' => $detail[1]->id])); ?>">
-                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
+                                                        <!-- PayPal -->
+                                                        <a href="<?php echo e(route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 'user_id' => $detail[1]->id])); ?>"
+                                                        class="flex flex-col items-center justify-center">
+                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl leading-none"></i>
+                                                            <span class="text-xs text-blue-500">PayPal</span>
                                                         </a>
+
                                                         <!-- 現金 -->
                                                         <div x-data="{ open: false, amount: '' }" class="relative">
                                                             <!-- 起動ボタン -->
@@ -168,10 +172,7 @@ unset($__errorArgs, $__bag); ?>
                                                                         <button @click="amount = amount.slice(0, -1)" class="bg-yellow-200 hover:bg-yellow-300 rounded-lg text-xl py-3">←</button>
                                                                     </div>
                                                                     <!-- 送信 -->
-                                                                    <?php
-                                                                        $maxAmount = number_format($detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 0);
-                                                                    ?>
-                                                                    <form method="post" action="<?php echo e(route('goDutch.cashPay', ['itinerary_id' => $itinerary->id, 'user_id' => $detail[1]->id, 'detail' => $maxAmount])); ?>">
+                                                                    <form method="post" action="<?php echo e(route('goDutch.cashPay', ['itinerary_id' => $itinerary->id, 'user_id' => $detail[1]->id, 'detail' => number_format($detail[2], 0)])); ?>">
                                                                         <?php echo csrf_field(); ?>
                                                                         <input type="hidden" name="amount" :value="amount">
                                                                         <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
@@ -215,7 +216,7 @@ unset($__errorArgs, $__bag); ?>
                                                         <!-- PayPal -->
                                                         <a href="<?php echo e(route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2], 'user_id' => $detail[1]->id])); ?>"
                                                         class="flex flex-col items-center justify-center">
-                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl"></i>
+                                                            <i class="fa-brands fa-cc-paypal text-blue-500 text-3xl leading-none"></i>
                                                             <span class="text-xs text-blue-500">PayPal</span>
                                                         </a>
 

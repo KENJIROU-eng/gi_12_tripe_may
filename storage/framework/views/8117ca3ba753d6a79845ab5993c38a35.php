@@ -14,7 +14,7 @@
             <?php $__currentLoopData = $post->likes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $like): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                     <a href="" class="flex items-center space-x-4 w-full ml-2">
-                        <?php if($like->user->avatar): ?>
+                        <?php if(optional($like->user)->avatar): ?>
                             <img src="<?php echo e($like->user->avatar); ?>" alt="<?php echo e($like->user->name); ?>" class="w-12 h-12 rounded-full object-cover">
                         <?php else: ?>
                         <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">

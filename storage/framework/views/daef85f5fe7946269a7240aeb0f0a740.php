@@ -180,7 +180,7 @@
                                         
                                         <div class="text-center text-sm text-blue-600">
                                             <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
-                                                Finalize to enable PayPal
+                                                Finalize to enable PayPal or Cash
                                             </span>
                                         </div>
                                     </div>

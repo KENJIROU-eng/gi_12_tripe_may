@@ -196,7 +196,7 @@ class GroupController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:225',
+            'name' => 'required|string|max:50',
             'image' =>'nullable|image|max:2048',
             'members' =>'required|array|min:1',
             'members.*' => 'exists:users,id',

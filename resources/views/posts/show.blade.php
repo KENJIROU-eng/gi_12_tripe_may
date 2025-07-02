@@ -71,7 +71,7 @@
                                             @include('posts.modals.delete', ['post' => $post])
                                         </div>
                                     </div>
-                                    @endif
+                                    
                                     <!-- Title -->
                                     <h1 class="font-bold text-center mb-2 text-lg md:text-xl lg:text-2xl">{{ $post->title }}</h1>
 

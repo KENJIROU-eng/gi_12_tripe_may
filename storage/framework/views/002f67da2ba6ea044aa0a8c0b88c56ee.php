@@ -19,7 +19,7 @@
                     </div>
                     <div class="h-[2px] w-full bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 my-4"></div>
                     
-                    <div class="mx-auto h-full mt-8">
+                    <div class="mx-auto h-full mt-8 mb-24">
                         <form action="/group/store" method="post" enctype="multipart/form-data">
                             <?php echo csrf_field(); ?>
                             <div class="mb-4 flex items-center justify-center">
@@ -37,14 +37,17 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
 
-                            <div class="flex justify-center">
-                                <div class="container mb-4 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3  md:mx-0">
+                            
+                            <div class="flex flex-wrap justify-center lg:justify-center mx-auto">
+    
+                                <!-- Group Member -->
+                                <div class="container mb-4 w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 md:mx-0">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
-                                    <div class="space-y-2 mt-2 max-h-[500px] overflow-y-auto border p-2 rounded">
+                                    <div class="space-y-2 mt-2 max-h-[300px] lg:max-h-[500px] overflow-y-auto border p-2 rounded">
                                         <?php $__empty_1 = true; $__currentLoopData = Auth::User()->following; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                             <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
                                                 <input type="checkbox" name="members[]" value="<?php echo e($user->following->id); ?>" class="hidden peer">
-                                                <div class="flex items-center space-x-2 max-h-400px">
+                                                <div class="flex items-center space-x-2">
                                                     <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-bold">
                                                         <?php if($user->following->avatar): ?>
                                                             <img src="<?php echo e($user->following->avatar); ?>" alt="<?php echo e($user->following->name); ?>" class="w-8 h-8 rounded-full">
@@ -55,7 +58,7 @@ unset($__errorArgs, $__bag); ?>
                                                     </div>
                                                     <span class="text-sm text-gray-700"><?php echo e($user->following->name); ?></span>
                                                 </div>
-                                                <div class=" w-4 h-4 rounded-full border-2 border-gray-400 peer-checked:bg-blue-400 peer-checked:border-blue-500 flex items-center justify-center transition">
+                                                <div class="w-4 h-4 rounded-full border-2 border-gray-400 peer-checked:bg-blue-400 peer-checked:border-blue-500 flex items-center justify-center transition">
                                                     <i class="fa-solid fa-check text-white text-xs hidden peer-checked:block"></i>
                                                 </div>
                                             </label>
@@ -64,27 +67,28 @@ unset($__errorArgs, $__bag); ?>
                                         <?php endif; ?>
                                     </div>
                                 </div>
-                                <div class="container w-1/3 mb-4 ml-4">
+                            
+                                <!-- Group Image -->
+                                <div class="container mb-4  w-1/2 lg:w-1/3 md:ml-4">
                                     <label for="image" class="block text-sm font-semibold text-gray-700 text-center">Group Image</label>
-                                    <!--image preview-->
                                     <img id="image-preview" class="w-25 aspect-square rounded-full object-cover border border-gray-300 hidden mx-auto" alt="Preview">
-                                    <input type="file" name="image" id="image" accept="image/*"
-                                    class="mt-1 block w-full text-sm text-gray-500 text-center">
+                                    <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 text-center">
                                     <div class="form-text text-gray-500 mt-1" id="image-info">
                                         The acceptable formats are jpeg, jpg, png, and gif only. <br>
                                         Max file size is 1048kb.
                                     </div>
-                                </div>
-                                <?php $__errorArgs = ['image'];
+                                    <?php $__errorArgs = ['image'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                    <div class="text-red-500 text-xs"><?php echo e($message); ?></div>
-                                <?php unset($message);
+                                        <div class="text-red-500 text-xs"><?php echo e($message); ?></div>
+                                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
+                                </div>
+                            
                             </div>
                             <div class="flex justify-center mt-6">
                                 <div class=" px-4 py-2 border border-gray-400 rounded-md hover:bg-gray-300 duration-300 mr-3">

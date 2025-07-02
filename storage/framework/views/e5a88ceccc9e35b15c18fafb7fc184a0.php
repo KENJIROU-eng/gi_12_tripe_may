@@ -8,7 +8,7 @@
             <textarea id="edit-message-text" name="message" class="w-full p-2 mb-4" rows="3"></textarea>
 
             <div class="flex justify-end space-x-2">
-                <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-400 text-gray-900 rounded">
+                <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-400 hover:bg-gary-300 text-gray-900 rounded">
                     Cancel
                 </button>
                 <button type="submit" class="px-4 py-2 bg-blue-500 text-gray-100 rounded">

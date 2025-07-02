@@ -13,7 +13,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-6 text-black dark:text-gray-100">
                     
-                    <div class="absolute left-4 sm:left-6">
+                    <div class="">
                         <a href="<?php echo e(route('profile.show', $user->id)); ?>" class="inline-flex items-center text-sm sm:text-base text-blue-500 hover:underline">
                             <i class="fa-solid fa-arrow-left mr-1"></i> Back to profile page
                         </a>
@@ -26,6 +26,7 @@
                     
                     <div class="mx-auto h-full mt-8">
                         <?php $__currentLoopData = $followers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $follower): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php if(!empty($follower->follower)): ?>
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
                                 <a href="<?php echo e(route('profile.show', ['user_id' => $follower->follower->id])); ?>" class="flex items-center space-x-4 w-full ml-2">
                                     <?php if($follower->follower->avatar): ?>
@@ -42,6 +43,7 @@
                                     </div>
                                 </a>
                             </div>
+                            <?php endif; ?>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     </div>

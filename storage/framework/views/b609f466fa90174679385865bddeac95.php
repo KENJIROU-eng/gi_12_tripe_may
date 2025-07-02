@@ -44,6 +44,7 @@
                             <div class="post-sizer w-full sm:w-1/2 lg:w-1/3"></div>
 
                             <?php $__currentLoopData = $all_posts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $post): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if($post->user): ?>
                                 <div class="post-item w-full sm:w-1/2 lg:w-1/3 px-2 mb-4 transition transform hover:scale-[1.03] hover:-translate-y-1">
                                     <div class="relative group bg-white dark:bg-gray-700 shadow-xl overflow-hidden">
                                         <a href="<?php echo e(route('post.show', $post->id)); ?>">
@@ -87,6 +88,7 @@ if (isset($__slots)) unset($__slots);
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>

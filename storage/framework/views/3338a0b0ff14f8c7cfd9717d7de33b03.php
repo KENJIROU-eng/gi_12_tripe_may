@@ -53,10 +53,11 @@
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $all_posts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $post): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if($post->user): ?>
                                         <tr class="<?php echo e($loop->odd ? 'bg-green-100' : 'bg-green-50'); ?> text-sm sm:text-base">
                                             <td class="py-2"><?php echo e($post->id); ?></td>
                                             <td class="py-2">
-                                                <?php if($post->user->avatar): ?>
+                                                <?php if($post->user && $post->user->avatar): ?>
                                                     <img src="<?php echo e($post->user->avatar); ?>" alt="<?php echo e($post->user->name); ?>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mx-auto object-cover">
                                                 <?php else: ?>
                                                     <i class="fa-solid fa-circle-user text-blue-600 text-lg sm:text-xl"></i>
@@ -77,6 +78,7 @@
                                                 </form>
                                             </td>
                                         </tr>
+                                        <?php endif; ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>

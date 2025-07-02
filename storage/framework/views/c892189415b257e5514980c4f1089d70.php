@@ -69,8 +69,6 @@
             </div>
         </div>
 
-        <!--chat-->
-        
         <div id="messages" data-group-id="<?php echo e($group->id); ?>" class="overflow-y-scroll  px-4 pb-20 pt-4 space-y-2" style="height: calc(100vh - 4rem - 4rem);">
             <?php $__currentLoopData = $messages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php $isMine = $message->user_id === auth()->id();?>
@@ -96,7 +94,7 @@
                                 <div><?php echo e($message->created_at->format('Y-m-d')); ?></div>
                             </div>
                             <div class="max-w-[70%]">
-                                <img src="<?php echo e($message->image_url); ?>" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" download>
+                                <img src="<?php echo e($message->image_url); ?>" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" oncontextmenu="openCustomMenu(event, <?php echo e($message->id); ?>, this)" download>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -145,21 +143,16 @@
         </div>
 
         <ul id="custom-menu" class="absolute hidden bg-gray-100  rounded shadow z-50">
-            <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
+            <li id="edit-item" class="p-1 text-base hover:bg-green-200 cursor-pointer">
                 Edit
             </li>
-            <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
+            <li id="delete-item" class="p-1 text-base hover:bg-red-200 cursor-pointer">
                 Delete
             </li>
         </ul>
 
     </div>
 
-    <!-- 編集用フォーム -->
-    <div id="edit-form" class="hidden mt-4">
-        <textarea id="edit-textarea" class="w-full p-2 border rounded"></textarea>
-        <button id="submit-edit" class="mt-2 px-4 py-1 bg-blue-500 text-white rounded">送信</button>
-    </div>
 
 
     <script>
@@ -222,9 +215,12 @@
     </script>
 
 
+
     <form id="chat-form" action="<?php echo e(route('message.send')); ?>" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
     <?php echo csrf_field(); ?>
         <input type="hidden" name="group_id" value="<?php echo e($group->id); ?>">
+
+        <input type="hidden" id="edit-message-id" name="edit_message_id" value="">
         <textarea id="message-input" name="message" rows="1" placeholder="message..." class="flex-1 p-2 rounded-lg focus:outline-none focus:ring focus:border-teal-500 resize-none max-h-[6rem] overflow-y-auto leading-relaxed text-sm sm:text-base"></textarea>
         <input type="file" name="image" accept="image/*" class="hidden" id="image-upload">
         <label for="image-upload" class="cursor-pointer">

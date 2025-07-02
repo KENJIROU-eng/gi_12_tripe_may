@@ -20,10 +20,11 @@
         <!-- Scripts -->
         <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-        <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
-
+        <script src="https://unpkg.com/alpinejs" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
+
 
         
         <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
@@ -39,6 +40,9 @@
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <?php echo $__env->make('layouts.navigation', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             <!-- Page Content -->
+
+            
+
             <main class="relative pt-12 min-h-screen" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
                 <?php if(Str::startsWith(Route::currentRouteName(), 'post.') || Str::startsWith(Route::currentRouteName(), 'group.')): ?>
                     <div class="absolute inset-y-0  left-[3%] right-[3%] md:left-[10%] md:right-[10%] top-12 bottom-0 bg-gray-50 dark:bg-gray-800 z-0 "></div>
@@ -62,8 +66,6 @@
             };
             const routeUrls = <?php echo json_encode($routeUrls ?? [], 15, 512) ?>;
         </script>
-
-
         <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
     </body>
