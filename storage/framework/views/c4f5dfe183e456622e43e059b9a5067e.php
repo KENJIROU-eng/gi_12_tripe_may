@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes(['class' => 'overflow-hidden']); ?>
     <div class="py-10 min-h-screen bg-cover bg-center" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8">
                 
                 <div class="relative flex items-center justify-center text-center mb-10 h-12">
@@ -33,12 +33,12 @@
                 
                 <div class="text-center space-y-6">
                     <p class="text-sm md:text-base text-gray-600 dark:text-gray-300">
-                        Would you like to share your itinerary with other users?<br>
-                        If you share it, other users will be able to edit or delete it.
+                        Would you like to share your itinerary with a group?<br>
+                        If you share it, group members will be able to view and edit it, but only you can delete it.
                     </p>
 
                     
-                    <form action="<?php echo e(route('itinerary.prefill')); ?>" id="shareForm" method="get" class="space-y-6 max-w-md mx-auto">
+                    <form action="<?php echo e(route('itinerary.prefill')); ?>" id="shareForm" method="get" class="space-y-6 max-w-lg mx-auto">
                         <?php echo csrf_field(); ?>
 
                         
@@ -95,10 +95,14 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         
-                        <div id="noMessage" class="hidden text-sm text-gray-600 dark:text-gray-300">
-                            I will create the itinerary without sharing it.<br>
-                            You can choose to share it later if you want.
+                        <div id="noMessage" class="hidden text-md text-gray-600 dark:text-gray-300 space-y-1">
+                            <p>I will create the itinerary without sharing it.  </p>
+                            <p>You can choose to share it later if you want.  </p>
+                            <p class="text-gray-500 dark:text-gray-400">
+                                A private group called <strong class="text-red-500">Bocci</strong> will be automatically created for you.
+                            </p>
                         </div>
+
 
                         
                         <div class="text-center">
@@ -146,4 +150,4 @@ unset($__errorArgs, $__bag); ?>
 <?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
 <?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
 <?php endif; ?>
-<?php /**PATH /Users/kawaimayu/Desktop/gi_12_tripe_may/resources/views/itineraries/share.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/itineraries/share.blade.php ENDPATH**/ ?>
