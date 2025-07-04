@@ -36,7 +36,7 @@ $__split = function ($name, $params = []) {
 };
 [$__name, $__params] = $__split('notification-toggle');
 
-$__html = app('livewire')->mount($__name, $__params, 'lw-2397315956-0', $__slots ?? [], get_defined_vars());
+$__html = app('livewire')->mount($__name, $__params, 'lw-2073828994-0', $__slots ?? [], get_defined_vars());
 
 echo $__html;
 
@@ -286,4 +286,4 @@ if (isset($__slots)) unset($__slots);
 
 <script src="<?php echo e(asset('js/homepage_calender.js')); ?>"></script>
 
-<?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/dashboard.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/dashboard.blade.php ENDPATH**/ ?>

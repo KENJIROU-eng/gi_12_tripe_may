@@ -37,36 +37,46 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
- * プログレスバーのリアルタイム更新
- */
-const updateProgressBar = () => {
-    const belongingItems = document.querySelectorAll('.belonging-item');
-    let total = 0;
-    let checked = 0;
+     * プログレスバーのリアルタイム更新
+     */
+    const updateProgressBar = () => {
+        const belongingItems = document.querySelectorAll('.belonging-item');
+        let total = 0;
+        let checked = 0;
 
-    belongingItems.forEach(item => {
-        const checkboxes = item.querySelectorAll('.member-checkbox');
-        const totalCount = checkboxes.length;
-        const checkedCount = [...checkboxes].filter(cb => cb.checked).length;
+        belongingItems.forEach(item => {
+            const checkboxes = item.querySelectorAll('.member-checkbox');
+            const totalCount = checkboxes.length;
+            const checkedCount = [...checkboxes].filter(cb => cb.checked).length;
 
-        if (totalCount > 0) {
-            total += 1;
-            if (checkedCount === totalCount) {
-                checked += 1;
+            if (totalCount > 0) {
+                total += 1;
+                if (checkedCount === totalCount) {
+                    checked += 1;
+                }
+            }
+        });
+
+        const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+
+        const countText = document.querySelector('.progress-count-text');
+        const percentText = document.querySelector('.progress-percent-text');
+        const bar = document.querySelector('.progress-bar-fill');
+        const progressContainer = document.querySelector('.progress-container');
+
+        if (countText) countText.textContent = `${checked} / ${total} items`;
+        if (percentText) percentText.textContent = `${percent}%`;
+        if (bar) bar.style.width = `${percent}%`;
+
+        if (progressContainer) {
+            if (total === 0) {
+                progressContainer.classList.add('hidden');
+            } else {
+                progressContainer.classList.remove('hidden');
             }
         }
-    });
+    };
 
-    const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
-
-    const countText = document.querySelector('.progress-count-text');
-    const percentText = document.querySelector('.progress-percent-text');
-    const bar = document.querySelector('.progress-bar-fill');
-
-    if (countText) countText.textContent = `${checked} / ${total} items`;
-    if (percentText) percentText.textContent = `${percent}%`;
-    if (bar) bar.style.width = `${percent}%`;
-};
 
 
     /**
@@ -150,7 +160,9 @@ const updateProgressBar = () => {
                     await axios.delete(`/belonging/${btn.dataset.belongingId}/destroy`, {
                         headers: { 'X-CSRF-TOKEN': csrfToken }
                     });
-                    btn.closest('.belonging-item').remove();
+                    const item = btn.closest('.belonging-item');
+                    item.remove();
+                    updateProgressBar();
                 } catch (err) {
                     alert('Deletion failed.');
                 }

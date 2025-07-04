@@ -72,8 +72,6 @@
                 </div>
             </div>
 
-            <div id="notification-area" class="fixed top-4 right-4 space-y-2 z-50"></div>
-
             
             <div class="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex text-xl items-center space-x-6">
                 <?php if(auth()->guard()->check()): ?>
@@ -585,4 +583,4 @@
         });
     </script>
 </nav>
-<?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>

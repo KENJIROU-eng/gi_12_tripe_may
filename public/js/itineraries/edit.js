@@ -44,8 +44,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                     <i class="fa-solid fa-grip-lines"></i>
                 </span>
 
-                <div class="w-4/5">
-                    <!-- ラベルを input の上に出す -->
+                <div class="w-full">
                     <span class="departure-label text-xs text-blue-600 font-bold mb-1 hidden block">
                         <i class="fa-solid fa-flag-checkered text-blue-500"></i> Starting Point
                     </span>
@@ -71,8 +70,6 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         </div>
     `;
 }
-
-
 
 // ラジオボタンのTRANSIT警告表示制御
 function handleTransitWarnings() {

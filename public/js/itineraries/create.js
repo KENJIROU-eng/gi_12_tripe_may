@@ -43,7 +43,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
                         <i class="fa-solid fa-grip-lines"></i>
                     </span>
                     <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
-                        class="p-1 border rounded destination-input w-4/5"
+                        class="p-1 border rounded destination-input w-full"
                         placeholder="${isFirst ? 'Please enter your starting point' : 'Please enter your destination'}" />
                     <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn">
                         <i class="fa-solid fa-xmark"></i>

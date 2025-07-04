@@ -40,7 +40,6 @@ class BelongingController extends Controller
         ]);
     }
 
-
     public function store(Request $request, $itineraryId)
     {
         $validated = $request->validate([
@@ -159,11 +158,24 @@ class BelongingController extends Controller
             'members.*' => 'integer|exists:users,id',
         ]);
 
-        $belonging->users()->syncWithoutDetaching(
-            collect($validated['members'])->mapWithKeys(fn($id) => [$id => ['is_checked' => false]])
-        );
+        $newMemberIds = $validated['members'] ?? [];
+
+        // 既存の user_id => is_checked のペアを取得
+        $existing = $belonging->users()->pluck('belonging_user.is_checked', 'user_id')->toArray();
+
+        // sync用データ生成（既存は保持、新規は0）
+        $syncData = [];
+
+        foreach ($newMemberIds as $userId) {
+            $syncData[$userId] = [
+                'is_checked' => $existing[$userId] ?? 0
+            ];
+        }
+
+        $belonging->users()->syncWithoutDetaching($syncData);
 
         return response()->json(['message' => 'Members added']);
     }
+
 
 }

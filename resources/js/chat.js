@@ -356,14 +356,14 @@ if (groupId && myUserId) {
 
             //画像組み込み
             if (e.image_url) {
-                messageContent += `<img src="${e.image_url}" class="mt-2 max-w-xs rounded-lg">`;
+                messageContent += `<img src="${e.image_url}" class="mt-2  rounded-lg mr-2">`;
             }
 
             if (isMine) {
                 // テキストがある場合は枠付き
                 if (e.message && e.message.text) {
                     wrapper.innerHTML = `
-                        <div class="flex items-end justify-end">
+                        <div class="flex items-end justify-end mr-2">
                             <div>
                                 <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
                                 <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
@@ -379,15 +379,14 @@ if (groupId && myUserId) {
                     `;
                 } else {
                     // 画像だけの場合
+                    
                     wrapper.innerHTML = `
-                        <div class="flex items-end justify-end">
-                            <div class="max-w-[70%]">
-                                <div class="mt-2">${messageContent}</div>
-                            </div>
-                            <div>
-                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
-                                <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
-                            </div>
+                        <div class="text-xs text-gray-400 mr-2">
+                            <div class="text-right">${e.time_hm}</div>
+                            <div>${e.time_ymd}</div>
+                        </div>
+                        <div class="max-w-[70%]">
+                            <img src="${e.image_url}" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)">
                         </div>
                     `;
                 }
@@ -423,7 +422,7 @@ if (groupId && myUserId) {
                             <div class="max-w-[70%]">
                                 <div class="text-sm md:text-base text-gray-600 font-medium">${e.user_name}</div>
                                 <div class="flex items-end space-y-1">
-                                    <div>${messageContent}</div>
+                                    <img src="${e.image_url}" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" >
                                     <div>
                                         <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_hm}</div>
                                         <div class="text-xs  mt-1 text-gray-400 ml-2">${e.time_ymd}</div>

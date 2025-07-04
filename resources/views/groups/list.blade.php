@@ -1,4 +1,5 @@
 <x-app-layout>
+
     {{-- <div style="background-image: url('/images/pexels-quintingellar-844167.jpg'); background-size: cover; background-position: center"> --}}
         <div class= "mt-5">
             <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8">
@@ -40,15 +41,19 @@
                                                             @foreach ($message->group->users as $user)
                                                                 @if (($message->group->name == $user->name) || ($message->group->user_id == $user->id))
                                                                     @if (Auth::User()->id != $user->id)
-                                                                        <p class="font-semibold text-2xl truncate">{{ $user->name }}</p>
+                                                                        <p class="font-semibold text-xl md:text-2xl truncate">{{ $user->name }}</p>
                                                                     @endif
                                                                 @endif
                                                             @endforeach
                                                         @else
-                                                            <p class="font-semibold text-2xl truncate ">{{ $message->group->name }}</p>
+                                                            <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]">{{ \Illuminate\Support\Str::limit($message->group->name, 10) }}</p>
+                                                            <!-- PC以上は制限なし -->
+                                                            <p class="font-semibold text-xl md:text-2xl hidden md:block truncate">{{ $message->group->name }}</p>
                                                         @endif
                                                     @else
-                                                        <p class="font-semibold text-2xl truncate ">{{ $message->group->name }}</p>
+                                                        <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]">{{ \Illuminate\Support\Str::limit($message->group->name, 10) }}</p>
+                                                        <!-- PC以上は制限なし -->
+                                                        <p class="font-semibold text-xl md:text-2xl hidden md:block truncate">{{ $message->group->name }}</p>
                                                     @endif
                                                     <p class="text-lg ml-3">({{ $message->group->members->count() }})</p>
                                                 </div>
@@ -92,7 +97,9 @@
                                                 </div>
                                                 @endif
                                                 <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                                    <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
+                                                    <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]">{{ \Illuminate\Support\Str::limit($group->name, 10) }}</p>
+                                                    <!-- PC以上は制限なし -->
+                                                    <p class="font-semibold text-xl md:text-2xl hidden md:block truncate">{{ $group->name }}</p>
                                                     <p class="text-lg ml-3">({{ $group->members->count() }})</p>
                                                 </div>
                                                 @if ($nonReadCount)
@@ -136,7 +143,9 @@
                                                 </div>
                                                 @endif
                                                 <div class="flex flex-row sm:flex-row sm:items-center sm:justify-center text-center sm:space-x-2 ">
-                                                    <p class="font-semibold text-2xl truncate ">{{ $group->name }}</p>
+                                                    <p class="font-semibold text-xl md:text-2xl md:hidden truncate max-w-[160px]">{{ \Illuminate\Support\Str::limit($group->name, 10) }}</p>
+                                                    <!-- PC以上は制限なし -->
+                                                    <p class="font-semibold text-xl md:text-2xl hidden md:block truncate">{{ $group->name }}</p>
                                                     <p class="text-lg ml-3">({{ $group->members->count() }})</p>
                                                 </div>
                                                 @if ($nonReadCount)

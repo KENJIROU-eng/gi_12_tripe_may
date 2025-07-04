@@ -10,29 +10,6 @@
 <?php $component->withAttributes(['class' => 'h-screen flex flex-col overflow-hidden']); ?>
     <div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('https://res.cloudinary.com/dpwrycc89/image/upload/v1750757614/pexels-jplenio-1133505_ijwxpn.jpg');">
         <div class="pt-8 flex-1 overflow-y-auto flex flex-col lg:flex-row gap-4 max-w-screen-3xl mx-auto px-4 pb-32"">
-<<<<<<<< HEAD:storage/framework/views/bf6bc534eaaf94c527cd82cd24f17052.php
-            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 mx-auto w-full max-w-6xl">
-                
-                <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
-                
-                <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
-                    <a href="<?php echo e(route('itinerary.index')); ?>" class="inline-flex items-center text-sm text-blue-500 hover:underline">
-                        <i class="fa-solid fa-arrow-left mr-1"></i> Back
-                    </a>
-                </div>
-
-                
-                <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
-                    <i class="fa-solid fa-c"></i>
-                    <i class="fa-solid fa-r"></i>
-                    <i class="fa-solid fa-e"></i>
-                    <i class="fa-solid fa-a"></i>
-                    <i class="fa-solid fa-t"></i>
-                    <i class="fa-solid fa-e"></i>
-                </h1>
-            </div>
-
-========
             
             <div class="w-full lg:w-1/5"></div>
 
@@ -41,28 +18,26 @@
                 
                 <div class="relative flex flex-col md:flex-row items-center justify-center text-center mb-10 gap-2 md:gap-0">
                     
-                    <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
-                        <a href="<?php echo e(route('itinerary.index')); ?>" class="inline-flex items-center text-sm text-blue-500 hover:underline">
-                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
-                        </a>
-                    </div>
-
-                    
-                    <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
-                        <i class="fa-solid fa-c"></i>
-                        <i class="fa-solid fa-r"></i>
+                        <div class="absolute left-0 top-1/2 transform -translate-y-1/2">
+                            <a href="<?php echo e(route('itinerary.show', $itinerary->id)); ?>" class="inline-flex items-center text-sm text-blue-500 hover:underline">
+                                <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                            </a>
+                        </div>
+                    <h1 class="order-2 md:order-2 text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn">
                         <i class="fa-solid fa-e"></i>
-                        <i class="fa-solid fa-a"></i>
+                        <i class="fa-solid fa-d"></i>
+                        <i class="fa-solid fa-i"></i>
                         <i class="fa-solid fa-t"></i>
-                        <i class="fa-solid fa-e"></i>
                     </h1>
                 </div>
 
->>>>>>>> 6df93b8a75dd54c8cbc6cfa7579d8c9215562e33:storage/framework/views/22971ed486e05a17cfeb175ba014037e.php
-                <form id="itineraryForm" action="<?php echo e(route('itinerary.store')); ?>" method="POST" class="space-y-8">
+                <form id="itineraryForm" method="POST" action="<?php echo e(route('itinerary.update', $itinerary->id)); ?>" class="flex flex-col gap-6">
                     <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
+
                     
                     <div class="grid grid-cols-1 md:grid-cols-10 gap-6">
+
                         
                         <div class="md:col-span-4">
                             <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -88,14 +63,14 @@
 <?php endif; ?>
                             <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['name' => 'title','id' => 'title','placeholder' => 'Please enter a title','required' => true,'maxlength' => '100','class' => 'w-full']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'title','name' => 'title','placeholder' => 'Enter a title','required' => true,'maxlength' => '100','class' => 'w-full','value' => ''.e(old('title', $itinerary->title)).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['name' => 'title','id' => 'title','placeholder' => 'Please enter a title','required' => true,'maxlength' => '100','class' => 'w-full']); ?>
+<?php $component->withAttributes(['id' => 'title','name' => 'title','placeholder' => 'Enter a title','required' => true,'maxlength' => '100','class' => 'w-full','value' => ''.e(old('title', $itinerary->title)).'']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -122,7 +97,7 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         
-                        <div class="md:col-span-5">
+                        <div class="md:col-span-3">
                             <div class="grid grid-cols-9 gap-1 text-sm">
                                 <div class="col-span-4">
                                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -176,14 +151,14 @@ unset($__errorArgs, $__bag); ?>
                                 <div class="col-span-4">
                                     <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['name' => 'start_date','type' => 'date','id' => 'start_date','class' => 'w-full']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'start_date','name' => 'start_date','type' => 'date','class' => 'w-full','value' => ''.e(old('start_date', $itinerary->start_date?->format('Y-m-d'))).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['name' => 'start_date','type' => 'date','id' => 'start_date','class' => 'w-full']); ?>
+<?php $component->withAttributes(['id' => 'start_date','name' => 'start_date','type' => 'date','class' => 'w-full','value' => ''.e(old('start_date', $itinerary->start_date?->format('Y-m-d'))).'']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -209,14 +184,14 @@ unset($__errorArgs, $__bag); ?>
                                 <div class="col-span-4">
                                     <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['name' => 'end_date','type' => 'date','id' => 'end_date','class' => 'w-full']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'end_date','name' => 'end_date','type' => 'date','class' => 'w-full','value' => ''.e(old('end_date', $itinerary->end_date?->format('Y-m-d'))).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['name' => 'end_date','type' => 'date','id' => 'end_date','class' => 'w-full']); ?>
+<?php $component->withAttributes(['id' => 'end_date','name' => 'end_date','type' => 'date','class' => 'w-full','value' => ''.e(old('end_date', $itinerary->end_date?->format('Y-m-d'))).'']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -242,12 +217,75 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         
-                        <div class="md:col-span-1 flex items-start justify-end">
-                            <button type="submit" class="w-full md:w-auto mt-5 px-5 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow transition-all duration-200 ease-in-out">
-                                Create
+                        <?php if(Auth::id() === $itinerary->created_by): ?>
+                            <div class="md:col-span-2">
+                                <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'group_id','value' => 'Group']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'group_id','value' => 'Group']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                <select name="group_id" id="group_id" class="w-full border-gray-300 rounded-md max-h-40 overflow-y-auto"">
+                                    <option value="" <?php echo e(is_null($itinerary->group_id) ? 'selected' : ''); ?>>No Group</option>
+                                    <?php $__currentLoopData = $allGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($group->id); ?>" <?php echo e($group->id == $itinerary->group_id ? 'selected' : ''); ?>>
+                                            <?php echo e($group->name); ?>
+
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        <?php else: ?>
+                            <div class="md:col-span-2">
+                                <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'group_id','value' => 'Group']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'group_id','value' => 'Group']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                <div class="w-full py-2 px-3 border border-gray-300 rounded-md bg-gray-100">
+                                    <?php echo e($itinerary->group?->name ?? 'No Group'); ?>
+
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        
+                        <div class="md:col-span-1 text-end">
+                            <button type="submit" class="w-full md:w-auto px-4 mt-5 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
+                                Update
                             </button>
                         </div>
                     </div>
+
                     
                     <div class="flex flex-col md:flex-row gap-4">
                         
@@ -258,88 +296,114 @@ unset($__errorArgs, $__bag); ?>
                             <input type="hidden" name="total_distance" id="total_distance" />
                             <input type="hidden" name="total_duration" id="total_duration" />
                             <input type="hidden" name="initial_place" id="initial_place" />
-                            
-                            <div id="dateFieldsContainer" class="flex-1 overflow-y-auto max-h-[500px] space-y-4">
-                                
-                            </div>
-                            
+
+                            <div id="dateFieldsContainer" class="flex-1 overflow-y-auto max-h-[510px] space-y-4"></div>
                             <div id="totalSummary" class="mt-4 text-right text-sm text-gray-600 dark:text-gray-300 hidden"></div>
                         </div>
+
                         
                         <div class="md:w-1/2 w-full bg-white dark:bg-gray-700 rounded-lg p-2 shadow relative">
-                            <div id="map" class="h-64 md:h-[550px] w-full rounded-md border"></div>
+                            <div id="map" class="h-72 md:h-[560px] w-full rounded-md border"></div>
                         </div>
                     </div>
                 </form>
+
+                
+                <div id="groupModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center">
+                    <div class="bg-white rounded shadow-lg p-6 w-80">
+                        <h2 class="text-lg font-bold mb-2 text-red-600">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Caution
+                        </h2>
+                        <p class="mb-4 text-sm text-gray-700">
+                            If you change groups, your GoDutch data will be deleted. Are you sure?
+                        </p>
+                        <div class="flex justify-end gap-2">
+                            <button id="cancelGroupChange" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                            <button id="confirmGroupChange" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">OK</button>
+                        </div>
+                    </div>
+                </div>
+
                 
                 <?php $__env->startPush('scripts'); ?>
+                    <script>
+                        window.existingData = <?php echo json_encode($itineraryData['destinations'] ?? [], 15, 512) ?>;
+                        window.originalGroupId = "<?php echo e($itinerary->group_id ?? ''); ?>";
+                    </script>
                     <script src="<?php echo e(asset('js/itineraries/map.js')); ?>"></script>
-                    <script src="<?php echo e(asset('js/itineraries/create.js')); ?>"></script>
+                    <script src="<?php echo e(asset('js/itineraries/edit.js')); ?>"></script>
                     <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo e(config('services.google_maps.key')); ?>&libraries=places&callback=initMap" async defer></script>
                 <?php $__env->stopPush(); ?>
+
             </div>
 
             
             <div class="w-full lg:w-1/5">
                 <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 space-y-4 text-sm text-gray-800 dark:text-gray-100">
                     <h2 class="text-base font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                        How to Use
-                    </h2>
+                                        How to Use
+                                    </h2>
                     <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-pen text-blue-500 mt-1"></i>
+                        <i class="fa-solid fa-pen-to-square text-blue-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 1: Set the Trip Info</p>
-                            <p>Enter a title and select the start and end dates of your trip.</p>
+                            <p class="font-semibold">Step 1: Modify Basic Information</p>
+                            <p>You can update the itinerary title and trip dates.</p>
+                            <p>Only the creator of the itinerary can change the associated group.</p>
+                            <p class="text-red-600 dark:text-red-400 font-semibold mt-1">
+                                ⚠️ Note: If the group is changed, all GoDutch bill data will be deleted.
+                            </p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-2">
                         <i class="fa-solid fa-calendar-days text-green-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 2: Generate Daily Sections</p>
-                            <p>Once the dates are selected, destination fields for each day will appear.</p>
+                            <p class="font-semibold">Step 2: Check the Daily Layout</p>
+                            <p>Each day within your trip duration will show its own destination input section.</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-location-dot text-red-500 mt-1"></i>
+                        <i class="fa-solid fa-map-pin text-red-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 3: Add Your Destinations</p>
-                            <p>Input the names of each place you plan to visit and choose a travel mode (e.g., walking, driving).</p>
+                            <p class="font-semibold">Step 3: Edit Destinations</p>
+                            <p>Change, add, or remove the places you plan to visit. Each place has its own travel mode option.</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-up-down-left-right text-yellow-500 mt-1"></i>
+                        <i class="fa-solid fa-arrows-up-down-left-right text-yellow-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 4: Reorder Destinations</p>
-                            <p>Drag and drop to reorder destinations — the system uses this order to calculate routes.</p>
+                            <p class="font-semibold">Step 4: Reorder If Needed</p>
+                            <p>Drag and drop destinations to adjust the visiting order for each day.</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-2">
                         <i class="fa-solid fa-route text-purple-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 5: Review the Route</p>
-                            <p>Distances and durations are automatically calculated between stops.</p>
+                            <p class="font-semibold">Step 5: Review Route Updates</p>
+                            <p>Distances and durations are recalculated based on the updated order and travel modes.</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-circle-check text-teal-500 mt-1"></i>
+                        <i class="fa-solid fa-floppy-disk text-teal-500 mt-1"></i>
                         <div>
-                            <p class="font-semibold">Step 6: Create Itinerary</p>
-                            <p>Click the “Create” button to save your trip and proceed to the next step.</p>
+                            <p class="font-semibold">Step 6: Save Your Changes</p>
+                            <p>Click the “Update” button to apply the changes to your itinerary.</p>
                         </div>
                     </div>
                 </div>
-            </div>
+
         </div>
     </div>
     
     <button id="scrollToTopBtn" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white rounded-full p-1 shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none md:hidden" aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i> Go to Top
     </button>
+
+
     
     <style>
         @keyframes fadeIn {
@@ -360,9 +424,4 @@ unset($__errorArgs, $__bag); ?>
 <?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
 <?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
 <?php endif; ?>
-
-<<<<<<<< HEAD:storage/framework/views/bf6bc534eaaf94c527cd82cd24f17052.php
-<?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/itineraries/create.blade.php ENDPATH**/ ?>
-========
-<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/itineraries/create.blade.php ENDPATH**/ ?>
->>>>>>>> 6df93b8a75dd54c8cbc6cfa7579d8c9215562e33:storage/framework/views/22971ed486e05a17cfeb175ba014037e.php
+<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/itineraries/edit.blade.php ENDPATH**/ ?>

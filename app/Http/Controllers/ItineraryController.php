@@ -19,7 +19,6 @@ use App\Services\CostCalculator;
 
 class ItineraryController extends Controller
 {
-
     private $itinerary;
     private $billUser;
     private $bill;
@@ -225,7 +224,7 @@ class ItineraryController extends Controller
 
         session()->forget(['group_id', 'share']);
 
-        return redirect()->route('itinerary.index')->with('success', 'Itinerary saved');
+        return redirect()->route('itinerary.show', ['itinerary_id' => $itinerary->id])->with('success', 'Itinerary saved');
     }
 
     private function fetchPlaceInfo(string $address, array &$cache): array
@@ -277,96 +276,95 @@ class ItineraryController extends Controller
     /**
      * Display the specified resource.
      */
-public function show($itinerary_id, CostCalculator $costCalculator)
-{
-    $user = Auth::user();
+    public function show($itinerary_id, CostCalculator $costCalculator)
+    {
+        $user = Auth::user();
 
-    $itinerary = $this->itinerary
-        ->with(['dateItineraries.mapItineraries', 'group.users', 'bills.billUser'])
-        ->findOrFail($itinerary_id);
+        $itinerary = $this->itinerary
+            ->with(['dateItineraries.mapItineraries', 'group.users', 'bills.billUser'])
+            ->findOrFail($itinerary_id);
 
-    // 所属グループID取得（nullを除外）
-    $userGroupIds = $user->groups->pluck('id')->filter()->all();
+        // 所属グループID取得（nullを除外）
+        $userGroupIds = $user->groups->pluck('id')->filter()->all();
 
-    // 次の旅程（IDが大きい）
-    $next = Itinerary::where(function ($query) use ($user, $userGroupIds) {
-            $query->where('created_by', $user->id)
-                ->orWhereIn('group_id', $userGroupIds);
-        })
-        ->where('id', '>', $itinerary->id)
-        ->orderBy('id')
-        ->first();
+        // 次の旅程（IDが大きい）
+        $next = Itinerary::where(function ($query) use ($user, $userGroupIds) {
+                $query->where('created_by', $user->id)
+                    ->orWhereIn('group_id', $userGroupIds);
+            })
+            ->where('id', '>', $itinerary->id)
+            ->orderBy('id')
+            ->first();
 
-    // 前の旅程（IDが小さい）
-    $previous = Itinerary::where(function ($query) use ($user, $userGroupIds) {
-            $query->where('created_by', $user->id)
-                ->orWhereIn('group_id', $userGroupIds);
-        })
-        ->where('id', '<', $itinerary->id)
-        ->orderBy('id', 'desc')
-        ->first();
+        // 前の旅程（IDが小さい）
+        $previous = Itinerary::where(function ($query) use ($user, $userGroupIds) {
+                $query->where('created_by', $user->id)
+                    ->orWhereIn('group_id', $userGroupIds);
+            })
+            ->where('id', '<', $itinerary->id)
+            ->orderBy('id', 'desc')
+            ->first();
 
-    // belongings と進捗計算
-    $all_belongings = $itinerary->belongings;
-    $totalCount = $all_belongings->count();
-    $checkedCount = $all_belongings->where('checked', true)->count();
-    $progressPercent = $totalCount > 0 ? floor(($checkedCount / $totalCount) * 100) : 0;
+        // belongings と進捗計算
+        $all_belongings = $itinerary->belongings;
+        $totalCount = $all_belongings->count();
+        $checkedCount = $all_belongings->where('checked', true)->count();
+        $progressPercent = $totalCount > 0 ? floor(($checkedCount / $totalCount) * 100) : 0;
 
-    // map data
-    $itineraryData = [];
-    foreach ($itinerary->dateItineraries as $dateItinerary) {
-        $date = $dateItinerary->date instanceof \Carbon\Carbon
-            ? $dateItinerary->date->format('Y-m-d')
-            : (string) $dateItinerary->date;
+        // map data
+        $itineraryData = [];
+        foreach ($itinerary->dateItineraries as $dateItinerary) {
+            $date = $dateItinerary->date instanceof \Carbon\Carbon
+                ? $dateItinerary->date->format('Y-m-d')
+                : (string) $dateItinerary->date;
 
-        $itineraryData['destinations'][$date] = [];
+            $itineraryData['destinations'][$date] = [];
 
-        foreach ($dateItinerary->mapItineraries as $map) {
-            $itineraryData['destinations'][$date][] = [
-                'place_name'    => $map->place_name ?? $map->destination ?? '',
-                'latitude'      => $map->latitude,
-                'longitude'     => $map->longitude,
-                'place_id'      => $map->place_id ?? null,
-                'address'       => $map->destination ?? null,
-                'distance_km'   => $map->distance_km ?? null,
-                'duration_text' => $map->duration_text ?? null,
-                'travel_mode'   => $map->travel_mode ?? 'DRIVING',
-            ];
+            foreach ($dateItinerary->mapItineraries as $map) {
+                $itineraryData['destinations'][$date][] = [
+                    'place_name'    => $map->place_name ?? $map->destination ?? '',
+                    'latitude'      => $map->latitude,
+                    'longitude'     => $map->longitude,
+                    'place_id'      => $map->place_id ?? null,
+                    'address'       => $map->destination ?? null,
+                    'distance_km'   => $map->distance_km ?? null,
+                    'duration_text' => $map->duration_text ?? null,
+                    'travel_mode'   => $map->travel_mode ?? 'DRIVING',
+                ];
+            }
         }
-    }
 
-    $startDate = \Carbon\Carbon::parse($itinerary->start_date);
-    $endDate = \Carbon\Carbon::parse($itinerary->end_date);
-    $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
+        $startDate = \Carbon\Carbon::parse($itinerary->start_date);
+        $endDate = \Carbon\Carbon::parse($itinerary->end_date);
+        $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
 
-    // bill計算
-    $total_getPay = [];
-    $total_Pay = [];
-    if ($itinerary->group_id != null) {
-        foreach ($itinerary->group->users as $member) {
-            $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
-            $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
+        // bill計算
+        $total_getPay = [];
+        $total_Pay = [];
+        if ($itinerary->group_id != null) {
+            foreach ($itinerary->group->users as $member) {
+                $total_getPay[$member->id] = $costCalculator->total_getPay($itinerary, $member);
+                $total_Pay[$member->id] = $costCalculator->total_Pay($itinerary, $this->billUser, $member);
+            }
         }
+
+        $memo = $itinerary->memo?->content ?? '';
+
+        return view('itineraries.show', [
+            'itinerary' => $itinerary,
+            'previous' => $previous,
+            'next' => $next,
+            'period' => $period,
+            'itineraryData' => $itineraryData,
+            'all_belongings' => $all_belongings,
+            'total_getPay' => $total_getPay,
+            'total_Pay' => $total_Pay,
+            'totalCount' => $totalCount,
+            'checkedCount' => $checkedCount,
+            'progressPercent' => $progressPercent,
+            'itineraryMemo' => $memo,
+        ]);
     }
-
-    $memo = $itinerary->memo?->content ?? '';
-
-    return view('itineraries.show', [
-        'itinerary' => $itinerary,
-        'previous' => $previous,
-        'next' => $next,
-        'period' => $period,
-        'itineraryData' => $itineraryData,
-        'all_belongings' => $all_belongings,
-        'total_getPay' => $total_getPay,
-        'total_Pay' => $total_Pay,
-        'totalCount' => $totalCount,
-        'checkedCount' => $checkedCount,
-        'progressPercent' => $progressPercent,
-        'itineraryMemo' => $memo,
-    ]);
-}
-
 
     /**
      * Show the form for editing the specified resource.
@@ -443,10 +441,12 @@ public function show($itinerary_id, CostCalculator $costCalculator)
         try {
             $itinerary = $this->itinerary->findOrFail($itinerary_id);
 
-            if (Auth::user()->id != $itinerary->created_by && Auth::user()->id != optional($itinerary->group)->user_id) {
+            if (Auth::user()->id !== $itinerary->created_by && Auth::user()->id !== optional($itinerary->group)->user_id) {
                 return redirect()->route('itinerary.index')->withErrors(['unauthorized' => 'You are not authorized to update this itinerary.']);
             }
 
+            // 保存前の group_id を保持しておく（比較用）
+            $originalGroupId = $itinerary->group_id;
             $groupId = $request->input('group_id');
 
             if (empty($groupId)) {
@@ -454,7 +454,11 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                 $groupId = $group->id;
             }
 
-            // 目的地関連データ
+
+            // グループが変更されたかを判定
+            $groupChanged = (int) $originalGroupId !== (int) $groupId;
+
+            // Google Maps 関連取得
             $destinationsAddress    = $request->input('destinations', []);
             $destinationsLat        = $request->input('destinations_lat', []);
             $destinationsLng        = $request->input('destinations_lng', []);
@@ -462,7 +466,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
             $destinationsPlaceNames = $request->input('destinations_place_name', []);
             $travelModes            = $request->input('travel_modes', []);
 
-            // 初期地点
+            // 初期地点処理
             $firstPlace = null;
             foreach ($destinationsAddress as $places) {
                 if (!empty($places)) {
@@ -480,9 +484,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                 [$firstLat, $firstLng, $firstPlaceName] = $this->fetchPlaceInfo($firstPlace, $cache);
             }
 
-            // グループ変更前のgroup_idを保持
-            $originalGroupId = $itinerary->group_id;
-
+            // update（group_idもここで更新するが、変更前と比較済み）
             $itinerary->update([
                 'title'              => $validated['title'],
                 'start_date'         => $validated['start_date'],
@@ -493,16 +495,14 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                 'initial_longitude'  => $firstLng,
             ]);
 
-            // グループが変更された場合、GoDutch関連データを削除
-            if ($originalGroupId !== $groupId) {
-                // GoDutchデータ削除（例: GodutchPayment や GodutchUser などの関連モデル）
+            // ✅ グループが変更された場合のみ GoDutchデータ削除
+            if ($groupChanged) {
                 $billIds = $this->bill->where('itinerary_id', $itinerary->id)->pluck('id');
                 $this->billUser->whereIn('bill_id', $billIds)->delete();
                 $this->bill->where('itinerary_id', $itinerary->id)->delete();
-
             }
 
-            // 古い日付・目的地を削除
+            // 古い MapItinerary・DateItinerary を削除
             foreach ($itinerary->dateItineraries as $dateItinerary) {
                 MapItinerary::where('date_id', $dateItinerary->id)->delete();
                 $dateItinerary->delete();
@@ -521,8 +521,8 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                 $dateIds[$date->toDateString()] = $dateRecord->id;
             }
 
+            // ルート情報登録
             $prevPlace = null;
-
             foreach ($destinationsAddress as $date => $places) {
                 $dateId = $dateIds[$date] ?? null;
                 if (!$dateId || empty($places)) continue;
@@ -536,14 +536,13 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                     $placeName  = $destinationsPlaceNames[$date][$index] ?? $destination;
                     $travelMode = $travelModes[$date][$index] ?? 'DRIVING';
 
-                    // Google API で place_name 補完（任意）
+                    // Google APIで正式名称取得
                     if ($placeId) {
                         $placeDetailResponse = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
                             'place_id' => $placeId,
                             'fields'   => 'name',
                             'key'      => env('GOOGLE_MAPS_API_KEY'),
                         ]);
-
                         if ($placeDetailResponse->successful()) {
                             $placeDetail = $placeDetailResponse->json();
                             if (isset($placeDetail['result']['name'])) {
@@ -552,6 +551,7 @@ public function show($itinerary_id, CostCalculator $costCalculator)
                         }
                     }
 
+                    // 距離と所要時間を取得
                     $distance = null;
                     $duration = null;
 
@@ -592,13 +592,14 @@ public function show($itinerary_id, CostCalculator $costCalculator)
 
             DB::commit();
             return redirect()->route('itinerary.show', ['itinerary_id' => $itinerary->id])->with('success', 'Itinerary updated successfully.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Itinerary update failed', ['error' => $e->getMessage()]);
             return back()->withErrors(['update_failed' => 'An error occurred while updating the itinerary.']);
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -642,26 +643,4 @@ public function show($itinerary_id, CostCalculator $costCalculator)
 
         return back()->with('success', 'Itinerary status updated.');
     }
-
-
-
-
-    // public function loadMore(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $groupIds = $user->groups->pluck('id');
-
-    //     $page = $request->get('page', 1);
-
-    //     $itineraries = Itinerary::with(['user', 'group'])
-    //         ->where('created_by', $user->id)
-    //         ->orWhereIn('group_id', $groupIds)
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate(10, ['*'], 'page', $page);
-
-    //     return view('itineraries.partials.scroll', [
-    //         'all_itineraries' => $itineraries
-    //     ]);
-    // }
-
 }

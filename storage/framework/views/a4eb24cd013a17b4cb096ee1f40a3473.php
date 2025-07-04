@@ -38,4 +38,4 @@ $classes = ($active ?? false)
     <?php echo e($slot); ?>
 
 </a>
-<?php /**PATH C:\Users\Tamak\Desktop\gi_12_tripe_may\resources\views/components/responsive-nav-link.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\USER\Desktop\gi_12_tripe_may\resources\views/components/responsive-nav-link.blade.php ENDPATH**/ ?>

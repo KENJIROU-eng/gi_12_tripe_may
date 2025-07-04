@@ -85,7 +85,7 @@
                                 <div>{{ $message->created_at->format('Y-m-d') }}</div>
                             </div>
                             <div class="max-w-[70%]">
-                                <img src="{{ $message->image_url }}" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" download>
+                                <img src="{{ $message->image_url }}" class="mt-2 max-w-[220px] sm:max-w-xs rounded-lg mr-3" oncontextmenu="openCustomMenu(event, {{ $message->id }}, this)" download>
                             </div>
                         </div>
                     @endif
@@ -135,10 +135,10 @@
         </div>
 
         <ul id="custom-menu" class="absolute hidden bg-gray-100  rounded shadow z-50">
-            <li id="edit-item" class="p-1 m-2 hover:bg-gray-200 cursor-pointer">
+            <li id="edit-item" class="p-1 text-base hover:bg-green-200 cursor-pointer">
                 Edit
             </li>
-            <li id="delete-item" class="p-1 hover:bg-gray-200 cursor-pointer">
+            <li id="delete-item" class="p-1 text-base hover:bg-red-200 cursor-pointer">
                 Delete
             </li>
         </ul>

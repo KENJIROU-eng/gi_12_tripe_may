@@ -70,7 +70,7 @@
                             </button>
                         </div>
 
-                        <div class="max-h-40 overflow-y-auto border rounded-md p-2 bg-white dark:bg-gray-700">
+                        <div class="max-h-[100px] overflow-y-auto border rounded-md p-2 bg-white dark:bg-gray-700">
                             <div class="grid grid-cols-2 gap-1">
                                 @foreach ($members as $member)
                                     <label class="flex items-center space-x-2">
@@ -86,10 +86,16 @@
                     </div>
 
                     {{-- progress + addボタン横並び --}}
-                    @if($totalCount > 0)
-                        <div class="pt-2 md:flex md:items-center md:justify-between">
-                            {{-- プログレスバー --}}
-                            <div class="w-full px-4 mb-4">
+                    <div class="pt-2 md:flex md:items-center md:justify-between">
+                        {{-- Addボタン --}}
+                        <div class="text-right md:w-auto">
+                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
+                                Add
+                            </button>
+                        </div>
+                        @if($totalCount > 0)
+                            {{-- 👇 プログレスバーをラップするクラスを追加 --}}
+                            <div class="w-full px-4 mb-4 progress-container">
                                 <div class="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
                                     <span class="progress-count-text">{{ $checkedCount }} / {{ $totalCount }} items</span>
                                     <span class="progress-percent-text">{{ $progressPercent }}%</span>
@@ -98,26 +104,12 @@
                                     <div class="progress-bar-fill bg-blue-500 h-full transition-all duration-300" style="width: {{ $progressPercent }}%;"></div>
                                 </div>
                             </div>
-
-                            {{-- Addボタン --}}
-                            <div class="text-right md:w-auto">
-                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                    @else
-                        <div class="pt-2 text-right">
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
-                                Add
-                            </button>
-                        </div>
-                    @endif
-
+                        @endif
+                    </div>
                 </form>
 
                 {{-- Belonging List --}}
-                <div class="mt-8 max-h-[470px] overflow-y-auto pr-1 space-y-6" id="belongingListScrollArea">
+                <div class="mt-8 max-h-[370px] overflow-y-auto pr-1 space-y-6" id="belongingListScrollArea">
                     @forelse ($all_belongings as $belonging)
                         <div class="relative border p-2 rounded-md bg-white dark:bg-gray-700 shadow-sm belonging-item" data-belonging-id="{{ $belonging->id }}" data-belonging-name="{{ $belonging->name }}" data-belonging-description="{{ $belonging->description }}" data-belonging-users='@json($belonging->users->pluck("id"))' data-checked="{{ $belonging->users->every(fn($u) => $u->pivot->is_checked) ? '1' : '0' }}">
                             <div class="absolute top-2 right-2 flex space-x-2">

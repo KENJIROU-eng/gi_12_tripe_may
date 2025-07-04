@@ -1,6 +1,6 @@
 {{-- Edit Modal --}}
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg w-full max-w-3xl">
+    <div class="bg-white p-6 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div class="relative flex items-center justify-center h-16 my-5">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold absolute left-1/2 transform -translate-x-1/2">Edit Group</h1>
         </div>
@@ -18,7 +18,7 @@
                 <div class="text-red-500 text-xs">{{ $message }}</div>
             @enderror
 
-            <div class="flex justify-center">
+            <div class="flex flex-wrap justify-center">
                 {{-- Members --}}
                 <div class="container mb-4 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3  mr-2">
                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Members</label>
@@ -62,22 +62,24 @@
                 </div>
 
                 {{-- Image --}}
-                <div class="container w-1/3 mb-4 ml-4">
+                <div class="container w-full lg:w-1/3 mb-4 ml-4">
                     <label for="image-{{ $group->id }}" class="block text-sm font-semibold text-gray-700 text-center">Group Image</label>
-
                     <img id="image-preview-{{ $group->id }}" src="{{ $group->image ? asset('storage/' . $group->image) : '' }}"
-                        class="w-25 aspect-square rounded-full object-cover border border-gray-300 mx-auto {{ $group->image ? '' : 'hidden' }}" alt="Preview">
-
+                        class=" w-25 aspect-square rounded-full object-cover border border-gray-300 mx-auto {{ $group->image ? '' : 'hidden' }}" alt="Preview">
                     <input type="file" name="image" id="image-{{ $group->id }}" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 text-center">
+                    <div class="form-text text-gray-500 mt-1" id="image-info">
+                        The acceptable formats are jpeg, jpg, png, and gif only. <br>
+                        Max file size is 1048kb.
+                    </div>
                 </div>
                 @error('image')
                     <div class="text-red-500 text-xs">{{ $message }}</div>
                 @enderror
             </div>
 
-            <div class="flex justify-end mt-6 gap-2">
+            <div class="flex justify-center mt-6 gap-2">
                 <button type="button" @click="showEditModal = false" class="bg-white border border-gray-400 text-black px-4 py-2 rounded hover:bg-gray-300">Cancel</button>
-                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Update Group</button>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Update</button>
             </div>
         </form>
 
