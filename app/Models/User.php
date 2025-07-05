@@ -52,7 +52,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function itineraries() {
-        return $this->hasMany(Itinerary::class)->latest();
+        return $this->hasMany(Itinerary::class, 'created_by')->latest();
     }
 
     public function groups() {
@@ -64,17 +64,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Group::class);
     }
 
-    public function post()
+    public function posts()
     {
-        return $this->HasMany(Post::class);
+        return $this->hasMany(Post::class);
     }
 
-    public function followers(){
-        return $this->hasMany(Follow::class, 'following_id');
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
     }
 
-    public function following(){
-        return $this->hasMany(Follow::class, 'follower_id');
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
     }
 
     public function private_group(){

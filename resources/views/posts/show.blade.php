@@ -71,9 +71,26 @@
                                             @include('posts.modals.delete', ['post' => $post])
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Title -->
                                     <h1 class="font-bold text-center mb-2 text-lg md:text-xl lg:text-2xl">{{ $post->title }}</h1>
+
+                                    <!-- 公開範囲表示 -->
+                                    <div class="text-center text-sm text-gray-500 mb-2">
+                                    @php
+                                        $visibilityLabels = [
+                                            'public' => 'Visible to: Everyone',
+                                            'self' => 'Visible to: Only Me',
+                                            'followers' => 'Visible to: Followers Only',
+                                            'groups' => 'Visible to: Specific Groups',
+                                            'followers_groups' => 'Visible to: Followers + Groups',
+                                            'custom' => 'Visible to: Selected Users',
+                                        ];
+                                    @endphp
+                                        <span class="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
+                                            {{ $visibilityLabels[$post->visibility] ?? 'Visibility: Not set' }}
+                                        </span>
+                                    </div>
 
                                     <!-- Image -->
                                     <div class="mb-2 bg-gradient-to-r from-gray-200 via-white to-gray-200 ">
@@ -131,7 +148,26 @@
                                     <div class="text-xs text-gray-500 ml-3 mt-1">
                                         {{ $post->created_at->format('M d, Y') }}
                                     </div>
-                                    
+
+                                    {{-- 選択された Itinerary と目的地 --}}
+                                    @if ($post->itinerary)
+                                        <div class="my-1 px-4">
+                                            <h2 class="text-lg font-semibold text-teal-600 mb-1">
+                                                Itinerary: {{ $post->itinerary->title }}
+                                            </h2>
+
+                                            @if ($post->mapItineraries->isNotEmpty())
+                                                <ul class="list-disc list-inside text-sm text-gray-700">
+                                                    @foreach ($post->mapItineraries as $map)
+                                                        <li>{{ $map->place_name ?? $map->destination }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="text-sm text-gray-500">No destinations selected.</p>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                         <div class="px-4 mb-2">
                                             <div class="font-light whitespace-pre-line break-words text-gray-800 dark:text-gray-100">
                                                 {{ $post->description }}

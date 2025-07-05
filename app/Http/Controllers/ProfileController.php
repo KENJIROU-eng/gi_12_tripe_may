@@ -38,8 +38,7 @@ class ProfileController extends Controller
 
     public function users_index()
     {
-        $all_users = $this->user->all();
-
+        $all_users = $this->user->where('is_public', true)->get();
 
         return view('profile.users_list')
             ->with('all_users', $all_users);
@@ -52,7 +51,7 @@ class ProfileController extends Controller
         ]);
 
         $search = $request->user_name;
-        $all_users = $this->user->where('name', 'like', '%'. $request->user_name . '%')->get();
+        $all_users = $this->user->where('is_public', true)->where('name', 'like', '%'. $request->user_name . '%')->get();
 
         return view('profile.users_list_search')
             ->with('search', $search)
@@ -65,13 +64,15 @@ class ProfileController extends Controller
             'name'          => 'required|max:50',
             'email'         => 'required|email|max:50|unique:users,email,' . Auth::user()->id,
             'image'        => 'mimes:jpeg,jpg,png,gif|max:1048',
-            'introduction'  => 'max:100'
+            'introduction'  => 'max:100',
+            'is_public'     => 'required|boolean'
         ]);
 
         $user = $this->user->findOrFail(Auth::user()->id);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->introduction = $request->introduction;
+        $user->is_public = $request->is_public;
 
         if ($request->image) {
             $user->avatar = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
@@ -102,13 +103,15 @@ class ProfileController extends Controller
             'name'          => 'required|max:50',
             'email'         => 'required|email|max:50|unique:users,email,' . Auth::user()->id,
             'image'        => 'mimes:jpeg,jpg,png,gif|max:1048',
-            'introduction'  => 'max:100'
+            'introduction'  => 'max:100',
+            'is_public'     => 'required|boolean'
         ]);
 
         $user = $this->user->findOrFail(Auth::user()->id);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->introduction = $request->introduction;
+        $user->is_public = $request->is_public;
 
         if ($request->image) {
             $user->avatar = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
@@ -153,18 +156,28 @@ class ProfileController extends Controller
 
     public function show($user_id) {
         $user = $this->user->findOrFail($user_id);
-        $all_posts = $user->post->all();
 
-        $group = $this->group->where('user_id', Auth::User()->id)->where('name', $user->name)->first();
-        if(!$group) {
-            $group = $this->group->where('user_id', $user->id)->where('name', Auth::User()->name)->first();
-        };
+        // グループ情報取得
+        $group = $this->group->where('user_id', Auth::id())->where('name', $user->name)->first();
+        if (!$group) {
+            $group = $this->group->where('user_id', $user->id)->where('name', Auth::user()->name)->first();
+        }
+
+        // 投稿取得（自分ならすべて、それ以外はフィルタ）
+        if (Auth::id() === $user->id) {
+            $all_posts = $user->posts;
+        } else {
+            $all_posts = $user->posts->filter(function ($post) {
+                return $post->isVisibleTo(Auth::user());
+            });
+        }
 
         return view('profile.show')
             ->with('user', $user)
             ->with('group', $group)
             ->with('all_posts', $all_posts);
     }
+
 
     public function index() {
     $top3 = DB::table('likes')

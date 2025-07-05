@@ -72,6 +72,28 @@
                             </div>
                         </div>
 
+                        {{-- 公開範囲設定 --}}
+                        <div>
+                            <label class="block text-md font-medium mb-1">Search Visibility:</label>
+                            <div class="flex items-center gap-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="is_public" value="1"
+                                        {{ old('is_public', $user->is_public) ? 'checked' : '' }}
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span class="ml-2">Visible</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="is_public" value="0"
+                                        {{ old('is_public', $user->is_public) ? '' : 'checked' }}
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span class="ml-2">Hidden</span>
+                                </label>
+                            </div>
+                            @error('is_public')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         {{-- ボタン --}}
                         <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mt-4">
                             <a href="{{ route('profile.show', $user->id) }}" class="w-full sm:w-1/2">
