@@ -32,7 +32,7 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
 
     const startLabel = isFirst
         ? `<div class="text-sm text-blue-600 font-semibold mb-1 flex items-center gap-1">
-           </div>`
+            </div>`
         : '';
 
     return `

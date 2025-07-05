@@ -100,7 +100,7 @@
                                             @php
                                                 $diffStart = $itinerary->start_date->diffInDays($today, false);
                                                 $diffEnd = $itinerary->end_date->diffInDays($today, false);
-                                                $members = $itinerary->group->members;
+                                                $members = $itinerary->group->users;
                                                 $authUser = Auth::user();
 
                                                 // Laravelで残りメンバーを整形

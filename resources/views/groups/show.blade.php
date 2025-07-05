@@ -207,7 +207,6 @@
     </script>
 
 
-
     <form id="chat-form" action="{{ route('message.send')}}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 p-2 border-t mt-4 bg-white fixed bottom-0 left-0 right-0 z-50">
     @csrf
         <input type="hidden" name="group_id" value="{{ $group->id }}">

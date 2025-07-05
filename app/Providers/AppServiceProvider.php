@@ -77,7 +77,7 @@ class AppServiceProvider extends ServiceProvider
                     ->whereDate('end_date', '>=', $today)
                     ->where(function ($query) use ($user, $groupIds) {
                         $query->where('created_by', $user->id)
-                              ->orWhereIn('group_id', $groupIds);
+                            ->orWhereIn('group_id', $groupIds);
                     })->get();
                 // 天気情報
                 $countryId = session('weather_country_id');
