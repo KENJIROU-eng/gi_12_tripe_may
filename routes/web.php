@@ -27,14 +27,14 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-#weather
-Route::post('/set-weather-country', function (Request $request) {
-    $minutes = 60 * 24 * 30;
-    return back()->withCookie(cookie('weather_country_id', $request->input('country_id'), $minutes));
-})->name('weather.setCountry');
-Route::get('/api/weather', [WeatherController::class, 'fetch'])->name('api.weather');
-Route::post('/countries/store', [CountryController::class, 'store'])->middleware('auth')->name('countries.store');
-Route::delete('/countries/{id}', [CountryController::class, 'destroy'])->name('countries.destroy');
+    #weather
+    Route::post('/set-weather-country', function (Request $request) {
+        $minutes = 60 * 24 * 30;
+        return back()->withCookie(cookie('weather_country_id', $request->input('country_id'), $minutes));
+    })->name('weather.setCountry');
+    Route::get('/api/weather', [WeatherController::class, 'fetch'])->name('api.weather');
+    Route::post('/countries/store', [CountryController::class, 'store'])->middleware('auth')->name('countries.store');
+    Route::delete('/countries/{id}', [CountryController::class, 'destroy'])->name('countries.destroy');
 
 Route::middleware('auth')->group(function () {
     #profile
@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/post/{post_id}/update', [PostController::class, 'update'])->name('post.update');
     Route::get('/post/search', [PostController::class, 'search'])->name('post.search');
     Route::delete('/post/{post_id}/delete', [PostController::class, 'destroy'])->name('post.delete');
+    Route::get('/posts/search/location', [PostController::class, 'searchByLocation'])->name('post.search.location');
+
     // Route::get('/post/test', [PostController::class, 'test']);
     // Route::post('/post/broadcast/event', [PostController::class, 'broadcastEvent']);
     // Route::post('/post/broadcast/realtime', [PostController::class, 'broadcast']);

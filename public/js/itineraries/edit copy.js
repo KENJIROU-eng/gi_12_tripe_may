@@ -37,41 +37,38 @@ function createInputField(dateKey, index, address = '', lat = '', lng = '', plac
         </div>
     `;
 
-return `
-    <div class="destination-item mb-3">
-        <div class="w-full">
-            <span class="departure-label text-xs text-blue-600 font-bold mb-1 hidden">
-                <i class="fa-solid fa-flag-checkered text-blue-500"></i> Starting Point
-            </span>
+    return `
+        <div class="destination-item mb-3">
             <div class="flex items-center gap-2">
                 <span class="cursor-move drag-handle text-gray-500 text-xl w-1/12 text-center">
                     <i class="fa-solid fa-grip-lines"></i>
                 </span>
 
-                <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
-                    class="p-1 border rounded destination-input w-full"
-                    placeholder="Please enter a destination" />
+                <div class="w-full flex flex-col justify-center">
+                    <span class="departure-label text-xs text-blue-600 font-bold mb-1 hidden block">
+                        <i class="fa-solid fa-flag-checkered text-blue-500"></i> Starting Point
+                    </span>
+                    <input type="text" name="destinations[${dateKey}][]" value="${address || placeName}"
+                        class="p-1 border rounded destination-input w-full" placeholder="Please enter a destination" />
+                </div>
 
-                <button type="button"
-                    class="remove-btn ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 flex items-center h-[38px]">
+                <button type="button" class="ml-auto mx-2 text-red-500 hover:text-red-700 text-xl pr-2 remove-btn flex items-center h-[38px]">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+
+            <div class="ml-10 mt-1 flex flex-wrap md:flex-nowrap gap-2 items-center travel-mode-container">
+                ${radioButtons}
+                ${transitWarning}
+                <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
+            </div>
+
+            <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
+            <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
+            <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
+            <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
         </div>
-
-        <div class="ml-10 mt-1 flex flex-wrap md:flex-nowrap gap-2 items-center travel-mode-container">
-            ${radioButtons}
-            ${transitWarning}
-            <span class="route-info text-sm text-gray-600 col-span-2 sm:ml-4"></span>
-        </div>
-
-        <input type="hidden" name="destinations_lat[${dateKey}][]" value="${lat}" class="destination-lat" />
-        <input type="hidden" name="destinations_lng[${dateKey}][]" value="${lng}" class="destination-lng" />
-        <input type="hidden" name="destinations_place_id[${dateKey}][]" value="${placeId}" class="destination-place-id" />
-        <input type="hidden" name="destinations_place_name[${dateKey}][]" value="${placeName}" class="destination-place-name" />
-    </div>
-`;
-
+    `;
 }
 
 // ラジオボタンのTRANSIT警告表示制御

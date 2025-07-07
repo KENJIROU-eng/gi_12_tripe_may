@@ -3,7 +3,7 @@
         <div class="w-9/10 md:w-4/5 mx-auto sm:px-6 lg:px-8 h-full">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg h-full">
                 <div class="p-4 text-black dark:text-gray-100 h-full">
-                    
+
                     {{-- タイトル --}}
                     <div class="relative flex items-center justify-center h-8 my-2">
                         <h1 class="text-3xl sm:text-3xl lg:text-3xl 2xl:text-5xl font-bold absolute left-1/2 transform -translate-x-1/2">Post List</h1>
@@ -12,36 +12,53 @@
                         </a>
                     </div>
 
-                    {{-- 検索フォーム --}}
-                    <div class="mx-auto mt-4">
-                        <form action="{{ route('post.search') }}" method="get" class="w-full">
-                            <div class="flex justify-center items-center mb-3 w-full">
-                                <select name="search" class="block border border-gray-300 rounded w-2/3 focus:ring-2 me-3">
-                                    @if (isset($category_search))
-                                        <option value="#">All categories</option>
+                    {{-- 検索フォーム（カテゴリと位置の統合） --}}
+                    <div class="mx-auto mt-6 mb-6 w-full">
+                        <div class="flex flex-col sm:flex-row gap-6 justify-center items-end flex-wrap">
+
+                            {{-- カテゴリ検索 --}}
+                            <form action="{{ route('post.search') }}" method="GET" class="flex flex-col">
+                                <label class="text-sm font-semibold mb-1">Category</label>
+                                <div class="flex gap-2">
+                                    <select name="search" class="border border-gray-300 rounded px-4 py-2 w-60">
+                                        <option value="#" {{ !isset($category_search) ? 'selected' : '' }}>All categories</option>
                                         @foreach ($all_categories as $category)
-                                            @if ($category->id != $category_search->id)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @else
-                                                <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
-                                            @endif
+                                            <option value="{{ $category->id }}" {{ isset($category_search) && $category_search->id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
                                         @endforeach
-                                    @else
-                                        <option value="#" selected>All categories</option>
-                                        @foreach ($all_categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <button type="submit" class="block text-white px-4 bg-teal-500 py-2 font-semibold hover:bg-teal-700 transition rounded-md">Search</button>
-                            </div>
-                        </form>
+                                    </select>
+                                    <button type="submit"
+                                            class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-700 transition">
+                                        Search
+                                    </button>
+                                </div>
+                            </form>
+
+                            {{-- 位置検索 --}}
+                            <form id="searchForm" action="{{ route('post.search.location') }}" method="GET" class="flex flex-col">
+                                <label class="text-sm font-semibold mb-1">Location Search</label>
+                                <div class="flex gap-2 flex-wrap sm:flex-nowrap">
+                                    <input type="text" id="address" name="address" placeholder="Enter city or area"
+                                        class="border p-2 rounded w-60" required>
+                                    <input type="number" name="radius" id="radius" value="20" min="1"
+                                        class="border p-2 rounded w-32" placeholder="Radius (km)">
+                                    <input type="hidden" name="latitude" id="latitude">
+                                    <input type="hidden" name="longitude" id="longitude">
+                                    <button type="submit"
+                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+                                        Nearby
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+
 
                     {{-- 投稿リスト --}}
                     <div id="scroll-container" class="max-h-[780px] overflow-auto pb-4">
                         <div id="post-container" class="flex flex-wrap -mx-2" wire:ignore>
-                            
+
                             {{-- Masonry用のsizer（ブレイクポイントで幅制御） --}}
                             <div class="post-sizer w-full sm:w-1/2 lg:w-1/3"></div>
 
@@ -88,33 +105,89 @@
     <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <script>
-        function initMasonry() {
-            const container = document.querySelector('#post-container');
-            if (!container) return;
+    function initMasonry() {
+        const container = document.querySelector('#post-container');
+        if (!container) return;
 
-            if (window.masonryInstance) {
-                window.masonryInstance.destroy();
-            }
+        if (window.masonryInstance) {
+            window.masonryInstance.destroy();
+        }
 
-            imagesLoaded(container, function () {
-                window.masonryInstance = new Masonry(container, {
-                    itemSelector: '.post-item',
-                    columnWidth: '.post-sizer',
-                    percentPosition: true
-                });
+        imagesLoaded(container, function () {
+            window.masonryInstance = new Masonry(container, {
+                itemSelector: '.post-item',
+                columnWidth: '.post-sizer',
+                percentPosition: true
             });
-        }
-
-        function safeMasonry() {
-            initMasonry();
-            setTimeout(initMasonry, 300); 
-        }
-
-        document.addEventListener('DOMContentLoaded', safeMasonry);
-        document.addEventListener('livewire:load', () => {
-            safeMasonry();
-            Livewire.hook('message.processed', safeMasonry);
         });
-    </script>
+    }
+
+    function safeMasonry() {
+        initMasonry();
+        setTimeout(initMasonry, 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ✅ safeMasonry の初期化
+        safeMasonry();
+
+        // ✅ Livewire 用 hook
+        if (window.Livewire) {
+            Livewire.hook('message.processed', safeMasonry);
+        }
+
+        // ✅ Nearby ボタンの検索処理
+        const form = document.getElementById('searchForm');
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const address = document.getElementById('address').value.trim();
+            const radiusInput = document.getElementById('radius');
+            const apiKey = '{{ config("services.google_maps.key") }}';
+            const baseUrl = "{{ route('post.search.location') }}";
+
+            let radius = parseInt(radiusInput.value, 10) || 20;
+
+            try {
+                const response = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
+                );
+                const data = await response.json();
+
+                if (data.status === 'OK') {
+                    const location = data.results[0].geometry.location;
+                    const types = data.results[0].types;
+
+                    // 国名だったら最低1000km
+                    if (types.includes('country') && radius < 1000) {
+                        radius = 1000;
+                        radiusInput.value = 1000;
+                    }
+
+                    const query = new URLSearchParams({
+                        address: address,
+                        latitude: location.lat.toString(),
+                        longitude: location.lng.toString(),
+                        radius: radius.toString()
+                    });
+
+                    const fullUrl = `${baseUrl}?${query.toString()}`;
+                    console.log("Redirecting to:", fullUrl);
+                    window.location.assign(fullUrl);
+
+                } else {
+                    alert('Location not found. Try a more specific city or area.');
+                }
+            } catch (error) {
+                alert('Failed to fetch location data.');
+                console.error(error);
+            }
+        });
+    });
+</script>
+
+
 </x-app-layout>
 

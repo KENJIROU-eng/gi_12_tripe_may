@@ -50,4 +50,10 @@ class Itinerary extends Model
     {
         return $this->hasOne(ItineraryMemo::class);
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
 }

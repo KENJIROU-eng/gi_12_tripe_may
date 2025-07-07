@@ -17,24 +17,22 @@
                     </h1>
                 </div>
                     {{-- contents --}}
-                    <div class="mx-auto h-full mt-8">
+                    <div class="mx-auto mt-8 max-h-[600px] overflow-y-auto pr-2">
                         @foreach ($followings as $following)
-                            @if (!empty($following->following))
                             <div class="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-4 hover:bg-gray-50 transition">
-                                <a href="{{ route('profile.show', $following->following->id) }}" class="flex items-center space-x-4 w-full ml-2">
+                                <a href="{{ route('profile.show', $following->id) }}" class="flex items-center space-x-4 w-full ml-2">
                                     @if ($following->avatar)
-                                        <img src="{{ $following->following->avatar }}" alt="{{ $following->following->name }}" class="w-12 h-12 rounded-full object-cover">
+                                        <img src="{{ $following->avatar }}" alt="{{ $following->name }}" class="w-12 h-12 rounded-full object-cover">
                                     @else
                                         <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
-                                            {{ strtoupper(substr($following->following->name, 0, 1)) }}
+                                            {{ strtoupper(substr($following->name, 0, 1)) }}
                                         </div>
                                     @endif
                                     <div class="text-center">
-                                        <p class="font-semibold text-2xl truncate">{{ $following->following->name }}</p>
+                                        <p class="font-semibold text-2xl truncate">{{ $following->name }}</p>
                                     </div>
                                 </a>
                             </div>
-                            @endif
                         @endforeach
                     </div>
                 </div>

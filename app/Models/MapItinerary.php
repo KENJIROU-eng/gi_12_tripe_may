@@ -19,4 +19,10 @@ class MapItinerary extends Model
         'place_id',
         'travel_mode',
     ];
+
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class, 'post_map_itinerary');
+    }
+
 }

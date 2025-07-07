@@ -155,7 +155,7 @@ class FollowController extends Controller
     }
 
     public function following_show(User $user) {
-        $followings = $user->following;
+        $followings = $user->followings ?? collect();
 
         return view('follows.following')
             ->with('user', $user)

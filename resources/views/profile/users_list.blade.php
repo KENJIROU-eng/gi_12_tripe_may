@@ -12,7 +12,7 @@
                         </a>
                     </div>
                     {{-- contents --}}
-                    <div class="mx-auto h-full mt-8">
+                    <div class="mx-auto h-full mt-8 overflow-y-auto max-h-[600px] pr-2">
                         <form action="{{ route('profile.users.search') }}" method="get" class="w-full">
                             <div class="flex justify-center items-center mb-3 w-full">
                                 <input type="text" name="user_name" class="w-1/2 rounded-md mr-4" placeholder="Please search User Name">

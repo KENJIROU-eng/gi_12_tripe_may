@@ -45,7 +45,7 @@
                             </div>
                             <div class="flex justify-center gap-6 mt-4 text-center text-sm sm:text-base">
                                 <div>
-                                    <strong>{{ $user->post->count() }}</strong><br> {{ Str::plural('Post', $user->post->count()) }}
+                                    <strong>{{ $user->posts->count() }}</strong><br> {{ Str::plural('Post', $user->posts->count()) }}
                                 </div>
                                 <div>
                                     <a href="{{ route('follower.show', $user->id) }}" class="hover:text-blue-500">
@@ -54,7 +54,7 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('following.show', $user->id) }}" class="hover:text-blue-500">
-                                        <strong>{{ $user->following->count() }}</strong><br>Following
+                                        <strong>{{ $user->followings->count() }}</strong><br>Following
                                     </a>
                                 </div>
                             </div>
