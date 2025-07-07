@@ -38,7 +38,7 @@ class ProfileController extends Controller
 
     public function users_index()
     {
-        $all_users = $this->user->where('is_public', true)->get();
+        $all_users = $this->user->where('is_public', true)->paginate(6)->onEachSide(2);
 
         return view('profile.users_list')
             ->with('all_users', $all_users);
@@ -51,7 +51,7 @@ class ProfileController extends Controller
         ]);
 
         $search = $request->user_name;
-        $all_users = $this->user->where('is_public', true)->where('name', 'like', '%'. $request->user_name . '%')->get();
+        $all_users = $this->user->where('is_public', true)->where('name', 'like', '%'. $request->user_name . '%')->paginate(6)->onEachSide(2);
 
         return view('profile.users_list_search')
             ->with('search', $search)
