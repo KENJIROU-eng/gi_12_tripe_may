@@ -30,7 +30,8 @@
                         </div>
                     </div>
                     
-                    <?php
+                    <?php if(Auth::User()->notification == NULL): ?>
+                        <?php
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
@@ -46,6 +47,7 @@ unset($__params);
 unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
+                    <?php endif; ?>
 
                     
                     

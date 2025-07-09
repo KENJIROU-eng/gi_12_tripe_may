@@ -39,7 +39,9 @@
                         </div>
                     </div>
                     {{-- notification --}}
-                    @livewire('notification-toggle')
+                    @if (Auth::User()->notification == NULL)
+                        @livewire('notification-toggle')
+                    @endif
 
                     {{-- modal --}}
                     {{-- <div id="audio-permission-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">

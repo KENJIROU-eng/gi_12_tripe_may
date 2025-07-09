@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Message;
 use App\Models\ReadMessage;
 use App\Events\MessageSent;
+use App\Events\MessageDelete;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -39,6 +40,8 @@ class GroupController extends Controller
 
             $message->message = $request->message;
             $message->save();
+
+            broadcast(new MessageSent($message));
 
             return response()->json(['success' => true, 'image_url' => $message->image_url ?? '','mode' => 'edit',]);
             // return redirect()->back()->with('status', 'メッセージを更新しました');
@@ -116,11 +119,20 @@ class GroupController extends Controller
 
     public function destroyMessage(Message $message){
 
+
+        broadcast(new MessageDelete($message));
+
         $this->authorize('delete', $message);
         $message->delete();
 
         return response()->json(['success' => true]);
     }
+
+    // public function deleteEvent(Message $message){
+
+    //     broadcast(new MessageDelete($message));
+    //     return response()->json(['success' => true]);
+    // }
 
     public function updateMessage(Request $request, Message $message){
 

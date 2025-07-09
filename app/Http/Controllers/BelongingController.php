@@ -124,6 +124,16 @@ class BelongingController extends Controller
         // 中間テーブル更新（detach + attach）で状態を反映
         $belonging->users()->sync($syncData);
 
+        // すべての assigned user の is_checked が true なら belongings.checked も true に
+        $totalAssigned = DB::table('belonging_user')->where('belonging_id', $id)->count();
+        $totalChecked = DB::table('belonging_user')->where('belonging_id', $id)->where('is_checked', true)->count();
+
+        $isAllChecked = $totalAssigned > 0 && $totalAssigned === $totalChecked;
+
+        DB::table('belongings')
+            ->where('id', $id)
+            ->update(['checked' => $isAllChecked]);
+
         return response()->json(['message' => 'Updated successfully']);
     }
 

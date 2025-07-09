@@ -37,11 +37,9 @@
 
     </head>
     <body data-user-id="<?php echo e(Auth::user()->id); ?>" class="page-transition">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100">
             <?php echo $__env->make('layouts.navigation', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             <!-- Page Content -->
-
-            
 
             <main class="relative pt-12 min-h-screen" style="background-image: url('/images/mesut-kaya-eOcyhe5-9sQ-unsplash.jpg'); background-size: cover;">
                 <?php if(Str::startsWith(Route::currentRouteName(), 'post.') || Str::startsWith(Route::currentRouteName(), 'group.')): ?>

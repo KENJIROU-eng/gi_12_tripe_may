@@ -95,7 +95,7 @@
                             <div class="flex items-start">
                                 <img src="{{ $message->user->avatar_url ?? asset('images/user.png') }}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full mt-1" alt="{{ $message->user->name }}">
                                 <div class="flex space-x-2 items-end">
-                                    <div class="max-w-[70%]">
+                                    <div id = "message-{{ $message->id }}" class="max-w-[70%]">
                                         <div class="text-sm text-gray-600 font-medium ml-1">{{ $message->user->name }}</div>
                                         <div class="text-base lg:text-xl bg-white border border-gray-200 rounded-2xl p-3 shadow">
                                             <div style="word-break: break-word; overflow-wrap: break-word; ">
@@ -177,9 +177,7 @@
             customMenu.classList.add("hidden");
         });
             const newText = editTextarea.value.trim();
-            // 表示を即時反映（必要ならサーバーにもPOST/PUT送信可能）
             targetMessageElement.innerText = newText;
-            // オプション：fetchでサーバーに送信したい場合は以下を使う
             editForm.classList.add("hidden");
             targetMessageElement = null;
             currentMessageId = null;

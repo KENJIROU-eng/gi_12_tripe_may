@@ -4,6 +4,11 @@
             <div class="min-h-screen bg-gray-100 dark:bg-gray-800 py-6 px-4 sm:px-6 lg:px-8">
                 <div class="max-w-7xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                     {{-- タイトル --}}
+                    <div class="">
+                        <a href="{{ route('itinerary.show', $itinerary->id) }}" class="inline-flex items-center text-sm sm:text-base text-blue-500 hover:underline">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back to itinerary show page
+                        </a>
+                    </div>
                     <div class="text-center mb-8 border-b border-gray-300 pb-4">
                         <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex justify-center items-center gap-2">
                             <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
@@ -110,7 +115,7 @@
                                                     <i class="fa-solid fa-circle-xmark"></i> Unpaid
                                                 </div>
                                                 {{-- Pay now（説明風バッジ） --}}
-                                                 <div class="text-center text-sm text-blue-600 flex gap-6 items-center justify-center">
+                                                <div class="text-center text-sm text-blue-600 flex gap-6 items-center justify-center">
                                                     @if (Auth::User()->id == $detail[0]->id)
                                                         <!-- PayPal -->
                                                         <a href="{{ route('paypal.pay', ['itinerary_id' => $itinerary->id, 'total' => $detail[2] - $pays[$detail[0]->id][$detail[1]->id]->sum('Price'), 'user_id' => $detail[1]->id]) }}"

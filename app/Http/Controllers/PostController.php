@@ -149,8 +149,8 @@ public function create()
             $this->post->categoryPost()->createMany($category_id);
         }
 
-        $post->itinerary_id = $request->itinerary_id ?: null;
-        $post->save();
+        $this->post->itinerary_id = $request->itinerary_id ?: null;
+        $this->post->save();
 
         if (!empty($request->map_itinerary_ids)) {
             $this->post->mapItineraries()->sync($request->map_itinerary_ids);
@@ -374,7 +374,7 @@ public function create()
             'radius' => $request->radius,
             'address' => $request->address,
         ]);
-        
+
         $lat = $request->latitude;
         $lng = $request->longitude;
         $radius = $request->radius ?? 20;

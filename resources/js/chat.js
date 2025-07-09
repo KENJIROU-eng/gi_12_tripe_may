@@ -239,25 +239,25 @@ window.addEventListener('DOMContentLoaded', () => {
 // グローバル関数として明示
 
 window.enableNotification = function () {
-    document.getElementById('notify-box').style.display = 'none';
+    // document.getElementById('notify-box').style.display = 'none';
     Livewire.dispatch('notification-enabled');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '1');
-    location.reload();
+    // location.reload();
 }
 
 window.dismissNotification = function () {
-    document.getElementById('notify-box').style.display = 'none';
+    // document.getElementById('notify-box').style.display = 'none';
     Livewire.dispatch('notification-dismiss');
     localStorage.setItem(`notificationsEnabled_user_${myUserId}`, '0');
 }
 
 // DOM読み込み後に実行
-window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem(`notificationsEnabled_user_${myUserId}`);
-    if (saved === '1' || saved === '0') {
-        document.getElementById('notify-box').style.display = 'none';
-    }
-});
+// window.addEventListener('DOMContentLoaded', () => {
+//     const saved = localStorage.getItem(`notificationsEnabled_user_${myUserId}`);
+//     if (saved === '1' || saved === '0') {
+//         document.getElementById('notify-box').style.display = 'none';
+//     }
+// });
 
 // notification
 // document.addEventListener('livewire:init', () => {
@@ -339,13 +339,18 @@ if (groupId && myUserId) {
 
             const messagesDiv = document.getElementById('messages'); //チャットメッセージの親要素を取得
             const isMine = parseInt(myUserId) === e.user_id; //メッセージの送信者が自分かどうかを判定
+            let messageContent = '';
+
+            if (document.getElementById(`message-${e.message_id}`)) {
+                messageContent += nl2br(escapeHtml(e.message.text));
+                document.getElementById(`message-${e.message_id}`).querySelector('div[style*="word-break"]').textContent = messageContent;
+            }else {
 
             const wrapper = document.createElement('div');
             wrapper.id = `message-${e.message_id}`;
             wrapper.className = isMine ? 'flex justify-end items-end' : '';
             //7.メッセージ内容をHTMLに組み立て
             //const messageElement = document.createElement('div');//新しいメッセージを追加するための div を用意
-            let messageContent = '';
 
             //テキスト組み込み
             if (e.message && e.message.text) {
@@ -368,7 +373,7 @@ if (groupId && myUserId) {
                                 <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_hm}</div>
                                 <div class="text-xs text-right mt-1 text-gray-400 mr-2">${e.time_ymd}</div>
                             </div>
-                        
+
                             <div class="bg-teal-200 text-base lg:text-xl mr-2 rounded-2xl p-3 max-w-[70%] shadow" oncontextmenu="openCustomMenu(event, ${e.message_id}, this)"
                                 x-data="{ editing: false, content: ${JSON.stringify(e.message.text ?? '')} }">
                                     <div style="word-break: break-word; overflow-wrap: break-word; ">
@@ -379,7 +384,7 @@ if (groupId && myUserId) {
                     `;
                 } else {
                     // 画像だけの場合
-                    
+
                     wrapper.innerHTML = `
                         <div class="text-xs text-gray-400 mr-2">
                             <div class="text-right">${e.time_hm}</div>
@@ -455,6 +460,13 @@ if (groupId && myUserId) {
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 }
             });
+            }
+        });
+    window.Echo.private(`group.${groupId}`)
+        .listen('.message.delete', (e) => {
+            // setTimeout(() => {
+                location.reload();
+            // }, 4000);
         });
 }
 

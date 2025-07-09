@@ -63,12 +63,12 @@
                                 @enderror
                             </div> --}}
                             <div class="flex flex-wrap justify-center lg:justify-center mx-auto">
-    
+
                                 <!-- Group Member -->
                                 <div class="container mb-4 w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 md:mx-0">
                                     <label class="block text-sm font-semibold text-gray-700 text-center">Group Member</label>
                                     <div class="space-y-2 mt-2 max-h-[300px] lg:max-h-[500px] overflow-y-auto border p-2 rounded">
-                                        @forelse (Auth::User()->following as $user)
+                                        @forelse (Auth::User()->following ?? [] as $user)
                                             <label class="flex w-full justify-between items-center space-x-3 cursor-pointer">
                                                 <input type="checkbox" name="members[]" value="{{ $user->following->id }}" class="hidden peer">
                                                 <div class="flex items-center space-x-2">
@@ -90,7 +90,7 @@
                                         @endforelse
                                     </div>
                                 </div>
-                            
+
                                 <!-- Group Image -->
                                 <div class="container mb-4  w-1/2 lg:w-1/3 md:ml-4">
                                     <label for="image" class="block text-sm font-semibold text-gray-700 text-center">Group Image</label>
@@ -104,7 +104,7 @@
                                         <div class="text-red-500 text-xs">{{ $message }}</div>
                                     @enderror
                                 </div>
-                            
+
                             </div>
                             <div class="flex justify-center mt-6">
                                 <div class=" px-4 py-2 border border-gray-400 rounded-md hover:bg-gray-300 duration-300 mr-3">
