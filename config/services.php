@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'weatherapi' => [
+        'key' => env('WEATHERAPI_KEY'),
+    ],
+
+    'google_maps' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+
 ];

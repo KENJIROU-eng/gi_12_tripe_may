@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('auth.slide');
     }
 
     /**
@@ -24,11 +24,29 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
 
-        $request->session()->regenerate();
+            // finish authentication
+            $request->authenticate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if ($user->email_verified_at != NULL) {
+                if ($user->first_logged_in_at != NULL) {
+                    return redirect()->intended(route('dashboard', absolute: false));
+                }else {
+                    $user->first_logged_in_at = now();
+                    $user->save();
+                    return redirect()->route('profile.set');
+                }
+            } else {
+                Auth::logout();
+                return redirect('/login')->withErrors([
+                'email' => 'You do not finish email verification!',
+                ]);
+            }
+
     }
 
     /**

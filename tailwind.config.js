@@ -9,13 +9,20 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                bree: ['Bree Serif', ...defaultTheme.fontFamily.sans],
+                serif: ['Slabo 27px', ...defaultTheme.fontFamily.serif],
             },
         },
     },
 
     plugins: [forms],
+    plugins: [
+        require('@tailwindcss/forms'),
+        require('@tailwindcss/line-clamp'),
+    ],
 };
